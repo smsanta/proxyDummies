@@ -25,7 +25,7 @@ class ProxyController extends AbstractController{
             info( "No Rules Matched for Ur: $requestUri. Forwaring to original destination.")
             forwardRequest( requestUri )
         } else {
-            info( "Wa have found rules for this uri --> $checkRules"  )
+            info( "We have found rules for this uri --> $checkRules"  )
             Rule rule = proxyService.evalRules( checkRules )
 
             info( "Selected rule is: #$rule" )
