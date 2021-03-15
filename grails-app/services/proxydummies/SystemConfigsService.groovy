@@ -12,13 +12,17 @@ class SystemConfigsService extends BaseService{
     final static String CONFIG_KEY_PROXY_DUMMIES_HOME_FOLDER = "proxyDummiesHome"
     final static String CONFIG_KEY_SAVE_RESPONSE = "saveResponses"
     final static String CONFIG_KEY_SAVE_RESPONSE_FOLDER = "saveResponsesFolder"
+    final static String CONFIG_KEY_OVERRIDE_SAVE_RESPONSE = "overrideSaveResponses"
+    final static String CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION = "overrideSaveResponsesExpression"
 
     static List<String> getAllConfigurationKeys(){
         [
-                CONFIG_KEY_PROXY_DUMMIES_HOME_FOLDER,
-                CONFIG_KEY_SAVE_RESPONSE_FOLDER,
-                CONFIG_KEY_REDIRECT_URL,
-                CONFIG_KEY_SAVE_RESPONSE
+            CONFIG_KEY_PROXY_DUMMIES_HOME_FOLDER,
+            CONFIG_KEY_SAVE_RESPONSE_FOLDER,
+            CONFIG_KEY_REDIRECT_URL,
+            CONFIG_KEY_SAVE_RESPONSE,
+            CONFIG_KEY_OVERRIDE_SAVE_RESPONSE,
+            CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION
         ]
     }
 
@@ -74,5 +78,14 @@ class SystemConfigsService extends BaseService{
     Boolean getSaveResponse(){
         Boolean.valueOf( getConfigValueByKey( CONFIG_KEY_SAVE_RESPONSE ) )
     }
+
+    Boolean getOverrideSaveResponses(){
+        Boolean.valueOf( getConfigValueByKey( CONFIG_KEY_OVERRIDE_SAVE_RESPONSE ) )
+    }
+
+    String getOverrideSaveResponsesExpression(){
+        getConfigValueByKey( CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION )
+    }
+
 
 }

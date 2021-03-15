@@ -14,7 +14,7 @@ class DummiesMessageCode {
     static def GENERIC_COMMAND_VALIDATION_REJECTION = 1005
     static def SAVE_DUMMY_ALREADY_EXISTS = 1006
     static def RULE_COULD_NOT_BE_FOUND = 1007
-
+    static def FILE_NOT_FOUND = 1008
 
     static def Messages = [
         //1000-2000 General errors
@@ -25,7 +25,6 @@ class DummiesMessageCode {
         (this.GENERIC_COMMAND_VALIDATION_REJECTION) : "La validación de los parametros de entrada no ha sido superada.",
         (this.SAVE_DUMMY_ALREADY_EXISTS) : "Ya existe un dummy con la misma uri y la misma prioridad.",
         (this.RULE_COULD_NOT_BE_FOUND) : "El id de la rule no esta en la base de datos.",
-
-
+        (this.FILE_NOT_FOUND) : "El archivo indicado no existe.",
     ]
 }

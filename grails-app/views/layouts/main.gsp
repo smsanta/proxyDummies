@@ -111,6 +111,30 @@
         </div>
     </div>
     <!-- Modal Danger -->
+
+    <!-- Alert - Central Modal -->
+    <div id="popup-alert" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="popup-alert-title" aria-hidden="true">
+
+        <!-- Change class .modal-sm (sm, md, lg, fluid) to change the size of the modal -->
+        <div class="modal-dialog modal-xl" style="height: -webkit-fill-available;" role="document">
+            <div class="modal-content h-100">
+                <div class="modal-header">
+                    <h4 class="popup-alert-title modal-title w-100" id="popup-alert-modal-title">Modal title</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="popup-alert-body modal-body">
+                    ...
+                </div>
+                <div class="popup-alert-exchange body-exchange" style="display: none;"></div>
+                <div class="main-alert-footer modal-footer d-none">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Alert - Central Modal -->
 </div>
 
 <asset:javascript src="application.js"/>

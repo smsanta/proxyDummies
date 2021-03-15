@@ -16,8 +16,8 @@ class FilterResult implements AbstractObject {
     def toMapObject(List includingKeys, applyToResults, Closure collector = null) {
         Closure defaultCollector = { it.toMapObject(includingKeys) }
 
-        Closure chosenCollector = (collector ? collector : defaultCollector)
         if( applyToResults ){
+            Closure chosenCollector = (collector ? collector : defaultCollector)
             [ items: results.collect(chosenCollector)  ] + ( hasStatistics ? [statistics: statistics.toMapObject()] : [:] )
         } else {
             toMapObject( includingKeys )

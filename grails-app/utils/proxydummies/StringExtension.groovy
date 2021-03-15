@@ -2,7 +2,7 @@ package proxydummies
 
 class StringExtension {
 
-    static def extendStringMehtods(){
+    static void extendStringMehtods(){
 
         //Attach utility events to String class.
         String.metaClass.static.toCamelCase = { boolean capitalized = false ->

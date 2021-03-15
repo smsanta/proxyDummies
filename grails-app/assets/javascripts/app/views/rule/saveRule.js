@@ -5,7 +5,14 @@ _saveRule = {
 
     initialize: function () {
         _saveRule.setSaveEvent();
+        _saveRule.setTextAreaEditEvent();
         $("#v-pills-save-rule-tab").bind( "click", _saveRule.clearForm )
+    },
+
+    setTextAreaEditEvent: function(){
+        $("#abm_input_data").unbind("click").bind("click", function (e) {
+            _saveRule.popupEditData();
+        });
     },
 
     setSaveEvent : function () {
@@ -19,6 +26,7 @@ _saveRule = {
             let successCallback = function (result) {
                 app.endAjax(_saveRule._btnSave, _saveRule._loaderId, function () {
                     app.modals.showSuccess("Save Rule", "La rule se ha guardado exitosamente.", function () {
+                        _dashboard._rule_data_cache[ruleData.id] = undefined;
                         app.modals.closeDialog();
                         _dashboard._onFilterStart();
                         app.navToDashboard();
@@ -33,6 +41,10 @@ _saveRule = {
                     app.modals.showError("Error al guardar la Rule", errorData.message );
                 })
             };
+
+            if(ruleData.sourceType == "DATABASE"){
+                ruleData.data = Util.escapeXml( ruleData.data );
+            }
 
             app.startAjax( _saveRule._btnSave, _saveRule._loaderId, function () {
                 if( ruleData.id > 0 ){
@@ -85,6 +97,7 @@ _saveRule = {
     },
 
     clearForm: function () {
+        $("#abm_input_id").val( "" );
         $("#abm_input_uri").val("");
         $("#abm_input_priority").val("");
         $("#abm_input_state").prop("checked", false);
@@ -102,6 +115,22 @@ _saveRule = {
         $("#abm_input_data").val( data.data );
         $("#abm_input_description").val( data.description );
 
+    },
+
+    popupEditData: function () {
+        let ruleData = _saveRule.collectRuleData();
+
+        if( ruleData.sourceType == "DATABASE"){
+            let ruleId = ruleData.id;
+
+            let ruleSavedData = (_dashboard._rule_data_cache[ruleId] !== undefined) ? _dashboard._rule_data_cache[ruleId] : ruleData.data;
+            let dataPopup = '<textarea id="ta-pop-'+  ruleId +'" class="w-100 h-100 border-0 disabled">' + Util.escapeXml( ruleSavedData ) + '</textarea>';
+            app.modals.showPopup("Data from -> " + ruleData.uri,  dataPopup, function () {
+                let newRuleData = $('#ta-pop-'+  ruleId).val();
+                $("#abm_input_data").val( newRuleData );
+                app.modals.closeDialog();
+            });
+        }
     }
 
 };

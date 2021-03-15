@@ -76,6 +76,10 @@ var Util = {
 
     scapeBacklashes: function (str) {
         return str.replace(/\\/g, "\\\\")
+    },
+
+    escapeXml: function(s) {
+        return s.replaceAll("&", "&amp;").replaceAll(">", "&gt;").replaceAll("<", "&lt;").replaceAll("\"", "&quot;").replaceAll("'", "&apos;");
     }
 };
 

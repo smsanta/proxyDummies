@@ -2,6 +2,7 @@ var _dashboard = {
 
     _btnFilter: "#btn-search",
     _loaderId: "#loader-dashboard",
+    _rule_data_cache:{},
 
     initialize: function () {
         _dashboard.setFilterEvent();
@@ -75,15 +76,38 @@ var _dashboard = {
         }
 
         $.each(data, function (index, item) {
+            let dataString = item.data;
+
+            if( item.sourceType == "DATABASE" ){
+
+                dataString = htmlGenerator.icons.eyeFill("text-blue","Ver Data", {
+                    id: item.id,
+                    "data-id": item.id,
+                    action: "watch"
+                })
+            }
+
+            let activeIconClass = (item.active ? "bi-check-circle-fill text-green action-icon" : "bi-x-circle-fill text-red action-icon");
+            let activeIcon = htmlGenerator.icons.any(activeIconClass, "Ver Data", {
+                id: item.id,
+                "data-id": item.id,
+                action: "watch"
+            });
+
+            let hideIcon = (item.description == "" ? "d-none" : "")
+            let descriptionIcon = htmlGenerator.icons.any( ("bi-info-circle-fill action-icon text-blue " + hideIcon),  item.description);
+
             let templateData = {
                 "__ID__": item.id,
                 "__URI__": item.uri,
-                "__DESCRIPTION__": item.description,
+                "__DESCRIPTION__": descriptionIcon,
                 "__ACTIVE__": item.active,
-                "__ACTIVE_STRING__": (item.active ? "Si" : "No"),
+                "__ACTIVE_STRING__": activeIcon,
                 "__PRIORITY__": item.priority,
                 "__TYPE__": item.sourceType,
-                "__DATA__": item.data
+                "__DATA__": item.data,
+                "__DATA_STRING__": dataString
+
             };
 
             let newRow = templater.getFilledTemplate( templateData, templater.TEMPLATE_RULE_TABLE_ROW );
@@ -103,11 +127,13 @@ var _dashboard = {
         let deleteActions = tableBody.find("td .bi-x-circle");
         let activateActions = tableBody.find("td .bi-hand-thumbs-up-fill");
         let deactivateActions = tableBody.find("td .bi-hand-thumbs-down-fill");
+        let showActions = tableBody.find("td .bi-eye-fill");
 
         editActions.bind("click", _dashboard.tableActions.edit );
         deleteActions.bind("click", _dashboard.tableActions.delete );
         activateActions.bind("click", _dashboard.tableActions.activate );
         deactivateActions.bind("click", _dashboard.tableActions.deactivate );
+        showActions.bind("click", _dashboard.tableActions.show );
 
     },
 
@@ -116,12 +142,35 @@ var _dashboard = {
             e.preventDefault();
             let tr = $(this).parents("tr");
 
-            let ruleData = _dashboard.collectRuleDataFromTR( tr )
+            let ruleData = _dashboard.collectRuleDataFromTR( tr );
 
             _saveRule.clearForm();
-            _saveRule.loadForm( ruleData );
+            let id = ruleData.id;
+            let btnId = $(this).attr("id");
 
-            app.navToSaveRule();
+            if ( _dashboard._rule_data_cache[id] !== undefined ){
+                ruleData.data = _dashboard._rule_data_cache[id];
+                _saveRule.loadForm( ruleData );
+                app.navToSaveRule();
+            } else {
+                app.startAjax(btnId, _dashboard._loaderId, function () {
+                    app.apiClient.getRuleDatabaseBody(id, function (result) {
+                            _dashboard._rule_data_cache[id] = result;
+                            app.endAjax( btnId, _dashboard._loaderId, function () {
+                                ruleData.data = _dashboard._rule_data_cache[id];
+                                _saveRule.loadForm( ruleData );
+                                app.navToSaveRule();
+                            })
+                        },
+                        function (errorData) {
+                            app.endAjax(btnId, _dashboard._loaderId, function () {
+                                app.modals.showError("Error al obtener la data de la rule.", errorData.message );
+                            })
+                        });
+                } );
+            }
+
+
         },
         delete: function (e) {
             e.preventDefault();
@@ -193,6 +242,40 @@ var _dashboard = {
                     })
                 })
             })
+        },
+
+        show: function (e) {
+            e.preventDefault();
+            let tr = $(this).parents("tr");
+            let rowData = _dashboard.collectRuleDataFromTR(tr);
+
+            let btnId = $(this).attr("id");
+
+            let id = rowData.id;
+
+            if ( _dashboard._rule_data_cache[id] !== undefined ){
+                let dataPopup = '<textarea class="w-100 h-100 border-0 disabled">' + Util.escapeXml( _dashboard._rule_data_cache[id] ) + '</textarea>';
+                app.modals.showPopup("Data from -> " + rowData.uri,  dataPopup, function () {
+                    app.modals.closeDialog();
+                });
+            } else {
+                app.startAjax(btnId, _dashboard._loaderId, function () {
+                    app.apiClient.getRuleDatabaseBody(id, function (result) {
+                            _dashboard._rule_data_cache[id] = result;
+                            app.endAjax( btnId, _dashboard._loaderId, function () {
+                                let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml(result) + '</textarea>';
+                                app.modals.showPopup("Data from -> " + rowData.uri,  dataPopup, function () {
+                                    app.modals.closeDialog();
+                                });
+                            })
+                        },
+                        function (errorData) {
+                            app.endAjax(btnId, _dashboard._loaderId, function () {
+                                app.modals.showError("Error al desactivar la Rule.", errorData.message );
+                            })
+                        });
+                } );
+            }
         }
     },
 

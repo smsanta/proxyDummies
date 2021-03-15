@@ -27,12 +27,7 @@ class ApiController extends ApiBaseController{
 
             FilterResult fResult = proxyService.searchRule( filter )
 
-            List returnKeys = ["id", "uri", "priority", "active", "sourceType", "description"];
-
-            def items = fResult.toMapObject( returnKeys, true, {
-                def addData = (it.sourceType == Rule.SourceType.FILE) ? ["data"] : []
-                it.toMapObject( returnKeys + addData )
-            })
+            def items = fResult.toMapObject( ["id", "uri", "priority", "active", "sourceType", "data", "description"], true )
 
             respondOK( items )
         }
@@ -97,6 +92,18 @@ class ApiController extends ApiBaseController{
         }
     }
 
+    def getRuleDatabaseBody(){
+        handle{
+            IdCommand idCommand = getCommandAndValidate( IdCommand.newInstance(), HttpMethod.GET )
+
+            FilterResult fResult = proxyService.searchRule( RuleFilter.newInstance( [id: idCommand.id] ) )
+
+            Rule rule = fResult.results.first()
+
+            respondOK( rule.data )
+        }
+    }
+
     def updateConfiguration() {
         handle{
             UpdateConfigurationCommand uConfigCommand = getCommandAndValidate( UpdateConfigurationCommand.newInstance(), HttpMethod.POST )
@@ -123,6 +130,5 @@ class ApiController extends ApiBaseController{
         Rule updatedRule = proxyService.changeRuleState( switchCommand.id, newState )
 
         updatedRule
-
     }
 }

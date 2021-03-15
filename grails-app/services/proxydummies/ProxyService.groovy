@@ -1,6 +1,7 @@
 package proxydummies
 
 import grails.gorm.transactions.Transactional
+import org.apache.commons.lang3.StringEscapeUtils
 import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
 import proxydummies.abstracts.BaseService
@@ -21,6 +22,7 @@ class ProxyService extends BaseService{
 
     FilterResult searchRule( RuleFilter filter){
         filter.withCriteria {
+            filter.id != null ?  add(Restrictions.eq("id", filter.id)) : null
             filter.uri ? add(Restrictions.ilike('uri', filter.uri, MatchMode.ANYWHERE)) : null
             filter.active != null ?  add(Restrictions.eq("active", filter.active)) : null
 
@@ -57,11 +59,17 @@ class ProxyService extends BaseService{
                     throw new DummiesException( DummiesMessageCode.RULE_COULD_NOT_BE_FOUND )
                 }
             }
+
+            String ruleData = pData
+            if( pSourceType == Rule.SourceType.DATABASE ){
+                ruleData = StringEscapeUtils.unescapeXml( ruleData )
+            }
+
             saveRule.with {
                 uri = pUri
                 priority = pPriority
                 sourceType = pSourceType
-                data = pData
+                data = ruleData
                 active = pActive
                 description = pDescription
             }
@@ -137,6 +145,13 @@ class ProxyService extends BaseService{
     }
 
     String generateDummyName(String name ){
-        DUMMIES_NAME_PREFIX + name + DUMMIES_NAME_EXT
+        String expressionName = ""
+
+        if( !systemConfigsService.getOverrideSaveResponses() ){
+            def expression = systemConfigsService.getOverrideSaveResponsesExpression()
+            expressionName= Eval.me( expression )
+        }
+
+        DUMMIES_NAME_PREFIX + expressionName + name + DUMMIES_NAME_EXT
     }
 }

@@ -645,7 +645,7 @@ img.grails-logo {
     height: 80px;
 }
 
-.table-actions i{
+.action-icon {
     font-size: 2em;
     cursor: pointer;
     margin-right: 7px;
@@ -962,4 +962,71 @@ img.grails-logo {
     text-align: center;
     font-weight: bold;
     font-size: 20px !important;
+}
+
+[class*='ch-box'] {
+    border-radius: 5px;
+    margin: 0 0 10px 0;
+    padding: 10px;
+}
+
+.ch-box {
+    border: 1px solid #dedede;
+}
+
+.ch-box {
+    background-color: #f0f0f0;
+    background-image: -webkit-linear-gradient(top, #f0f0f0, #fff 25px, #fff);
+    background-image: -webkit-linear-gradient(top,#f0f0f0, #fff 25px, #fff);
+    background-image: linear-gradient(to bottom,#f0f0f0, #fff 25px, #fff);
+}
+
+.json-container {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.json-container .ch-box {
+    width: 99%;
+    height: 87%;
+    overflow-y: scroll;
+    padding-right: 16px;
+}
+
+.json-container pre{
+    outline: 1px solid #ccc;
+    padding: 5px;
+    margin: 5px;
+}
+
+.json-container .string {
+    color: green;
+}
+
+.json-container .number {
+    color: darkorange;
+}
+
+.json-container .boolean {
+    color: blue;
+}
+
+.json-container .null {
+    color: magenta;
+}
+
+.json-container .key {
+    color: darkblue;
+}
+
+.text-blue {
+    color: #0a53be;
+}
+
+.text-red {
+    color: red;
+}
+.text-green {
+    color: green;
 }

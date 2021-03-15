@@ -108,7 +108,8 @@ var modals = {
     type : {
         ALERT : "main-alert",
         SUCCESS : "success-modal",
-        ERROR : "error-modal"
+        ERROR : "error-modal",
+        POPUP : "popup-alert"
     },
 
     templates : {
@@ -221,6 +222,28 @@ var modals = {
        )
     },
 
+    /**
+     * Shows an message and does something after accept.
+     *
+     * @param title
+     * @param message
+     * @param successCallback - By default if not given closes the alert.
+     */
+    showPopup : function(title, message, successCallback){
+        let btnAccept = $.extend( {}, modals.defaults.buttons.accept );
+        if( validator.isObject(successCallback) ){
+            btnAccept.click = successCallback
+        }
+
+        modals.showModal({
+                title: title,
+                body: message
+            },
+            [btnAccept],
+            modals.type.POPUP
+        )
+    },
+
     promtModal : function(title, message, acceptCallback, cancelCallback, buttons){
         var btnAccept = {};
         btnAccept = $.extend( btnAccept, modals.defaults.buttons.accept );
@@ -315,6 +338,9 @@ var modals = {
                 btns.append( modals.utilities.buildButton( button.label, button.classes, btnAttr ) );
 
                 $('#'+btnId).bind( "click", button.click );
+                $(".modal-header button.close").unbind("click").bind("click", function () {
+                   modal.modal('hide');
+                });
 
                 $( modalId ).on('hidden.bs.modal', function (e) {
                     $( "#" + app.modals.live.currentModal + "-btn-0").click();

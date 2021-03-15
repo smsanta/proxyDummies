@@ -56,7 +56,7 @@
             <label for="abm_input_data" class="col-form-label">Data</label>
         </div>
         <div class="col-5">
-            <textarea type="text" id="abm_input_data" class="form-control" aria-describedby="dataHelpInline" placeholder="Si es tipo FILE va la ruta al archivo, Si es tipo DATABASE va todo el body xml."></textarea>
+            <textarea type="text" id="abm_input_data" class="form-control" aria-describedby="dataHelpInline" placeholder="Ruta completa al archivo: C:\folder\file.xml"></textarea>
         </div>
         <div class="col-auto">
             <span id="dataHelpInline" class="form-text d-none">

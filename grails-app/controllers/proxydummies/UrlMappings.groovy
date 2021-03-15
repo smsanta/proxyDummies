@@ -11,6 +11,7 @@ class UrlMappings {
         "/setup"(controller: "setup", action:  [GET: "index"])
 
         "/setup/api/rule/search"(controller: "api", action:  [GET: "searchRules"])
+        "/setup/api/rule/getRuleDatabaseBody"(controller: "api", action:  [GET: "getRuleDatabaseBody"])
         "/setup/api/rule/create"(controller: "api", action:  [POST: "createRule"])
         "/setup/api/rule/update"(controller: "api", action:  [POST: "updateRule"])
         "/setup/api/rule/enable"(controller: "api", action:  [POST: "enableRule"])

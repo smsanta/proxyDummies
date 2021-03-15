@@ -2,6 +2,8 @@ package proxydummies
 
 import grails.gorm.transactions.Transactional
 import proxydummies.abstracts.BaseService
+import proxydummies.exceptions.DummiesException
+import proxydummies.utilities.DummiesMessageCode
 
 import java.nio.charset.Charset
 import java.nio.file.Files
@@ -18,10 +20,13 @@ class FileServicesService extends BaseService{
     String loadFileData( String pFilePath ){
         String loadedData = ""
         Path filePath = Paths.get( pFilePath )
-        if( Files.exists( filePath ) ){
-            byte[] encoded = Files.readAllBytes( filePath )
-            loadedData = new String(encoded, Charset.defaultCharset())
+
+        if( !Files.exists( filePath ) ){
+            throw new DummiesException( DummiesMessageCode.FILE_NOT_FOUND )
         }
+
+        byte[] encoded = Files.readAllBytes( filePath )
+        loadedData = new String(encoded, Charset.defaultCharset())
 
         loadedData
     }

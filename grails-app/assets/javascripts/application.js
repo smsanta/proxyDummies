@@ -19,7 +19,8 @@
 
 // Static Resources
 //= require app/statics/httpStatus
-//= require app/statics/HtmlTemplates
+//= require app/statics/htmlTemplates
+//= require app/statics/htmlGenerator
 //
 // Utility Resources
 //= require app/utils

@@ -54,6 +54,7 @@ class ProxyController extends AbstractController{
 
     void saveResponse(String data, String uriName) {
         String dummyName = proxyService.generateDummyNameFromUri( uriName )
+
         proxyService.createDummy( data, dummyName )
     }
 

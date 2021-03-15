@@ -19,23 +19,29 @@ class Rule implements AbstractObject{
 
     @Override
     def toMapObject() {
-        [
+        def mapObject = [
             id: id,
             uri: uri,
             active: active,
             priority: priority,
-            description: description,
+            description: (description ? description : ""),
             sourceType: sourceType.toString(),
-            data: data,
+            data: "",
             requestConditionActive: requestConditionActive,
             responseOverrideActive: responseOverrideActive
         ]
+
+        if( sourceType in [ SourceType.FILE ] ){
+            mapObject.data = data
+        }
+
+        mapObject
     }
 
     enum SourceType {
         FILE,
-        DATABASE,
-        SERVICE
+        DATABASE
+        //SERVICE
     }
 
     static constraints = {

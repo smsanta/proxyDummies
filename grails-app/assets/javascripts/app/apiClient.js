@@ -31,14 +31,18 @@ var apiClient = {
                 error : "Error al crear la Rule."
             },
             update: {
-                error: "Error al actualizar la Rule"
+                error: "Error al actualizar la Rule."
             },
             delete: {
-                error: "Error al eliminar la Rule"
+                error: "Error al eliminar la Rule."
             },
             search: {
-                error: "Error al buscar Rules"
+                error: "Error al buscar Rules."
+            },
+            getRuleDatabaseBody: {
+                error: "Error al buscar el body de la Rule."
             }
+
         },
         configuration: {
             updateConfiguration: {
@@ -68,7 +72,8 @@ var apiClient = {
             search: '/search',
             enable: '/enable',
             disable: '/disable',
-            delete: '/delete'
+            delete: '/delete',
+            getRuleDatabaseBody: '/getRuleDatabaseBody'
         },
         configuration: {
             getConfiguration: '/find',
@@ -248,6 +253,32 @@ var apiClient = {
                         errorCallback( data );
                     } else {
                         app.modals.showError(apiClient.messages.rule.search.error, data.message );
+                    }
+                }
+            },
+            apiClient._defaultErrorCallback,
+            comunicator._responseTypes.JSON
+        )
+    },
+
+    getRuleDatabaseBody: function (id, successCallback, errorCallback) {
+        var urlFinal = config.baseUrl +
+            apiClient.module.rule +
+            apiClient.action.rule.getRuleDatabaseBody;
+
+        var json = {
+            id: id
+        };
+
+        comunicator.doGet(urlFinal, json,
+            function (data) {
+                if (data.status == 200) {
+                    successCallback(data.result);
+                } else {
+                    if( validator.isObject( errorCallback ) ){
+                        errorCallback( data );
+                    } else {
+                        app.modals.showError(apiClient.messages.rule.getRuleDatabaseBody.error, data.message );
                     }
                 }
             },

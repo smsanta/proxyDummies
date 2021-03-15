@@ -10,7 +10,7 @@ trait AbstractObject {
 
     abstract def toMapObject()
 
-    def toMapObject(List includingKeys ){
+    def toMapObject(List<String> includingKeys ){
         toMapObject().collectEntries { key, value ->
             key in includingKeys ? [key, value] : [:]
         }

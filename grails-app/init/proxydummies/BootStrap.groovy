@@ -3,6 +3,8 @@ package proxydummies
 import grails.util.Environment
 import proxydummies.utilities.Logger
 
+import java.text.SimpleDateFormat
+
 class  BootStrap {
 
     SystemConfigsService systemConfigsService
@@ -12,9 +14,9 @@ class  BootStrap {
 
     def init = { servletContext ->
         checkDb()
+        extendFuntionalities()
         loadInitialConfig()
         loadTestData()
-
     }
 
     def destroy = {
@@ -30,7 +32,9 @@ class  BootStrap {
             "redirectUrl" : "http://localhost:8888",
             "proxyDummiesHome" : proxyDummiesHome,
             "saveResponses" : true,
-            "saveResponsesFolder" : saveResponsesFolder
+            "saveResponsesFolder" : saveResponsesFolder,
+            "overrideSaveResponses" : false,
+            "overrideSaveResponsesExpression" : '"__" + Date.newInstance().format("yyyy-MM-dd_HH.mm.ss.S") + "__"',
         ]
 
         initialConfigs.each { confKey, confValue ->
@@ -64,5 +68,10 @@ class  BootStrap {
             Logger.info(this, StaticScripts.CREATE_DB_USER)
             throw e;
         }
+    }
+
+    void extendFuntionalities(){
+        StringExtension.extendStringMehtods()
+        DateExtension.extendDateMehtods()
     }
 }
