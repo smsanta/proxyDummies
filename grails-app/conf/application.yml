@@ -114,7 +114,7 @@ dataSource:
     pooled: true
     jmxExport: true
     driverClassName: oracle.jdbc.OracleDriver
-    username: proxydummies
+    username: proxydummiesdev
     password: password
     dialect: org.hibernate.dialect.Oracle10gDialect
     schema: proxydummies
@@ -141,4 +141,5 @@ environments:
     production:
         dataSource:
             dbCreate: update
+            username: proxydummies
 

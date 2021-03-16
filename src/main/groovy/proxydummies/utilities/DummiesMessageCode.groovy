@@ -15,6 +15,7 @@ class DummiesMessageCode {
     static def SAVE_DUMMY_ALREADY_EXISTS = 1006
     static def RULE_COULD_NOT_BE_FOUND = 1007
     static def FILE_NOT_FOUND = 1008
+    static def RULE_NOT_MATCHING_ANY = 1009
 
     static def Messages = [
         //1000-2000 General errors
@@ -26,5 +27,6 @@ class DummiesMessageCode {
         (this.SAVE_DUMMY_ALREADY_EXISTS) : "Ya existe un dummy con la misma uri y la misma prioridad.",
         (this.RULE_COULD_NOT_BE_FOUND) : "El id de la rule no esta en la base de datos.",
         (this.FILE_NOT_FOUND) : "El archivo indicado no existe.",
+        (this.RULE_NOT_MATCHING_ANY) : "No se pudo evaluar ningúna regla válida.",
     ]
 }

@@ -20,7 +20,7 @@ class ProxyService extends BaseService{
     final static String DUMMIES_NAME_PREFIX = "DUMMIES"
     final static String DUMMIES_NAME_EXT = ".xml"
 
-    FilterResult searchRule( RuleFilter filter){
+    FilterResult searchRule( RuleFilter filter ){
         filter.withCriteria {
             filter.id != null ?  add(Restrictions.eq("id", filter.id)) : null
             filter.uri ? add(Restrictions.ilike('uri', filter.uri, MatchMode.ANYWHERE)) : null
@@ -28,8 +28,7 @@ class ProxyService extends BaseService{
 
             order('uri')
             order('active')
-            order('priority')
-
+            order('priority', 'DESC')
         }
     }
 
@@ -101,14 +100,29 @@ class ProxyService extends BaseService{
     }
 
     Rule evalRules( List<Rule> candidates ){
-        /*Rule priorityCandidate = null
-        candidates.each { Rule candidate ->
+        Rule priorityCandidate = null
+
+        List<Rule> sortedCandidates = candidates.sort { a, b ->
+            a.priority == b.priority ? 0 : a.priority > b.priority ? -1 : 1
+        }
+
+        info( "Starting Evaluating candidates: ")
+        info( sortedCandidates.toArray() )
+
+        for (Rule candidate in sortedCandidates){
+            info( "Evaluating candidate: -> $candidate")
             if( candidate.active ){
+                info("Selected Rule -> $candidate")
                 priorityCandidate = candidate
+                break
             }
         }
-        priorityCandidate*/
-        candidates.first()
+
+        if( !priorityCandidate ){
+            throw new DummiesException( DummiesMessageCode.RULE_NOT_MATCHING_ANY )
+        }
+
+        priorityCandidate
     }
 
     String loadDummy(Rule rule){

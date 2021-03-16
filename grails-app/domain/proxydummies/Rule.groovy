@@ -38,6 +38,11 @@ class Rule implements AbstractObject{
         mapObject
     }
 
+    @Override
+    String toString() {
+        toMapObject().toString()
+    }
+
     enum SourceType {
         FILE,
         DATABASE
