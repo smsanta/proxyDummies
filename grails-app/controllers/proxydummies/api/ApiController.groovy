@@ -27,7 +27,7 @@ class ApiController extends ApiBaseController{
 
             FilterResult fResult = proxyService.searchRule( filter )
 
-            def items = fResult.toMapObject( ["id", "uri", "priority", "active", "sourceType", "data", "description"], true )
+            def items = fResult.toMapObject()
 
             respondOK( items )
         }
@@ -43,7 +43,9 @@ class ApiController extends ApiBaseController{
                 ruleCommand.sourceType,
                 ruleCommand.data,
                 ruleCommand.active,
-                ruleCommand.description
+                ruleCommand.description,
+                ruleCommand.requestConditionActive,
+                ruleCommand.requestCondition
             )
 
             respondOK( newRule.toMapObject() )
@@ -61,6 +63,8 @@ class ApiController extends ApiBaseController{
                     ruleCommand.data,
                     ruleCommand.active,
                     ruleCommand.description,
+                    ruleCommand.requestConditionActive,
+                    ruleCommand.requestCondition,
                     ruleCommand.id
             )
 

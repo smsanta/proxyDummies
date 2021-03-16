@@ -80,7 +80,7 @@ abstract class ApiBaseController extends AbstractController{
             error("API Error(In action $actionName): -> ${e.message} \n ${DummiesException.getStringTrace(e)}")
             respondError(e)
         } catch (DummiesException e) {
-            error("API Error(In action $actionName): -> ${e.message} \n ${DummiesException.getStringTrace(e)}")
+            error("Dummies Error(In action $actionName): -> ${e.message} \n ${DummiesException.getStringTrace(e)}")
             respondError(e)
         } catch (Exception e) {
             error("Error(In action $actionName): -> ${e.message} \n ${DummiesException.getStringTrace(e)}")

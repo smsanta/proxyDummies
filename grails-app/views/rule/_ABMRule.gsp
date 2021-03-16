@@ -1,7 +1,7 @@
 <form class="rule-form">
     <input type="hidden" id="abm_input_id">
     <div class="row">
-        <div class="col-1">
+        <div class="col-2">
             <label for="abm_input_uri" class="col-form-label">Uri</label>
         </div>
         <div class="col-5">
@@ -15,7 +15,7 @@
     </div>
 
     <div class="row">
-        <div class="col-1">
+        <div class="col-2">
             <label for="abm_input_priority" class="col-form-label">Prioridad</label>
         </div>
         <div class="col-5">
@@ -34,7 +34,7 @@
     </div>
 
     <div class="row">
-        <div class="col-1">
+        <div class="col-2">
             <label for="abm_input_type" class="col-form-label">Tipo</label>
         </div>
         <div class="col-5">
@@ -52,7 +52,7 @@
     </div>
 
     <div class="row">
-        <div class="col-1">
+        <div class="col-2">
             <label for="abm_input_data" class="col-form-label">Data</label>
         </div>
         <div class="col-5">
@@ -66,7 +66,7 @@
     </div>
 
     <div class="row">
-        <div class="col-1">
+        <div class="col-2">
             <label for="abm_input_state" class="col-form-label">Estado</label>
         </div>
         <div class="col-5 form-switch">
@@ -80,7 +80,55 @@
     </div>
 
     <div class="row">
-        <div class="col-1">
+        <div class="col-2">
+            <label for="abm_input_request_condition_active" class="col-form-label">Activar condición sobre la Request</label>
+        </div>
+        <div class="col-5 form-switch">
+            <input type="checkbox" id="abm_input_request_condition_active" class="form-check-input" aria-describedby="requestConditionActiveHelpInline">
+        </div>
+        <div class="col-auto">
+            <span id="requestConditionActiveHelpInline" class="form-text d-none">
+                Must be 8-20 characters long.
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <label for="abm_input_request_condition" class="col-form-label">
+                <i class="bi-info-circle-fill text-blue" data-bs-toggle="tooltip" data-bs-placement="left" title="
+                    La expression debe retornar un Boolean.
+                    Para mas información sobre como generar expressiones vea: H1 y H2"></i>
+                <i class="bi-arrow-right"></i>
+                <a href="https://docs.groovy-lang.org/latest/html/api/groovy/util/XmlParser.html" target="_blank">
+                    <i class="bi-type-h1 text-blue" class="c-pointer" data-bs-toggle="tooltip" data-bs-placement="left" title="Click para ver sobre XmlParser"></i>
+                </a>
+                <a href="https://github.com/smsanta/proxyDummies/tree/master/grails-app/utils/proxydummies/XmlNavigator.groovy" target="_blank">
+                    <i class="bi-type-h2 text-blue" class="c-pointer" data-bs-toggle="tooltip" data-bs-placement="left" title="Click para ver la clase wrapper."></i>
+                </a>
+                <br>
+
+                Request Condition Expression
+            </label>
+        </div>
+        <div class="col-5">
+            <textarea type="text" id="abm_input_request_condition" class="form-control" aria-describedby="requestCondtionHelpInline" placeholder="
+            Expression a ser evaluada sobre los parametros de la request.
+            Variable de la Request $requestXml
+            Ej: $requestXml
+                .getHeaderComunRequest()
+                .get(['origen', 'idSistema'])
+                .value() == '753'"></textarea>
+        </div>
+        <div class="col-auto">
+            <span id="requestCondtionHelpInline" class="form-text d-none">
+                Must be 8-20 characters long.
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
             <label for="abm_input_description" class="col-form-label">Descripción</label>
         </div>
         <div class="col-5">
@@ -94,7 +142,7 @@
     </div>
 
     <div class="row">
-        <div class="col-6" style="text-align: center;">
+        <div class="col-7" style="text-align: center;">
             <button id="btn-save-rule" type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </div>

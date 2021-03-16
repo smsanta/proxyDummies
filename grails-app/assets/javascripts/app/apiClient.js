@@ -96,7 +96,7 @@ var apiClient = {
     //API Methods
 
     //    ########### Rule ###########
-    createRule: function (pUri,pPriority, pSourceType, pData, pActive, pDescription, successCallback, errorCallback) {
+    createRule: function (pUri,pPriority, pSourceType, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition, successCallback, errorCallback) {
         var urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.create;
@@ -107,7 +107,10 @@ var apiClient = {
             sourceType: pSourceType,
             data: pData,
             active: pActive,
-            description: pDescription
+            description: pDescription,
+            requestCondition: pRequestCondition,
+            requestConditionActive: pRequestConditionActive
+
         };
 
         comunicator.doPost(urlFinal, json,
@@ -127,7 +130,7 @@ var apiClient = {
         )
     },
 
-    updateRule: function (pId, pUri,pPriority, pSourceType, pData, pActive, pDescription, successCallback, errorCallback) {
+    updateRule: function (pId, pUri,pPriority, pSourceType, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition, successCallback, errorCallback) {
         var urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.update;
@@ -139,7 +142,9 @@ var apiClient = {
             sourceType: pSourceType,
             data: pData,
             active: pActive,
-            description: pDescription
+            description: pDescription,
+            requestCondition: pRequestCondition,
+            requestConditionActive: pRequestConditionActive
         };
 
         comunicator.doPost(urlFinal, json,

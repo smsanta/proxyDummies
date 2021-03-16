@@ -2,7 +2,6 @@ package proxydummies.abstracts
 
 import io.micronaut.http.HttpRequest
 import proxydummies.exceptions.ApiException
-import proxydummies.exceptions.DummiesException
 import proxydummies.utilities.DummiesMessageCode
 import org.springframework.http.HttpStatus
 

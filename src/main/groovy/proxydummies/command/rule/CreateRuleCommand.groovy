@@ -11,7 +11,8 @@ class CreateRuleCommand extends MainCommand {
     String data
     Boolean active
     String description
-
+    Boolean requestConditionActive
+    String requestCondition
 
     static constraints = {
         uri nullable: false, blank: false
@@ -20,6 +21,11 @@ class CreateRuleCommand extends MainCommand {
         data nullable: false, blank: false
         active nullable: false
         description nullable: true, blank: true
+        requestCondition nullable: true, blank: true, validator: { String value, CreateRuleCommand obj ->
+            if(obj.requestConditionActive && !value){
+                obj.errors.putAt("requestCondition", "requestCondition no puede estar vacío si la condición esta activa.")
+            }
+        }
     }
 
     @Override

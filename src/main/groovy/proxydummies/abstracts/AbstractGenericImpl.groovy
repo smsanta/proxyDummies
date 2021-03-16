@@ -15,9 +15,6 @@ abstract class AbstractGenericImpl {
 
     static final String DEFAULT_RETRY_TIMES_PROP = "dummies.application.retryTimes"
     static final String DEFAULT_RETRY_SLEEP_TIME_PROP = "dummies.application.retrySleepTime"
-    static final String CONFIG_PROPERTY_DUMMIES_URL = "dummies.system-property.url"
-    static final String CONFIG_PROPERTY_DUMMIES_FILE_DIRECTORY = "dummies.system-property.file"
-
 
     def grailsApplication
     SystemConfigsService systemConfigsService

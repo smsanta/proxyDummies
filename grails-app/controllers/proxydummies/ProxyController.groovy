@@ -21,29 +21,37 @@ class ProxyController extends AbstractController{
         def requestUri = proxyService.purgeProxyDummiesPrefix( request.getRequestURI() )
         def checkRules = proxyService.getActiveRules( requestUri )
 
+        String requestSoapBody = getSoapBody()
+
         if( checkRules.isEmpty() ){
             info( "No Rules Matched for Ur: $requestUri. Forwaring to original destination.")
-            forwardRequest( requestUri )
+            forwardRequest( requestUri, requestSoapBody )
         } else {
-            info( "We have found rules for this uri --> $checkRules"  )
-            Rule rule = proxyService.evalRules( checkRules )
+            def xmlRequestNavigator = XmlNavigator.newInstance( requestSoapBody )
 
-            info( "Selected rule is: #$rule" )
-            String dummy = proxyService.loadDummy( rule )
+            info( "We have found rules for this uri(${checkRules.size()}) --> $checkRules"  )
+            Rule rule = proxyService.evalRules( checkRules, xmlRequestNavigator )
 
-            response.addHeader('Content-Type', 'text/xml')
+            if ( !rule ){
+                info("Ninguna de las rules testeadas pudieron ser verificadas. se forwarea la request por default.")
+                forwardRequest( requestUri, requestSoapBody )
+            }else{
+                String dummy = proxyService.loadDummy( rule )
 
-            render( dummy )
+                response.addHeader('Content-Type', 'text/xml')
+
+                render( dummy )
+            }
         }
     }
 
-    private void forwardRequest(forwardUri ){
+    private void forwardRequest(forwardUri, String soapBody ){
         info( "Forwaring request -> ${request.getRequestURL()} " )
 
         String redirectUrl = systemConfigsService.getDummiesRedirectUrl()
         HttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
 
-        HttpRequest forwardRequest = getRequestByMethod( request.method, forwardUri, getSoapBody() )
+        HttpRequest forwardRequest = getRequestByMethod( request.method, forwardUri, soapBody )
         HttpResponse newResponse = httpClient.toBlocking().exchange(forwardRequest, String)
 
         saveResponse( newResponse.body(), forwardUri )

@@ -1030,3 +1030,11 @@ img.grails-logo {
 .text-green {
     color: green;
 }
+
+#v-pills-tabContent .tab-pane {
+    overflow-y: scroll;
+}
+
+.t-align-center{
+    text-align: center;
+}

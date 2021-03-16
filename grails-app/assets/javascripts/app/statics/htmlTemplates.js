@@ -11,11 +11,12 @@ var templater = {
 
     TEMPLATE_RULE_TABLE_ROW:
         '<tr data-id="__ID__">' +
-            '<td data-uri="__URI__"> __DESCRIPTION__ __URI__ </td>' +
-            '<td data-active="__ACTIVE__">__ACTIVE_STRING__</td>' +
-            '<td data-priority="__PRIORITY__">__PRIORITY__</td>' +
-            '<td data-sourceType="__TYPE__">__TYPE__</td>' +
-            '<td data-data="__DATA__">__DATA_STRING__</td>' +
+            '<td> __DESCRIPTION__ __URI__ </td>' +
+            '<td class="t-align-center">__ACTIVE_STRING__</td>' +
+            '<td class="t-align-center">__PRIORITY__</td>' +
+            '<td class="t-align-center">__TYPE__</td>' +
+            '<td>__DATA_STRING__</td>' +
+            '<td class="t-align-center">__REQUEST_CONDITION__</td>' +
             '<td class="table-actions">' +
                 '<i id="edit-__ID__" class="bi-pencil-square action-icon" action="edit" style="color: dodgerblue;"></i>' +
                 '<i id="activate-__ID__"class="bi-hand-thumbs-up-fill action-icon" style="color: green;" action="activate"></i>' +

@@ -6,6 +6,7 @@
             <th scope="col">Prioridad</th>
             <th scope="col">Tipo</th>
             <th scope="col">Data</th>
+            <th scope="col">Tiene Request Condition</th>
             <th scope="col">Acciones</th>
         </tr>
     </thead>

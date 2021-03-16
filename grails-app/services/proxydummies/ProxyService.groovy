@@ -1,6 +1,7 @@
 package proxydummies
 
 import grails.gorm.transactions.Transactional
+import io.micronaut.http.HttpRequest
 import org.apache.commons.lang3.StringEscapeUtils
 import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
@@ -9,6 +10,8 @@ import proxydummies.exceptions.DummiesException
 import proxydummies.filters.FilterResult
 import proxydummies.filters.RuleFilter
 import proxydummies.utilities.DummiesMessageCode
+
+import javax.servlet.http.HttpServletRequest
 
 @Transactional
 class ProxyService extends BaseService{
@@ -43,6 +46,8 @@ class ProxyService extends BaseService{
         String pData,
         Boolean pActive,
         String pDescription,
+        Boolean pRequestConditionActive,
+        String pRequestCondition,
         Long id = null ){
         handle{
             if ( Rule.countByUriAndPriorityAndIdNotEqual( pUri, pPriority, id ) > 0 ){
@@ -71,6 +76,8 @@ class ProxyService extends BaseService{
                 data = ruleData
                 active = pActive
                 description = pDescription
+                requestConditionActive = pRequestConditionActive
+                requestCondition = pRequestCondition
             }
 
             saveRule.save( flush: true, failOnError: true )
@@ -99,7 +106,7 @@ class ProxyService extends BaseService{
         deleteRule.delete()
     }
 
-    Rule evalRules( List<Rule> candidates ){
+    Rule evalRules(List<Rule> candidates, XmlNavigator soapXmlRequest){
         Rule priorityCandidate = null
 
         List<Rule> sortedCandidates = candidates.sort { a, b ->
@@ -107,19 +114,27 @@ class ProxyService extends BaseService{
         }
 
         info( "Starting Evaluating candidates: ")
-        info( sortedCandidates.toArray() )
+        info( sortedCandidates.toList() )
 
         for (Rule candidate in sortedCandidates){
             info( "Evaluating candidate: -> $candidate")
             if( candidate.active ){
+                if( candidate.requestConditionActive ){
+
+                    Boolean evalExpression = Eval.me( "\$requestXml", soapXmlRequest, candidate.requestCondition )
+                    if( evalExpression ){
+                        info("Selected Rule -> $candidate")
+                        priorityCandidate = candidate
+                        break
+                    }
+
+                    continue
+                }
+
                 info("Selected Rule -> $candidate")
                 priorityCandidate = candidate
                 break
             }
-        }
-
-        if( !priorityCandidate ){
-            throw new DummiesException( DummiesMessageCode.RULE_NOT_MATCHING_ANY )
         }
 
         priorityCandidate

@@ -2,6 +2,7 @@ var _dashboard = {
 
     _btnFilter: "#btn-search",
     _loaderId: "#loader-dashboard",
+    _rule_search_cache: {},
     _rule_data_cache:{},
 
     initialize: function () {
@@ -25,6 +26,7 @@ var _dashboard = {
             app.apiClient.searchRules(searchFilter,
                 function (result) {
                     app.endAjax( _dashboard._btnFilter, _dashboard._loaderId, function () {
+                        _dashboard._rule_search_cache = result.items;
                         _dashboard.fillTable( result.items )
 
                     })
@@ -79,12 +81,11 @@ var _dashboard = {
             let dataString = item.data;
 
             if( item.sourceType == "DATABASE" ){
-
                 dataString = htmlGenerator.icons.eyeFill("text-blue","Ver Data", {
                     id: item.id,
                     "data-id": item.id,
                     action: "watch"
-                })
+                });
             }
 
             let activeIconClass = (item.active ? "bi-check-circle-fill text-green action-icon" : "bi-x-circle-fill text-red action-icon");
@@ -94,8 +95,25 @@ var _dashboard = {
                 action: "watch"
             });
 
-            let hideIcon = (item.description == "" ? "d-none" : "")
+            let hideIcon = (item.description == "" ? "d-none" : "");
             let descriptionIcon = htmlGenerator.icons.any( ("bi-info-circle-fill action-icon text-blue " + hideIcon),  item.description);
+
+            let requestConditionActiveIconClass = (item.requestConditionActive ? "bi-check-circle-fill text-green action-icon" : "bi-x-circle-fill text-red action-icon");
+            let requestConditionActiveIcon = htmlGenerator.icons.any(requestConditionActiveIconClass, "", {
+                id: item.id,
+                "data-id": item.id
+            });
+
+
+            hideIcon = (item.requestConditionActive === true ? "" : "d-none");
+            let requestConditionIcon = htmlGenerator.icons.eyeFill("text-blue " + hideIcon,"Ver Condition", {
+                id: item.id,
+                "data-id": item.id,
+                action: "watch-condition"
+            });
+
+            let arrowIcon = htmlGenerator.icons.any("bi-arrow-right action-icon " + hideIcon,"", {});
+            let requestCondition = requestConditionActiveIcon + arrowIcon + requestConditionIcon;
 
             let templateData = {
                 "__ID__": item.id,
@@ -106,7 +124,8 @@ var _dashboard = {
                 "__PRIORITY__": item.priority,
                 "__TYPE__": item.sourceType,
                 "__DATA__": item.data,
-                "__DATA_STRING__": dataString
+                "__DATA_STRING__": dataString,
+                "__REQUEST_CONDITION__": requestCondition
 
             };
 
@@ -123,17 +142,19 @@ var _dashboard = {
         let table = $("#table-filter-rule");
         let tableBody = table.find("tbody");
 
-        let editActions = tableBody.find("td .bi-pencil-square");
-        let deleteActions = tableBody.find("td .bi-x-circle");
-        let activateActions = tableBody.find("td .bi-hand-thumbs-up-fill");
-        let deactivateActions = tableBody.find("td .bi-hand-thumbs-down-fill");
-        let showActions = tableBody.find("td .bi-eye-fill");
+        let editActions = tableBody.find("td i[action=edit]");
+        let deleteActions = tableBody.find("td i[action=delete]");
+        let activateActions = tableBody.find("td i[action=activate]");
+        let deactivateActions = tableBody.find("td i[action=deactivate]");
+        let showActions = tableBody.find('td i[action=watch]');
+        let showRequestCondition = tableBody.find('td i[action=watch-condition]');
 
         editActions.bind("click", _dashboard.tableActions.edit );
         deleteActions.bind("click", _dashboard.tableActions.delete );
         activateActions.bind("click", _dashboard.tableActions.activate );
         deactivateActions.bind("click", _dashboard.tableActions.deactivate );
         showActions.bind("click", _dashboard.tableActions.show );
+        showRequestCondition.bind("click", _dashboard.tableActions.showRequestCondition );
 
     },
 
@@ -276,28 +297,37 @@ var _dashboard = {
                         });
                 } );
             }
+        },
+
+        showRequestCondition:  function (e) {
+            e.preventDefault();
+            let tr = $(this).parents("tr");
+            let rowData = _dashboard.collectRuleDataFromTR(tr);
+
+            let id = rowData.id;
+
+            let dataPopup = '<textarea disabled class="w-100 h-100 border-0">' + rowData.requestCondition + '</textarea>';
+            app.modals.showPopup("Request Condition from -> " + rowData.uri, dataPopup, function () {
+                app.modals.closeDialog();
+            });
         }
     },
 
     collectRuleDataFromTR : function (tr) {
         let id = tr.attr("data-id");
-        let uri = tr.find("td[data-uri]").attr("data-uri");
-        let description = tr.find("i[data-description]").attr("data-description");
-        let active = tr.find("td[data-active]").attr("data-active");
-        let priority = tr.find("td[data-priority]").attr("data-priority");
-        let sourceType = tr.find("td[data-sourceType]").attr("data-sourceType");
-        let data = tr.find("td[data-data]").attr("data-data");
 
-        let ruleData = {
-            id: id,
-            uri: uri,
-            description: description,
-            active: active,
-            priority: priority,
-            sourceType: sourceType,
-            data: data
-        };
+        return _dashboard.getRule(id);
+    },
 
-        return ruleData;
+    getRule : function (id) {
+        let rule = undefined;
+
+        $.each( _dashboard._rule_search_cache, function (index, eachRule) {
+            if( eachRule.id == id ){
+                rule = eachRule;
+            }
+        });
+
+        return rule;
     }
 };

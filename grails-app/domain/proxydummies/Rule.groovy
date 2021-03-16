@@ -28,6 +28,7 @@ class Rule implements AbstractObject{
             sourceType: sourceType.toString(),
             data: "",
             requestConditionActive: requestConditionActive,
+            requestCondition: requestCondition,
             responseOverrideActive: responseOverrideActive
         ]
 
