@@ -62,6 +62,7 @@ Y tambien que las rules tengan la autonomia de definirse autosuficientes, es dec
 hacer un POST/GET o si es un SOAP/REST y hacia donde va a redirigir las llamadas.
 
 **TODOs**
+- Agregar Import/Export de rules
 - Agregar soporte para REST
 - Agregar "ambientes" que son las urls finales donde las request van a ser redirigidas(Implica eliminar la config unica de redireccion) y ser asignadas a cara rule por separado.
 - Mejorar la interfaz en general.
