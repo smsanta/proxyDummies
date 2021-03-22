@@ -121,7 +121,14 @@ class ProxyService extends BaseService{
             if( candidate.active ){
                 if( candidate.requestConditionActive ){
 
-                    Boolean evalExpression = Eval.me( "\$requestXml", soapXmlRequest, candidate.requestCondition )
+                    Boolean evalExpression = false
+                    try{
+                        soapXmlRequest.reset()
+                        evalExpression = Eval.me( "\$requestXml", soapXmlRequest, candidate.requestCondition )
+                    }catch(NoSuchElementException e){
+                        info("NoSuchElementException: Returning false on current Rule.")
+                    }
+
                     if( evalExpression ){
                         info("Selected Rule -> $candidate")
                         priorityCandidate = candidate

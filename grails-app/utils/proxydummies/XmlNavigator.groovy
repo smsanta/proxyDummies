@@ -1,5 +1,7 @@
 package proxydummies
 
+import proxydummies.utilities.Logger
+
 class XmlNavigator {
 
     private Node xmlObject
@@ -12,6 +14,7 @@ class XmlNavigator {
     }
 
     def get( String node, asList = false){
+        Logger.info(this, "Joining Node: $node.")
         if( asList ){
             currentElement = currentElement.get( node )
         } else {
@@ -25,7 +28,9 @@ class XmlNavigator {
         String lastElement = nestedNodes.last()
         nestedNodes.remove(lastElement)
 
+        Logger.info(this, "Joining List Node: $nestedNodes.")
         nestedNodes.each {
+            Logger.info(this, "Iterating Over node: $it")
             currentElement = currentElement.get( it ).first()
         }
 
@@ -44,7 +49,7 @@ class XmlNavigator {
     }
 
     def getBody(){
-        currentElement = xmlObject.get("S:body").first()
+        currentElement = xmlObject.get("S:Body").first()
         this
     }
 
