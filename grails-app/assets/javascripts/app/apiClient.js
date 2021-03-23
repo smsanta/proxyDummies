@@ -276,12 +276,12 @@ var apiClient = {
         )
     },
 
-    importRule: function (plainJson, successCallback, errorCallback) {
+    importRule: function (pJson, successCallback, errorCallback) {
         var urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.import;
 
-        var json = JSON.parse( plainJson );
+        var json = pJson;
 
         comunicator.doPost(urlFinal, json,
             function (data) {

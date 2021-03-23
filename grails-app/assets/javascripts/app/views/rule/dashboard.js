@@ -35,21 +35,28 @@ var _dashboard = {
                 let btnId = $(this).attr("id");
                 app.startAjax(btnId, _dashboard._loaderId, function () {
                     let plainJson = $("#" + popupTextAreaTmpId).val();
-                    app.apiClient.importRule( plainJson, function () {
+                    let parsedJson = undefined;
+                    try {
+                        parsedJson = JSON.parse( plainJson )
+                    }catch (e) {
                         app.endAjax(btnId, _dashboard._loaderId, function () {
-                            //app.modals.closeDialog(function () {
-                                app.modals.showSuccess("Rule Import", "La Rule se importo exitosamente.", function () {
-                                    _dashboard._onFilterStart();
-                             });
-                         //});
-                    })
-                   },function (errorData) {
-                       app.endAjax(btnId, _dashboard._loaderId, function () {
-                           app.modals.closeDialog(function () {
-                                app.modals.showError("Error al importar la Rule.", errorData.message);
-                           });
+                            app.modals.showError("No se pudo importar la Rule.", "JSON inválido.");
+                        });
 
-                       })
+                        return;
+                    }
+
+
+                    app.apiClient.importRule( parsedJson, function () {
+                        app.endAjax(btnId, _dashboard._loaderId, function () {
+                            app.modals.showSuccess("Rule Import", "La Rule se importo exitosamente.", function () {
+                                _dashboard._onFilterStart();
+                             });
+                        })
+                    },function (errorData) {
+                        app.endAjax(btnId, _dashboard._loaderId, function () {
+                           app.modals.showError("Error al importar la Rule.", errorData.message);
+                        })
                    })
                 });
                 app.modals.closeDialog();
