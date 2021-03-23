@@ -1,12 +1,14 @@
 var _dashboard = {
 
     _btnFilter: "#btn-search",
+    _btnImport: "#btn-import-rule",
     _loaderId: "#loader-dashboard",
     _rule_search_cache: {},
     _rule_data_cache:{},
 
     initialize: function () {
         _dashboard.setFilterEvent();
+        _dashboard.setImportEvent();
 
     },
 
@@ -16,6 +18,45 @@ var _dashboard = {
         btnFilter.unbind().bind("click", function (e) {
             e.preventDefault();
             _dashboard._onFilterStart();
+        })
+    },
+
+    setImportEvent : function () {
+        let btnImport = $( _dashboard._btnImport );
+
+        btnImport.unbind().bind("click", function (e) {
+            e.preventDefault();
+
+            let popupTextAreaTmpId = "tmp-ta-" + Date.now();
+            let dataPopup = '<textarea id="'+ popupTextAreaTmpId +'" class="w-100 h-100 border-0"></textarea>';
+
+            app.modals.promtModal("Import Rule -> Pegar JSON raw", dataPopup ,
+                function () {
+                let btnId = $(this).attr("id");
+                app.startAjax(btnId, _dashboard._loaderId, function () {
+                    let plainJson = $("#" + popupTextAreaTmpId).val();
+                    app.apiClient.importRule( plainJson, function () {
+                        app.endAjax(btnId, _dashboard._loaderId, function () {
+                            //app.modals.closeDialog(function () {
+                                app.modals.showSuccess("Rule Import", "La Rule se importo exitosamente.", function () {
+                                    _dashboard._onFilterStart();
+                             });
+                         //});
+                    })
+                   },function (errorData) {
+                       app.endAjax(btnId, _dashboard._loaderId, function () {
+                           app.modals.closeDialog(function () {
+                                app.modals.showError("Error al importar la Rule.", errorData.message);
+                           });
+
+                       })
+                   })
+                });
+                app.modals.closeDialog();
+            },
+                function () {
+                    app.modals.closeDialog();
+            });
         })
     },
 
@@ -148,6 +189,7 @@ var _dashboard = {
         let deactivateActions = tableBody.find("td i[action=deactivate]");
         let showActions = tableBody.find('td i[action=watch]');
         let showRequestCondition = tableBody.find('td i[action=watch-condition]');
+        let exportActions = tableBody.find('td i[action=export]');
 
         editActions.bind("click", _dashboard.tableActions.edit );
         deleteActions.bind("click", _dashboard.tableActions.delete );
@@ -155,6 +197,7 @@ var _dashboard = {
         deactivateActions.bind("click", _dashboard.tableActions.deactivate );
         showActions.bind("click", _dashboard.tableActions.show );
         showRequestCondition.bind("click", _dashboard.tableActions.showRequestCondition );
+        exportActions.bind("click", _dashboard.tableActions.export );
 
     },
 
@@ -243,6 +286,7 @@ var _dashboard = {
                 })
             })
         },
+
         deactivate: function (e) {
             e.preventDefault();
             let id = $(this).parents("tr").attr("data-id");
@@ -310,6 +354,29 @@ var _dashboard = {
             app.modals.showPopup("Request Condition from -> " + rowData.uri, dataPopup, function () {
                 app.modals.closeDialog();
             });
+        },
+
+        export: function (e) {
+            let tr = $(this).parents("tr");
+            let rowData = _dashboard.collectRuleDataFromTR(tr);
+            let id = rowData.id;
+            let btnId = $(this).attr("id");
+
+            app.startAjax(btnId, _dashboard._loaderId, function () {
+                app.apiClient.exportRule(id, function (result) {
+                        app.endAjax( btnId, _dashboard._loaderId, function () {
+                            Util.copyToClipboard( result );
+                            app.modals.showSuccess("Rule Export -> " + rowData.uri + " - Priority -> " + rowData.priority,  "La rule se ha copiado al portapaples!", function () {
+                                app.modals.closeDialog();
+                            });
+                        })
+                    },
+                    function (errorData) {
+                        app.endAjax(btnId, _dashboard._loaderId, function () {
+                            app.modals.showError("Error al generar el export de la Rule.", errorData.message );
+                        })
+                    });
+            } );
         }
     },
 

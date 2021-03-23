@@ -1038,3 +1038,23 @@ img.grails-logo {
 .t-align-center{
     text-align: center;
 }
+
+.nav-importer{
+    display: block;
+    float: left;
+    list-style-type: none;
+    margin-right: 0.5em;
+    padding: 0;
+}
+
+.nav-importer form {
+    border: 0px;
+    height: 70px;
+    text-align: center;
+    background-color: transparent;
+    color: white;
+}
+
+.nav-importer form button{
+    height: 100%;
+}

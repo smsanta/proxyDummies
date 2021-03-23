@@ -25,7 +25,7 @@ var Util = {
     copyToClipboard : function(text){
         var input = document.createElement('textarea');
 
-        document.getElementById("page-title").appendChild(input);
+        document.getElementById("secret-exchange-area").appendChild(input);
         input.value = text;
         input.focus();
         input.select();

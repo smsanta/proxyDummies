@@ -144,5 +144,7 @@
         app.initialize();
     });
 </script>
+
+<div id="secret-exchange-area"></div>
 </body>
 </html>

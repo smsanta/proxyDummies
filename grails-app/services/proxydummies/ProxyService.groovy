@@ -1,5 +1,6 @@
 package proxydummies
 
+import grails.converters.JSON
 import grails.gorm.transactions.Transactional
 import io.micronaut.http.HttpRequest
 import org.apache.commons.lang3.StringEscapeUtils
@@ -12,6 +13,7 @@ import proxydummies.filters.RuleFilter
 import proxydummies.utilities.DummiesMessageCode
 
 import javax.servlet.http.HttpServletRequest
+import java.util.logging.Filter
 
 @Transactional
 class ProxyService extends BaseService{
@@ -76,8 +78,8 @@ class ProxyService extends BaseService{
                 data = ruleData
                 active = pActive
                 description = pDescription
-                requestConditionActive = pRequestConditionActive
-                requestCondition = pRequestCondition
+                requestConditionActive = (pRequestConditionActive ?: false)
+                requestCondition = (pRequestConditionActive ? pRequestCondition : "")
             }
 
             saveRule.save( flush: true, failOnError: true )
@@ -190,4 +192,36 @@ class ProxyService extends BaseService{
 
         DUMMIES_NAME_PREFIX + expressionName + name + DUMMIES_NAME_EXT
     }
+
+    String exportRule(Long id){
+        FilterResult ruleFilterResult = searchRule( RuleFilter.newInstance( [id: id] ))
+        Rule ruleToExport = ruleFilterResult.results.first()
+
+        if( !ruleToExport ){
+            throw new DummiesException( DummiesMessageCode.RULE_COULD_NOT_BE_FOUND )
+        }
+
+        def data = loadDummy( ruleToExport )
+
+        def plainRule = ruleToExport.toMapObject()
+        plainRule.data = data
+
+        plainRule.sourceType = Rule.SourceType.DATABASE
+
+        (plainRule as JSON).toString()
+    }
+
+    Rule importRule(String pUri,
+                    String pData,
+                    Boolean pActive,
+                    String pDescription,
+                    Boolean pRequestConditionActive,
+                    String pRequestCondition ){
+
+        Rule maximumPriorityRule = Rule.findAllByUri(pUri, [sort: 'priority', order: 'desc', limit: 1])?.first()
+        Integer newMaximumPriority = ( maximumPriorityRule ? (maximumPriorityRule.priority+1) : 1 )
+
+        saveRule(pUri, newMaximumPriority, Rule.SourceType.DATABASE, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition)
+    }
+
 }

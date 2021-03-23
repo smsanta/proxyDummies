@@ -11,6 +11,7 @@ import proxydummies.command.IdCommand
 import proxydummies.command.configuration.ConfigurationKeyCommand
 import proxydummies.command.configuration.UpdateConfigurationCommand
 import proxydummies.command.rule.CreateRuleCommand
+import proxydummies.command.rule.ImportRuleCommand
 import proxydummies.command.rule.UpdateRuleCommand
 import proxydummies.filters.FilterResult
 import proxydummies.filters.RuleFilter
@@ -125,6 +126,33 @@ class ApiController extends ApiBaseController{
             String configurationValue = systemConfigsService.getConfigValueByKey( uConfigCommand.key )
 
             respondOK( configurationValue )
+        }
+    }
+
+    def exportRule(){
+        handle{
+            IdCommand idCommand = getCommandAndValidate( IdCommand.newInstance(), HttpMethod.GET )
+
+            def exportedRule = proxyService.exportRule( idCommand.id )
+
+            respondOK( exportedRule )
+        }
+    }
+
+    def importRule(){
+        handle{
+            ImportRuleCommand importRuleCommand = getCommandAndValidate( ImportRuleCommand.newInstance(), HttpMethod.POST )
+
+            Rule importedRule = proxyService.importRule(
+                importRuleCommand.uri,
+                importRuleCommand.data,
+                importRuleCommand.active,
+                importRuleCommand.description,
+                importRuleCommand.requestConditionActive,
+                importRuleCommand.requestCondition
+            )
+
+            respondOK( importedRule.toMapObject() )
         }
     }
 

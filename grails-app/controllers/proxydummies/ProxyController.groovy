@@ -57,14 +57,16 @@ class ProxyController extends AbstractController{
         saveResponse( newResponse.body(), forwardUri )
 
         mirrorResponseHeaders( newResponse, response )
+
         render( newResponse.body() )
     }
 
-    void saveResponse(String data, String uriName) {
+    private void saveResponse(String data, String uriName) {
         String dummyName = proxyService.generateDummyNameFromUri( uriName )
 
         proxyService.createDummy( data, dummyName )
     }
+
 
     private HttpRequest getRequestByMethod(String method, String uri, String data ){
         HttpRequest newRequest

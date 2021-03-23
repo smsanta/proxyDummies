@@ -235,6 +235,8 @@ var modals = {
             btnAccept.click = successCallback
         }
 
+        $("#"+ modals.type.POPUP).find(".modal-footer").addClass("d-none");
+
         modals.showModal({
                 title: title,
                 body: message
@@ -244,10 +246,15 @@ var modals = {
         )
     },
 
+    showPopupWithButton : function(title, message, successCallback){
+       modals.showPopup(title, message, successCallback)
+        $("#"+ modals.type.POPUP).find(".modal-footer").removeClass("d-none");
+    },
+
     promtModal : function(title, message, acceptCallback, cancelCallback, buttons){
         var btnAccept = {};
         btnAccept = $.extend( btnAccept, modals.defaults.buttons.accept );
-        var btnCancel = {};
+        var btnCancel = { classes: "btn-danger" };
         btnCancel = $.extend( btnCancel, modals.defaults.buttons.close );
 
         btnAccept.click = acceptCallback;

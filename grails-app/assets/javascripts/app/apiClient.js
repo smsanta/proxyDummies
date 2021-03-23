@@ -41,6 +41,12 @@ var apiClient = {
             },
             getRuleDatabaseBody: {
                 error: "Error al buscar el body de la Rule."
+            },
+            import: {
+                error: "Error al importar Rules."
+            },
+            export: {
+                error: "Error al exportar Rules."
             }
 
         },
@@ -73,7 +79,9 @@ var apiClient = {
             enable: '/enable',
             disable: '/disable',
             delete: '/delete',
-            getRuleDatabaseBody: '/getRuleDatabaseBody'
+            getRuleDatabaseBody: '/getRuleDatabaseBody',
+            import: '/import',
+            export: '/export'
         },
         configuration: {
             getConfiguration: '/find',
@@ -88,7 +96,7 @@ var apiClient = {
         app.log(data);
 
 
-        //$(".modal").modal("hide");
+        app.endAjax("", "span.spinner-border");
 
         app.modals.showError("Error de comunicación", apiClient._DEFAULT_AJAX_ERROR_MESSAGE );
     },
@@ -234,6 +242,56 @@ var apiClient = {
                         errorCallback( data );
                     } else {
                         app.modals.showError(apiClient.messages.rule.update.error, data.message );
+                    }
+                }
+            },
+            apiClient._defaultErrorCallback,
+            comunicator._responseTypes.JSON
+        )
+    },
+
+    exportRule: function (id, successCallback, errorCallback) {
+        var urlFinal = config.baseUrl +
+            apiClient.module.rule +
+            apiClient.action.rule.export;
+
+        var json = {
+            id: id
+        };
+
+        comunicator.doGet(urlFinal, json,
+            function (data) {
+                if (data.status == 200) {
+                    successCallback(data.result);
+                } else {
+                    if( validator.isObject( errorCallback ) ){
+                        errorCallback( data );
+                    } else {
+                        app.modals.showError(apiClient.messages.rule.export.error, data.message );
+                    }
+                }
+            },
+            apiClient._defaultErrorCallback,
+            comunicator._responseTypes.JSON
+        )
+    },
+
+    importRule: function (plainJson, successCallback, errorCallback) {
+        var urlFinal = config.baseUrl +
+            apiClient.module.rule +
+            apiClient.action.rule.import;
+
+        var json = JSON.parse( plainJson );
+
+        comunicator.doPost(urlFinal, json,
+            function (data) {
+                if (data.status == 200) {
+                    successCallback(data.result);
+                } else {
+                    if( validator.isObject( errorCallback ) ){
+                        errorCallback( data );
+                    } else {
+                        app.modals.showError(apiClient.messages.rule.import.error, data.message );
                     }
                 }
             },

@@ -20,6 +20,11 @@
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" ${saveResponses ? "checked" : ""}>
                         </form>
                     </li>
+                    <li class="nav-importer">
+                        <form class="form-control">
+                            <button id="btn-import-rule" class="btn btn-white"> Importar Rule </button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </nav>
