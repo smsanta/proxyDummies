@@ -67,16 +67,17 @@ abstract class AbstractController extends AbstractGenericImpl{
     protected mirrorResponseHeaders(copyHeader, pasteHeaders) {
         def headers = copyHeader.getHeaders()
         headers.each { header ->
-            info( "Mirroring Headers: ${header.key} -> ${header.value}" )
+            info( "Mirroring Response Headers: ${header.key} -> ${header.value}" )
             pasteHeaders.addHeader( header.key, header.value.first() )
         }
     }
 
     private void mirrorCurrentRequestHeaders(HttpRequest newRequest ){
-        Enumeration<String> headerNames = request.getHeaderNames();
+        Enumeration<String> headerNames = request.getHeaderNames()
         while ( headerNames.hasMoreElements()) {
             String nextElement = headerNames.nextElement()
             def header = request.getHeader(  nextElement )
+            info( "Mirroring Request Headers: $nextElement -> $header")
             newRequest.headers.add( nextElement, header )
         }
     }
