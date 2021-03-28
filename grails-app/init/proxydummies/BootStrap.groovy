@@ -29,18 +29,52 @@ class  BootStrap {
         def saveResponsesFolder = fileServicesService.buildDefaultProxyDummiesSaveResponseFolder()
 
         def initialConfigs = [
-            "redirectUrl" : "http://localhost:8888",
-            "proxyDummiesHome" : proxyDummiesHome,
-            "saveResponses" : true,
-            "saveResponsesFolder" : saveResponsesFolder,
-            "overrideSaveResponses" : false,
-            "overrideSaveResponsesExpression" : '"__" + Date.newInstance().format("yyyy-MM-dd_HH.mm.ss.S") + "__"',
+            [
+                key: "redirectUrl",
+                value: "http://localhost:8888",
+                title: "Url de redirección",
+                description: "Se utiliza para redirigir todas request hacia esta url manteniendo la misma URI."
+            ],
+            [
+                key: "proxyDummiesHome",
+                value: proxyDummiesHome,
+                title: "Carpeta Principal",
+                description: "Carpeta destinada a guardar archivos del proxy dummies."
+            ],
+            [
+                key: "saveResponses",
+                value: true,
+                title: "Guardar Respuestas?",
+                description: "Variable que determina si guardar los responses de las request. Valores posibles: \"true\" o \"false\""
+            ],
+            [
+                key: "saveResponsesFolder",
+                value: saveResponsesFolder,
+                title: "Carpeta de Responses",
+                description: "Carpeta destinada a guardar los responses de las requests."
+            ],
+            [
+                key: "overrideSaveResponses",
+                value: false,
+                title: "Sobreescribir Respuestas?",
+                description: "Variable que determina si al guardar un response debe sobreescribir el mismo archivo o generar nuevos por cada request. Valores posibles: \"true\" o \"false\""
+            ],
+            [
+                key: "overrideSaveResponsesExpression",
+                value: '"__" + Date.newInstance().format("yyyy-MM-dd_HH.mm.ss.S") + "__"',
+                title: "Expresion Nombre de Archivo",
+                description: 'Valor Anexo al nombre del archivo para que no se repita. Aplica la mascara: "DUMMIES." + expression +  "URI PATH" + ".mxl"'
+            ],
         ]
 
-        initialConfigs.each { confKey, confValue ->
-            if ( !systemConfigsService.getConfigByKey( confKey ) ){
-                Logger.info( this, "Saving new Config $confKey -> $confValue" )
-                systemConfigsService.createNewConfig( confKey, confValue )
+        initialConfigs.each { conf ->
+            Configuration config = systemConfigsService.getConfigByKey( conf.key )
+            if ( config ){
+                Logger.info( this, "Updating Config $config.key." )
+                systemConfigsService.updateConfig( config.key, null, conf.description, conf.title )
+            }else {
+                Logger.info( this, "Saving new Config $conf.key." )
+                systemConfigsService.createNewConfig( conf.key, conf.value, conf.description, conf.title )
             }
         }
     }

@@ -26,7 +26,7 @@ class SystemConfigsService extends BaseService{
         ]
     }
 
-    Configuration createNewConfig( key, value ){
+    Configuration createNewConfig( key, value, description, title ){
         Configuration newConfig = getConfigByKey( key )
 
         if( !newConfig ){
@@ -35,20 +35,27 @@ class SystemConfigsService extends BaseService{
         }
 
         newConfig.value = value
+        newConfig.description = description
+        newConfig.title = title
 
         newConfig.save( flush: true )
 
         newConfig
     }
 
-    Configuration updateConfig( key, value ){
+    Configuration updateConfig( key, value, description = null, title = null){
         Configuration updateConfig = getConfigByKey( key )
 
         if( !updateConfig ){
             throw new DummiesException( DummiesMessageCode.CONFIG_DOES_NOT_EXISTS )
         }
 
-        updateConfig.value = value
+
+        updateConfig.safeSetter([
+            value: value,
+            description: description,
+            title: title
+        ])
 
         updateConfig.save( flush: true )
 
