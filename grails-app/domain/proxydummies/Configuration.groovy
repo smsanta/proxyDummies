@@ -6,9 +6,12 @@ class Configuration implements AbstractObject {
 
     String key
     String value
+    String description
+    String title
 
     static constraints = {
         key unique: true
+        description nullable: true
     }
 
     static mapping = {
@@ -17,6 +20,6 @@ class Configuration implements AbstractObject {
 
     @Override
     def toMapObject() {
-        [key: key, value: value]
+        [key: key, value: value, description: description, title: title]
     }
 }

@@ -7,6 +7,7 @@ import io.micronaut.http.client.HttpClient
 import proxydummies.abstracts.AbstractController
 
 import javax.servlet.ServletInputStream
+import javax.servlet.http.HttpServletResponse
 import javax.xml.soap.MessageFactory
 import javax.xml.soap.MimeHeaders
 import javax.xml.soap.SOAPMessage
@@ -21,7 +22,9 @@ class ProxyController extends AbstractController{
         def requestUri = proxyService.purgeProxyDummiesPrefix( request.getRequestURI() )
         def checkRules = proxyService.getActiveRules( requestUri )
 
-        String requestSoapBody = getSoapBody()
+        String requestBody = request.getInputStream().getText("UTF8")
+        //String requestSoapBody = getSoapBody()
+        String requestSoapBody = requestBody
 
         if( checkRules.isEmpty() ){
             info( "No Rules Matched for Ur: $requestUri. Forwaring to original destination.")
@@ -57,6 +60,8 @@ class ProxyController extends AbstractController{
         saveResponse( newResponse.body(), forwardUri )
 
         mirrorResponseHeaders( newResponse, response )
+
+        response.status = newResponse.getStatus().getCode()
 
         render( newResponse.body() )
     }

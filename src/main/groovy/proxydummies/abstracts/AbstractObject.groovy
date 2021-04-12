@@ -15,4 +15,16 @@ trait AbstractObject {
             key in includingKeys ? [key, value] : [:]
         }
     }
+
+
+    def safeSetter( Map toBe ){
+        def _this = this
+        toBe.each { key, value ->
+            if(value != null){
+                _this."$key" = value
+            }
+        }
+
+        _this
+    }
 }
