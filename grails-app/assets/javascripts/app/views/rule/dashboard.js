@@ -137,7 +137,7 @@ var _dashboard = {
             }
 
             let activeIconClass = (item.active ? "bi-check-circle-fill text-green action-icon" : "bi-x-circle-fill text-red action-icon");
-            let activeIcon = htmlGenerator.icons.any(activeIconClass, "Ver Data", {
+            let activeIcon = htmlGenerator.icons.any(activeIconClass, "Rule " + (item.active ? "Activa" : "Inactiva"), {
                 id: item.id,
                 "data-id": item.id,
                 action: "watch"
@@ -147,7 +147,7 @@ var _dashboard = {
             let descriptionIcon = htmlGenerator.icons.any( ("bi-info-circle-fill action-icon text-blue " + hideIcon),  item.description);
 
             let requestConditionActiveIconClass = (item.requestConditionActive ? "bi-check-circle-fill text-green action-icon" : "bi-x-circle-fill text-red action-icon");
-            let requestConditionActiveIcon = htmlGenerator.icons.any(requestConditionActiveIconClass, "", {
+            let requestConditionActiveIcon = htmlGenerator.icons.any(requestConditionActiveIconClass, (item.requestConditionActive ? "Si" : "No"), {
                 id: item.id,
                 "data-id": item.id
             });

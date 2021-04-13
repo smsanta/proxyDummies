@@ -22,9 +22,9 @@ class CreateRuleCommand extends MainCommand {
         active nullable: false
         description nullable: true, blank: true
         requestConditionActive nullable: true
-        requestCondition nullable: true, blank: true, validator: { String value, CreateRuleCommand obj ->
+        requestCondition nullable: true, blank: true, validator: { String value, CreateRuleCommand obj, errors ->
             if(obj.requestConditionActive && !value){
-                obj.errors.putAt("requestCondition", "requestCondition no puede estar vacío si la condición esta activa.")
+                errors.rejectValue("requestCondition", "requestConditionEmpty","Request Condition no puede estar vacío si la condición esta activa.")
             }
         }
     }

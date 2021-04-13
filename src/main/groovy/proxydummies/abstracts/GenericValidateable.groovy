@@ -20,7 +20,7 @@ trait GenericValidateable implements Validateable{
     }
 
     String getPlainErrors(){
-        String errorStack = "";
+        String errorStack = ""
         getErrorMap().each { def field, List listError ->
             listError.each {
                 errorStack += it + "\n "

@@ -65,6 +65,12 @@ class  BootStrap {
                 title: "Expresion Nombre de Archivo",
                 description: 'Valor Anexo al nombre del archivo para que no se repita. Aplica la mascara: "DUMMIES." + expression +  "URI PATH" + ".mxl"'
             ],
+            [
+                key: "autoGenerateImportDummyFromResponses",
+                value: true,
+                title: "Auto-Generar archivo de import?",
+                description: "Variable que determina si al guardar un response debe generar un file con el snippet para imporatar esa request como dummy. Valores posibles: \"true\" o \"false\""
+            ],
         ]
 
         initialConfigs.each { conf ->

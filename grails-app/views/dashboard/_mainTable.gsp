@@ -2,12 +2,12 @@
     <thead class="table-light">
         <tr>
             <th scope="col">Uri</th>
-            <th scope="col">Activo</th>
-            <th scope="col">Prioridad</th>
-            <th scope="col">Tipo</th>
-            <th scope="col">Data</th>
-            <th scope="col">Tiene Request Condition</th>
-            <th scope="col">Acciones</th>
+            <th class="t-align-center" scope="col">Activo</th>
+            <th class="t-align-center" scope="col">Prioridad</th>
+            <th class="t-align-center" scope="col">Tipo</th>
+            <th class="t-align-center" scope="col">Data</th>
+            <th class="t-align-center" scope="col">Tiene Request Condition</th>
+            <th class="t-align-center" scope="col">Acciones</th>
         </tr>
     </thead>
     <tbody>

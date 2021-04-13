@@ -14,6 +14,8 @@ class SystemConfigsService extends BaseService{
     final static String CONFIG_KEY_SAVE_RESPONSE_FOLDER = "saveResponsesFolder"
     final static String CONFIG_KEY_OVERRIDE_SAVE_RESPONSE = "overrideSaveResponses"
     final static String CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION = "overrideSaveResponsesExpression"
+    final static String CONFIG_KEY_AUTO_GENERATE_IMPORT_DUMMY_FROM_RESPONSES = "autoGenerateImportDummyFromResponses"
+
 
     static List<String> getAllConfigurationKeys(){
         [
@@ -22,7 +24,8 @@ class SystemConfigsService extends BaseService{
             CONFIG_KEY_REDIRECT_URL,
             CONFIG_KEY_SAVE_RESPONSE,
             CONFIG_KEY_OVERRIDE_SAVE_RESPONSE,
-            CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION
+            CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION,
+            CONFIG_KEY_AUTO_GENERATE_IMPORT_DUMMY_FROM_RESPONSES
         ]
     }
 
@@ -92,6 +95,10 @@ class SystemConfigsService extends BaseService{
 
     String getOverrideSaveResponsesExpression(){
         getConfigValueByKey( CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION )
+    }
+
+    String getAutoGenerateImportDummyFromResponses(){
+        Boolean.valueOf( getConfigValueByKey( CONFIG_KEY_AUTO_GENERATE_IMPORT_DUMMY_FROM_RESPONSES ) )
     }
 
 

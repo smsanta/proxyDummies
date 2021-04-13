@@ -6,12 +6,6 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import proxydummies.abstracts.AbstractController
 
-import javax.servlet.ServletInputStream
-import javax.servlet.http.HttpServletResponse
-import javax.xml.soap.MessageFactory
-import javax.xml.soap.MimeHeaders
-import javax.xml.soap.SOAPMessage
-
 class ProxyController extends AbstractController{
 
     ProxyService proxyService
@@ -23,7 +17,6 @@ class ProxyController extends AbstractController{
         def checkRules = proxyService.getActiveRules( requestUri )
 
         String requestBody = request.getInputStream().getText("UTF8")
-        //String requestSoapBody = getSoapBody()
         String requestSoapBody = requestBody
 
         if( checkRules.isEmpty() ){
@@ -57,19 +50,12 @@ class ProxyController extends AbstractController{
         HttpRequest forwardRequest = getRequestByMethod( request.method, forwardUri, soapBody )
         HttpResponse newResponse = httpClient.toBlocking().exchange(forwardRequest, String)
 
-        saveResponse( newResponse.body(), forwardUri )
-
+        proxyService.saveResponse( forwardUri, newResponse.body() )
         mirrorResponseHeaders( newResponse, response )
 
         response.status = newResponse.getStatus().getCode()
 
         render( newResponse.body() )
-    }
-
-    private void saveResponse(String data, String uriName) {
-        String dummyName = proxyService.generateDummyNameFromUri( uriName )
-
-        proxyService.createDummy( data, dummyName )
     }
 
 
@@ -84,15 +70,6 @@ class ProxyController extends AbstractController{
         mirrorCurrentRequestHeaders( newRequest )
 
         newRequest
-    }
-
-    private String getSoapBody(){
-        MessageFactory messageFactory = MessageFactory.newInstance();
-        ServletInputStream servletInputStream = request.getInputStream();
-        SOAPMessage soapMessage = messageFactory.createMessage(new MimeHeaders(), (InputStream)servletInputStream)
-        ByteArrayOutputStream out = new ByteArrayOutputStream()
-        soapMessage.writeTo(out)
-        return new String(out.toByteArray())
     }
 
 }

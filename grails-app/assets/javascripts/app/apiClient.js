@@ -2,14 +2,14 @@
  * This class will manage the internal comunication API.
  *
  * //Correct handling.
- * var sucessCallback = function( response ){
+ * let sucessCallback = function( response ){
  *       alert( "The object is " + response )
  * }
  *
  * apiClient.getXObject(args.., sucessCallback)
  *
  * //Incorrect Handling
- * var sucessCallback = function( response ){
+ * let sucessCallback = function( response ){
  *      if(response.status == 200){
  *          alert( "The object is " + response.result )
  *      }
@@ -105,11 +105,11 @@ var apiClient = {
 
     //    ########### Rule ###########
     createRule: function (pUri,pPriority, pSourceType, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.create;
 
-        var json = {
+        let json = {
             uri: pUri,
             priority: pPriority,
             sourceType: pSourceType,
@@ -139,11 +139,11 @@ var apiClient = {
     },
 
     updateRule: function (pId, pUri,pPriority, pSourceType, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.update;
 
-        var json = {
+        let json = {
             id: pId,
             uri: pUri,
             priority: pPriority,
@@ -173,11 +173,11 @@ var apiClient = {
     },
 
     deleteRule: function (id, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.delete;
 
-        var json = {
+        let json = {
             id: id
         };
 
@@ -199,11 +199,11 @@ var apiClient = {
     },
 
     enableRule: function (id, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.enable;
 
-        var json = {
+        let json = {
             id: id
         };
 
@@ -225,11 +225,11 @@ var apiClient = {
     },
 
     disableRule: function (id, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.disable;
 
-        var json = {
+        let json = {
             id: id
         };
 
@@ -251,11 +251,11 @@ var apiClient = {
     },
 
     exportRule: function (id, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.export;
 
-        var json = {
+        let json = {
             id: id
         };
 
@@ -277,11 +277,11 @@ var apiClient = {
     },
 
     importRule: function (pJson, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.import;
 
-        var json = pJson;
+        let json = pJson;
 
         comunicator.doPost(urlFinal, json,
             function (data) {
@@ -301,11 +301,11 @@ var apiClient = {
     },
 
     searchRules: function (filter, successCallback, errorCallback) {
-        var urlFinal = app.config.baseUrl +
+        let urlFinal = app.config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.search;
 
-        var json = filter.getJson();
+        let json = filter.getJson();
 
         comunicator.doGet(urlFinal, json,
             function (data) {
@@ -325,11 +325,11 @@ var apiClient = {
     },
 
     getRuleDatabaseBody: function (id, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.getRuleDatabaseBody;
 
-        var json = {
+        let json = {
             id: id
         };
 
@@ -353,11 +353,11 @@ var apiClient = {
 
     //    ########### Configuration ###########
     updateConfiguration: function (pKey, pValue, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.configuration +
             apiClient.action.configuration.update;
 
-        var json = {
+        let json = {
             key: pKey,
             value: pValue
         };
@@ -380,11 +380,11 @@ var apiClient = {
     },
 
     getConfiguration: function (pKey, successCallback, errorCallback) {
-        var urlFinal = config.baseUrl +
+        let urlFinal = config.baseUrl +
             apiClient.module.configuration +
             apiClient.action.configuration.getConfiguration;
 
-        var json = {
+        let json = {
             key: pKey
         };
 

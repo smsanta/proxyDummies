@@ -58,15 +58,15 @@ class ApiController extends ApiBaseController{
             UpdateRuleCommand ruleCommand = getCommandAndValidate( UpdateRuleCommand.newInstance(), HttpMethod.POST )
 
             Rule updatedRule = proxyService.saveRule(
-                    ruleCommand.uri,
-                    ruleCommand.priority,
-                    ruleCommand.sourceType,
-                    ruleCommand.data,
-                    ruleCommand.active,
-                    ruleCommand.description,
-                    ruleCommand.requestConditionActive,
-                    ruleCommand.requestCondition,
-                    ruleCommand.id
+                ruleCommand.uri,
+                ruleCommand.priority,
+                ruleCommand.sourceType,
+                ruleCommand.data,
+                ruleCommand.active,
+                ruleCommand.description,
+                ruleCommand.requestConditionActive,
+                ruleCommand.requestCondition,
+                ruleCommand.id
             )
 
             respondOK( updatedRule.toMapObject() )
@@ -146,7 +146,6 @@ class ApiController extends ApiBaseController{
             Rule importedRule = proxyService.importRule(
                 importRuleCommand.uri,
                 importRuleCommand.data,
-                importRuleCommand.active,
                 importRuleCommand.description,
                 importRuleCommand.requestConditionActive,
                 importRuleCommand.requestCondition

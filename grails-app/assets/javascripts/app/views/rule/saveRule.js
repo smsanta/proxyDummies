@@ -146,7 +146,11 @@ _saveRule = {
         if( ruleData.sourceType == "DATABASE"){
             let ruleId = ruleData.id;
 
-            let ruleSavedData = (_dashboard._rule_data_cache[ruleId] !== undefined) ? _dashboard._rule_data_cache[ruleId] : ruleData.data;
+            let ruleSavedData = $("#abm_input_data").val();
+            if( $("#abm_input_data").val() == "" ){
+                ruleSavedData = (_dashboard._rule_data_cache[ruleId] !== undefined) ? _dashboard._rule_data_cache[ruleId] : ruleData.data;
+            }
+
             let dataPopup = '<textarea id="ta-pop-'+  ruleId +'" class="w-100 h-100 border-0">' + Util.escapeXml( ruleSavedData ) + '</textarea>';
             app.modals.showPopup("Data from -> " + ruleData.uri,  dataPopup, function () {
                 let newRuleData = $('#ta-pop-'+  ruleId).val();

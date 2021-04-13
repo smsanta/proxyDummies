@@ -16,6 +16,11 @@ trait AbstractObject {
         }
     }
 
+    def toMapObject(Closure finalEdit){
+        def mapObject = toMapObject();
+        finalEdit( mapObject )
+        return mapObject
+    }
 
     def safeSetter( Map toBe ){
         def _this = this
