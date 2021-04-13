@@ -4,6 +4,7 @@ import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
+import io.micronaut.http.client.exceptions.HttpClientResponseException
 import proxydummies.abstracts.AbstractController
 
 class ProxyController extends AbstractController{
@@ -47,8 +48,15 @@ class ProxyController extends AbstractController{
         String redirectUrl = systemConfigsService.getDummiesRedirectUrl()
         HttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
 
+
         HttpRequest forwardRequest = getRequestByMethod( request.method, forwardUri, soapBody )
-        HttpResponse newResponse = httpClient.toBlocking().exchange(forwardRequest, String)
+        HttpResponse newResponse
+
+        try{
+            newResponse = httpClient.toBlocking().exchange(forwardRequest, String)
+        } catch(HttpClientResponseException e){
+            newResponse = e.getResponse()
+        }
 
         proxyService.saveResponse( forwardUri, newResponse.body() )
         mirrorResponseHeaders( newResponse, response )
