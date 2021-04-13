@@ -12,6 +12,7 @@ class Configuration implements AbstractObject {
     static constraints = {
         key unique: true
         description nullable: true
+        title nullable: true
     }
 
     static mapping = {
