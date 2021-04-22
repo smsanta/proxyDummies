@@ -16,7 +16,12 @@ trait AbstractObject {
         }
     }
 
-
+    /**
+     * Does a set if the value is not null.
+     *
+     * @param toBe
+     * @return
+     */
     def safeSetter( Map toBe ){
         def _this = this
         toBe.each { key, value ->

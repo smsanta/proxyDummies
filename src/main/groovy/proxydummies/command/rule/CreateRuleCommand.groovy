@@ -1,5 +1,6 @@
 package proxydummies.command.rule
 
+import proxydummies.Ambient
 import proxydummies.Rule
 import proxydummies.command.abstracts.MainCommand
 
@@ -13,6 +14,7 @@ class CreateRuleCommand extends MainCommand {
     String description
     Boolean requestConditionActive
     String requestCondition
+    Long ambientId
 
     static constraints = {
         uri nullable: false, blank: false
@@ -27,6 +29,7 @@ class CreateRuleCommand extends MainCommand {
                 obj.errors.putAt("requestCondition", "requestCondition no puede estar vacío si la condición esta activa.")
             }
         }
+        ambientId nullable: false
     }
 
     @Override

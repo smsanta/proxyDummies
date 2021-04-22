@@ -8,6 +8,7 @@ import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
 import proxydummies.abstracts.BaseService
 import proxydummies.exceptions.DummiesException
+import proxydummies.filters.AmbientFilter
 import proxydummies.filters.FilterResult
 import proxydummies.filters.RuleFilter
 import proxydummies.utilities.DummiesMessageCode
@@ -27,9 +28,12 @@ class ProxyService extends BaseService{
 
     FilterResult searchRule( RuleFilter filter ){
         filter.withCriteria {
-            filter.id != null ?  add(Restrictions.eq("id", filter.id)) : null
+            filter.id != null ? add(Restrictions.eq("id", filter.id)) : null
             filter.uri ? add(Restrictions.ilike('uri', filter.uri, MatchMode.ANYWHERE)) : null
-            filter.active != null ?  add(Restrictions.eq("active", filter.active)) : null
+            filter.active != null ? add(Restrictions.eq("active", filter.active)) : null
+
+            createAlias('ambient', 'amb')
+            filter.ambientId != null ? add(Restrictions.eq("amb.id", filter.ambientId)) : null
 
             order('uri')
             order('active')
@@ -50,6 +54,7 @@ class ProxyService extends BaseService{
         String pDescription,
         Boolean pRequestConditionActive,
         String pRequestCondition,
+        Ambient pAmbient,
         Long id = null ){
         handle{
             if ( Rule.countByUriAndPriorityAndIdNotEqual( pUri, pPriority, id ) > 0 ){
@@ -80,6 +85,7 @@ class ProxyService extends BaseService{
                 description = pDescription
                 requestConditionActive = (pRequestConditionActive ?: false)
                 requestCondition = (pRequestConditionActive ? pRequestCondition : "")
+                ambient = pAmbient
             }
 
             saveRule.save( flush: true, failOnError: true )
@@ -222,6 +228,57 @@ class ProxyService extends BaseService{
         Integer newMaximumPriority = ( maximumPriorityRule ? (maximumPriorityRule.priority+1) : 1 )
 
         saveRule(pUri, newMaximumPriority, Rule.SourceType.DATABASE, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition)
+    }
+
+    FilterResult searchAmbient(AmbientFilter filter ){
+        handle{
+            filter.withCriteria {
+                filter.id != null ? add(Restrictions.eq("id", filter.id)) : null
+                filter.name ? add(Restrictions.ilike('name', filter.uri, MatchMode.ANYWHERE)) : null
+                filter.url ? add(Restrictions.ilike('url', filter.uri, MatchMode.ANYWHERE)) : null
+
+                order('name')
+            }
+        }
+    }
+
+    Ambient saveAmbient( String pName, String pUrl, Long id = null ){
+        handle{
+            Ambient saveAmbient = Ambient.newInstance()
+
+            if( id ){
+                saveAmbient = Ambient.findById( id )
+
+                if(!saveAmbient){
+                    throw new DummiesException( DummiesMessageCode.AMBIENT_COULD_NOT_BE_FOUND )
+                }
+            }
+
+            saveAmbient.safeSetter([
+                name: pName,
+                url: pUrl
+            ])
+
+            saveAmbient.save( flush: true, failOnError: true )
+        }
+    }
+
+    void deleteAmbient( Long id ){
+        Ambient deleteAmbient = Ambient.findById( id )
+
+        if( !deleteAmbient ){
+            throw new DummiesException( DummiesMessageCode.AMBIENT_COULD_NOT_BE_FOUND )
+        }
+
+        if( systemConfigsService.getDefaultAmbientId() == deleteAmbient.id ){
+            throw new DummiesException( DummiesMessageCode.AMBIENT_CANT_DELETE_DEFAULT )
+        }
+
+        if( Rule.countByAmbient( deleteAmbient ) > 0 ){
+            throw new DummiesException( DummiesMessageCode.AMBIENT_CANT_DELETE_WITH_ASOCIATED_RULE )
+        }
+
+        deleteAmbient.delete()
     }
 
 }

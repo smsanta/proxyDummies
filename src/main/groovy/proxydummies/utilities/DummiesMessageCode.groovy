@@ -16,6 +16,13 @@ class DummiesMessageCode {
     static def RULE_COULD_NOT_BE_FOUND = 1007
     static def FILE_NOT_FOUND = 1008
     static def RULE_NOT_MATCHING_ANY = 1009
+    static def AMBIENT_COULD_NOT_BE_FOUND = 1010
+    static def AMBIENT_CANT_DELETE_WITH_ASOCIATED_RULE = 1011
+    static def AMBIENT_CANT_DELETE_DEFAULT = 1012
+    static def RULE_AMBIENT_REQUIRED = 1013
+
+
+
 
     static def Messages = [
         //1000-2000 General errors
@@ -28,5 +35,9 @@ class DummiesMessageCode {
         (this.RULE_COULD_NOT_BE_FOUND) : "El id de la rule no esta en la base de datos.",
         (this.FILE_NOT_FOUND) : "El archivo indicado no existe.",
         (this.RULE_NOT_MATCHING_ANY) : "No se pudo evaluar ningúna regla válida.",
+        (this.AMBIENT_COULD_NOT_BE_FOUND) : "El id del Ambient no esta en la base de datos.",
+        (this.AMBIENT_CANT_DELETE_WITH_ASOCIATED_RULE) : "No se puede eliminar un Ambiente que este asociado a una Rule",
+        (this.AMBIENT_CANT_DELETE_DEFAULT) : "No se puede eliminar un Ambiente que este seleccionado como default.",
+        (this.RULE_AMBIENT_REQUIRED) : "El Ambiente no puede ser nulo.",
     ]
 }

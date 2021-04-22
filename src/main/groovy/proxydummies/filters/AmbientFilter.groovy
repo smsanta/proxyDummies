@@ -1,20 +1,17 @@
 package proxydummies.filters
 
-import groovy.transform.ToString
-import proxydummies.Rule
+import proxydummies.Ambient
 import proxydummies.abstracts.AbstractFilter
 
-@ToString(includeNames = true)
-class RuleFilter extends AbstractFilter{
+class AmbientFilter extends AbstractFilter {
 
     Long id
-    String uri
-    Boolean active
-    Long ambientId
+    String name
+    String url
 
     @Override
     def getTargetClass() {
-        Rule
+        Ambient
     }
 
     @Override

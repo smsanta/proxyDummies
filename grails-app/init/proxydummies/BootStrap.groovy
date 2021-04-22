@@ -3,12 +3,11 @@ package proxydummies
 import grails.util.Environment
 import proxydummies.utilities.Logger
 
-import java.text.SimpleDateFormat
-
 class  BootStrap {
 
     SystemConfigsService systemConfigsService
     FileServicesService fileServicesService
+    ProxyService proxyService
 
     def dataSource
 
@@ -28,12 +27,20 @@ class  BootStrap {
         def proxyDummiesHome = fileServicesService.buildDefaultProxyDummiesHomeFolder()
         def saveResponsesFolder = fileServicesService.buildDefaultProxyDummiesSaveResponseFolder()
 
+        Long configDefaultAmbientId = systemConfigsService.getConfigByKey( systemConfigsService.CONFIG_KEY_DEFAULT_AMBIENT)
+
+        if( !configDefaultAmbientId ){
+            Ambient defaultAmbient = proxyService.saveAmbient( "Membrane on 8888", "http://localhost:8888" )
+            configDefaultAmbientId = defaultAmbient.id
+        }
+
+
         def initialConfigs = [
             [
-                key: "redirectUrl",
-                value: "http://localhost:8888",
-                title: "Url de redirección",
-                description: "Se utiliza para redirigir todas request hacia esta url manteniendo la misma URI."
+                key: "defaultAmbiance",
+                value: configDefaultAmbientId,
+                title: "Ambiente por defecto",
+                description: "Id del ambiente seleccionado por defecto."
             ],
             [
                 key: "proxyDummiesHome",
@@ -100,7 +107,7 @@ class  BootStrap {
             Logger.info(this, "La aplicación no pudo ejecutarse por que no se pudo conectar a la db.")
             Logger.info(this, "Ejecute el siguiente script y intente nuevamente.")
             Logger.info(this, StaticScripts.CREATE_DB_USER)
-            throw e;
+            throw e
         }
     }
 

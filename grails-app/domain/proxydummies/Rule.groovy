@@ -17,6 +17,10 @@ class Rule implements AbstractObject{
 
     SourceType sourceType
 
+    static belongsTo = [
+        ambient: Ambient
+    ]
+
     @Override
     def toMapObject() {
         def mapObject = [
@@ -29,7 +33,8 @@ class Rule implements AbstractObject{
             data: "",
             requestConditionActive: (requestConditionActive ?: false),
             requestCondition: (requestConditionActive ? requestCondition: ""),
-            responseOverrideActive: responseOverrideActive
+            responseOverrideActive: responseOverrideActive,
+            ambient: ambient?.toMapObject()
         ]
 
         if( sourceType in [ SourceType.FILE ] ){
@@ -54,10 +59,13 @@ class Rule implements AbstractObject{
         description nullable: true
         requestCondition nullable: true
         responseOverride nullable: true
+        ambience nullable: true
     }
 
     static mapping = {
         version false
         data type: "text"
     }
+
+
 }
