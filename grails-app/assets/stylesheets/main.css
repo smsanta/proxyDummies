@@ -1077,3 +1077,7 @@ img.grails-logo {
     border-top-width: 0px;
     border-bottom-width: 0px;
 }
+
+.main-table{
+    padding-right: 8px;
+}

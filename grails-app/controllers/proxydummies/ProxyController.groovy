@@ -32,7 +32,7 @@ class ProxyController extends AbstractController{
             if ( !rule ){
                 info("Ninguna de las rules testeadas pudieron ser verificadas. se forwarea la request por default.")
                 forwardRequest( requestUri, requestSoapBody )
-            }else{
+            } else {
                 String dummy = proxyService.loadDummy( rule )
 
                 response.addHeader('Content-Type', 'text/xml')
