@@ -17,6 +17,19 @@ Request ---> ProxyDummies ---> Tiene Rule Aplicable?
     ----------------------------------------------------------------------------------------------------
     |-> No: forwareo la request haciendo mirror del body y header tanto de la request como del response.
 
+
+**Anatomia de una request**
+
+http://localhost:8088/proxyDummies/bancon_soap_service/esb.EAI/TarjetasSvc
+
+                     
+< baseurl >/            
+----------------------------< proxyDummiesUriPrefix >/
+
+-------------------------------------------------< proxyDummiesEnvironment >/
+
+------------------------------------------------------------------------------< Real Request Uri >/...
+
 **Intalación** 
 
 Se requiere descargar el war de acá: 

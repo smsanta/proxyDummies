@@ -50,9 +50,8 @@ _saveRule = {
                 })
             };
 
-            if(ruleData.sourceType == "DATABASE"){
-                ruleData.data = Util.escapeXml( ruleData.data );
-            }
+
+            ruleData.data = encodeURIComponent( ruleData.data );
 
             app.startAjax( _saveRule._btnSave, _saveRule._loaderId, function () {
                 if( ruleData.id > 0 ){

@@ -6,50 +6,63 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import proxydummies.abstracts.AbstractController
+import proxydummies.exceptions.DummiesException
+import proxydummies.utilities.DummiesMessageCode
 
-class ProxyController extends AbstractController{
+class ProxyController extends AbstractController {
 
     ProxyService proxyService
     SystemConfigsService systemConfigsService
 
     def index() {
 
-        def requestUri = proxyService.purgeProxyDummiesPrefix( request.getRequestURI() )
-        def checkRules = proxyService.getActiveRules( requestUri )
+        String requestUri = proxyService.purgeProxyDummiesPrefix( request.getRequestURI() )
 
-        String requestBody = request.getInputStream().getText("UTF8")
-        String requestSoapBody = requestBody
+        String requestEnvironmentPrefix = requestUri.substring( 1, requestUri.indexOf("/", 1) )
+
+        Environment requestEnvironment = Environment.findByUriPrefix( requestEnvironmentPrefix )
+
+        requestUri = requestUri.replaceAll( requestEnvironmentPrefix, "" )
+
+        def checkRules = proxyService.getActiveRules( requestUri, request.method, requestEnvironment )
+
+        String requestBody = request.getInputStream().getText( INPUT_STREAM_CHARSET_UTF8 )
 
         if( checkRules.isEmpty() ){
             info( "No Rules Matched for Ur: $requestUri. Forwaring to original destination.")
-            forwardRequest( requestUri, requestSoapBody )
-        } else {
-            def xmlRequestNavigator = XmlNavigator.newInstance( requestSoapBody )
-
-            info( "We have found rules for this uri(${checkRules.size()}) --> $checkRules"  )
-            Rule rule = proxyService.evalRules( checkRules, xmlRequestNavigator )
-
-            if ( !rule ){
-                info("Ninguna de las rules testeadas pudieron ser verificadas. se forwarea la request por default.")
-                forwardRequest( requestUri, requestSoapBody )
+            if( systemConfigsService.getEnableGlobalRedirectUrl() ){
+                String redirectUrl = systemConfigsService.getGlobalRedirectUrl()
+                info("Goblal redirect URL is enabled! forwaring request to: $redirectUrl" )
+                forwardRequest( redirectUrl, requestUri, requestBody )
             } else {
-                String dummy = proxyService.loadDummy( rule )
-
-                response.addHeader('Content-Type', 'text/xml')
-
-                render( dummy )
+                info( "There are no Rules matching current uri and global redirect is not enabled. Request will FAIL!." )
+                throw new DummiesException( DummiesMessageCode.PROXY_NOWHERE_TO_REDIRECT )
             }
+        } else {
+            info( "We have found rules for this uri(${checkRules.size()}) --> $checkRules"  )
+            Rule rule = proxyService.evalRules( checkRules, requestBody, params, requestUri )
+
+            String dummy = proxyService.loadDummy( rule )
+
+            rule.getResponseExtraHeadersObject().each { headerKey, headerValue ->
+                response.addHeader( headerKey, headerValue )
+            }
+
+            if( rule.responseStatus ){
+                response.status = rule.responseStatus
+            }
+
+            render( dummy )
+
         }
     }
 
-    private void forwardRequest(forwardUri, String soapBody ){
+    private void forwardRequest(String redirectUrl, String forwardUri, String soapBody ){
         info( "Forwaring request -> ${request.getRequestURL()} " )
 
-        String redirectUrl = systemConfigsService.getDummiesRedirectUrl()
         HttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
 
-
-        HttpRequest forwardRequest = getRequestByMethod( request.method, forwardUri, soapBody )
+        HttpRequest forwardRequest = getMirroredRequest( forwardUri, soapBody )
         HttpResponse newResponse
 
         try{
@@ -66,6 +79,11 @@ class ProxyController extends AbstractController{
         render( newResponse.body() )
     }
 
+    private HttpRequest getMirroredRequest(String uri, String requestBody) {
+        String method = request.method
+        HttpRequest mirroredRequest = getRequestByMethod( method, uri, requestBody )
+        mirrorCurrentRequestHeaders( mirroredRequest )
+    }
 
     private HttpRequest getRequestByMethod(String method, String uri, String data ){
         HttpRequest newRequest
@@ -74,8 +92,6 @@ class ProxyController extends AbstractController{
         } else {
             newRequest = HttpRequest.GET( uri )
         }
-
-        mirrorCurrentRequestHeaders( newRequest )
 
         newRequest
     }

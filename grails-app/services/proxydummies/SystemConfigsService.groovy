@@ -8,7 +8,8 @@ import proxydummies.utilities.DummiesMessageCode
 @Transactional
 class SystemConfigsService extends BaseService{
 
-    final static String CONFIG_KEY_REDIRECT_URL = "redirectUrl"
+    final static String CONFIG_KEY_GLOBAL_REDIRECT_URL = "globalRedirectUrl"
+    final static String CONFIG_KEY_ENABLE_GLOBAL_REDIRECT_URL = "enableGlobalRedirectUrl"
     final static String CONFIG_KEY_PROXY_DUMMIES_HOME_FOLDER = "proxyDummiesHome"
     final static String CONFIG_KEY_SAVE_RESPONSE = "saveResponses"
     final static String CONFIG_KEY_SAVE_RESPONSE_FOLDER = "saveResponsesFolder"
@@ -21,7 +22,8 @@ class SystemConfigsService extends BaseService{
         [
             CONFIG_KEY_PROXY_DUMMIES_HOME_FOLDER,
             CONFIG_KEY_SAVE_RESPONSE_FOLDER,
-            CONFIG_KEY_REDIRECT_URL,
+            CONFIG_KEY_GLOBAL_REDIRECT_URL,
+            CONFIG_KEY_ENABLE_GLOBAL_REDIRECT_URL,
             CONFIG_KEY_SAVE_RESPONSE,
             CONFIG_KEY_OVERRIDE_SAVE_RESPONSE,
             CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION,
@@ -29,7 +31,7 @@ class SystemConfigsService extends BaseService{
         ]
     }
 
-    Configuration createNewConfig( key, value, description, title ){
+    Configuration createNewConfig( String key, String value, String description, String title ){
         Configuration newConfig = getConfigByKey( key )
 
         if( !newConfig ){
@@ -46,13 +48,12 @@ class SystemConfigsService extends BaseService{
         newConfig
     }
 
-    Configuration updateConfig( key, value, description = null, title = null){
+    Configuration updateConfig( String key, String value, String description = null, String title = null){
         Configuration updateConfig = getConfigByKey( key )
 
         if( !updateConfig ){
             throw new DummiesException( DummiesMessageCode.CONFIG_DOES_NOT_EXISTS )
         }
-
 
         updateConfig.safeSetter([
             value: value,
@@ -60,45 +61,49 @@ class SystemConfigsService extends BaseService{
             title: title
         ])
 
-        updateConfig.save( flush: true )
+        updateConfig.save( flush: true, failOnError: true )
 
         updateConfig
     }
 
-    Configuration getConfigByKey( key ){
+    Configuration getConfigByKey( String key ){
         Configuration.findByKey( key )
     }
 
-    String getConfigValueByKey( key ){
+    String getConfigurationValueByKey(String key ){
         getConfigByKey( key )?.value
     }
 
     String getDummiesHomeFolder(){
-        getConfigValueByKey( CONFIG_KEY_PROXY_DUMMIES_HOME_FOLDER )
+        getConfigurationValueByKey( CONFIG_KEY_PROXY_DUMMIES_HOME_FOLDER )
     }
 
     String getDummiesSaveResponseFolder(){
-        getConfigValueByKey( CONFIG_KEY_SAVE_RESPONSE_FOLDER )
+        getConfigurationValueByKey( CONFIG_KEY_SAVE_RESPONSE_FOLDER )
     }
 
-    String getDummiesRedirectUrl(){
-        getConfigValueByKey( CONFIG_KEY_REDIRECT_URL )
+    String getGlobalRedirectUrl(){
+        getConfigurationValueByKey( CONFIG_KEY_GLOBAL_REDIRECT_URL )
+    }
+
+    Boolean getEnableGlobalRedirectUrl(){
+        getConfigurationValueByKey( CONFIG_KEY_ENABLE_GLOBAL_REDIRECT_URL )
     }
 
     Boolean getSaveResponse(){
-        Boolean.valueOf( getConfigValueByKey( CONFIG_KEY_SAVE_RESPONSE ) )
+        Boolean.valueOf( getConfigurationValueByKey( CONFIG_KEY_SAVE_RESPONSE ) )
     }
 
     Boolean getOverrideSaveResponses(){
-        Boolean.valueOf( getConfigValueByKey( CONFIG_KEY_OVERRIDE_SAVE_RESPONSE ) )
+        Boolean.valueOf( getConfigurationValueByKey( CONFIG_KEY_OVERRIDE_SAVE_RESPONSE ) )
     }
 
     String getOverrideSaveResponsesExpression(){
-        getConfigValueByKey( CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION )
+        getConfigurationValueByKey( CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION )
     }
 
     String getAutoGenerateImportDummyFromResponses(){
-        Boolean.valueOf( getConfigValueByKey( CONFIG_KEY_AUTO_GENERATE_IMPORT_DUMMY_FROM_RESPONSES ) )
+        Boolean.valueOf( getConfigurationValueByKey( CONFIG_KEY_AUTO_GENERATE_IMPORT_DUMMY_FROM_RESPONSES ) )
     }
 
 

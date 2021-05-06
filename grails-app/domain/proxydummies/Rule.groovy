@@ -5,55 +5,78 @@ import proxydummies.abstracts.AbstractObject
 class Rule implements AbstractObject{
 
     String uri
-    String description
+    String description = ""
     Integer priority
     Boolean active = false
     String data
     Boolean requestConditionActive = false
-    Boolean responseOverrideActive = false
-
-    String requestCondition
-    String responseOverride
+    String requestCondition = ""
 
     SourceType sourceType
+    HttpMethod method
+    String responseExtraHeaders
+    Integer responseStatus
+    ServiceType serviceType
+    String forwardUrl
+
+    static belongsTo = [ environment: Environment ]
 
     @Override
     def toMapObject() {
-        def mapObject = [
+         [
             id: id,
             uri: uri,
+            data: data,
             active: active,
             priority: priority,
-            description: (description ? description : ""),
-            sourceType: sourceType.toString(),
-            data: "",
-            requestConditionActive: (requestConditionActive ?: false),
-            requestCondition: (requestConditionActive ? requestCondition: ""),
-            responseOverrideActive: responseOverrideActive
-        ]
+            description: description,
+            sourceType: sourceType.name(),
+            requestConditionActive: requestConditionActive,
+            requestCondition: requestCondition,
+            method: method.name(),
+            environment: environment.toMapObject()
+         ]
+    }
 
-        if( sourceType in [ SourceType.FILE ] ){
-            mapObject.data = data
-        }
+    Map<String, String> getResponseExtraHeadersObject(){
+        Eval.me( responseExtraHeaders )
+    }
 
-        mapObject
+    String getDestination(){
+        forwardUrl ?: environment.url
     }
 
     @Override
     String toString() {
-        toMapObject().toString()
+        toMapObject({
+            if( sourceType == SourceType.DATABASE ){
+                it.data = ""
+            }
+        }).toString()
     }
 
     enum SourceType {
         FILE,
         DATABASE
-        //SERVICE
+    }
+
+    enum HttpMethod {
+        GET,
+        POST,
+        PUT,
+        DELETE,
+        ANY
+    }
+
+    enum ServiceType {
+        REST,
+        SOAP,
+        PROXY
     }
 
     static constraints = {
         description nullable: true
         requestCondition nullable: true
-        responseOverride nullable: true
     }
 
     static mapping = {

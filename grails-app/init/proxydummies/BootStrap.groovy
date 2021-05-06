@@ -1,9 +1,8 @@
 package proxydummies
 
 import grails.util.Environment
+import io.micronaut.http.HttpMethod
 import proxydummies.utilities.Logger
-
-import java.text.SimpleDateFormat
 
 class  BootStrap {
 
@@ -30,10 +29,16 @@ class  BootStrap {
 
         def initialConfigs = [
             [
-                key: "redirectUrl",
+                key: "globalRedirectUrl",
                 value: "http://localhost:8888",
-                title: "Url de redirección",
+                title: "Url de redirección global",
                 description: "Se utiliza para redirigir todas request hacia esta url manteniendo la misma URI."
+            ],
+            [
+                key: "enableGlobalRedirectUrl",
+                value: true,
+                title: "Habilita la Url de redirección global",
+                description: "Habilita el redireccionamiento global de URLs(Cuando no se encuentra ninguna Rule que matchee.)."
             ],
             [
                 key: "proxyDummiesHome",
@@ -86,17 +91,29 @@ class  BootStrap {
     }
 
     void loadTestData() {
-        if( !Environment.current.is( Environment.PRODUCTION ) && false){
+        if( !Environment.current.is( Environment.PRODUCTION ) ){
+            proxydummies.Environment environmentMembrane = new proxydummies.Environment()
+            environmentMembrane.url = "http://localhost:8888"
+            environmentMembrane.serviceType = proxydummies.Environment.ServiceType.SOAP
+            environmentMembrane.name = "Bancon Membrane Loopback"
+            environmentMembrane.save( flush: true, failOnError: true)
+
+            proxydummies.Environment environmentFrontendRest = new proxydummies.Environment()
+            environmentFrontendRest.url = "http://localhost:8088"
+            environmentFrontendRest.serviceType = proxydummies.Environment.ServiceType.REST
+            environmentFrontendRest.name = "Bancon Fronend"
+            environmentFrontendRest.save( flush: true, failOnError: true)
+
             Rule testRule = Rule.newInstance()
             testRule.uri = "/esb/EAI/ChequeElectronico_Buscar/v1.0"
-            testRule.data = "C:\\work\\environment\\DummiesFastrack\\DUMMIES.esb.EAI.ChequeElectronico_Buscar.v1.0.xml"
+            testRule.data = "C:\\Users\\u900574\\proxyDummies\\responses\\DUMMIES__2021-04-13_08.11.04.717__.esb.EAI.ChequeElectronico_Buscar.v1.0.xml"
             testRule.sourceType = Rule.SourceType.FILE
-            testRule.active = false
+            testRule.active = true
             testRule.priority = 1
-
+            testRule.environment = environmentMembrane
+            testRule.method = HttpMethod.POST
             testRule.save( flush: true )
         }
-
     }
 
     void checkDb() {

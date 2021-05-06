@@ -1,8 +1,6 @@
 ---
-dummies:
-    system-property :
-        url: "proxyDummmies.url"
-        file: "proxyDummmies.file"
+proxy-dummies:
+    uri-prefix : "/proxyDummies"
 ---
 server:
     servlet:

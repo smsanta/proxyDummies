@@ -17,11 +17,18 @@ trait AbstractObject {
     }
 
     def toMapObject(Closure finalEdit){
-        def mapObject = toMapObject();
+        def mapObject = toMapObject()
         finalEdit( mapObject )
-        return mapObject
+        mapObject
     }
 
+    /**
+     * Does a Set value "this.paramMapKey = paramMapValue"
+     * skips setting a value if it is null.
+     *
+     * @param toBe
+     * @return
+     */
     def safeSetter( Map toBe ){
         def _this = this
         toBe.each { key, value ->

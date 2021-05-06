@@ -9,7 +9,10 @@ class RuleFilter extends AbstractFilter{
 
     Long id
     String uri
+    String method
     Boolean active
+    String environmentName
+    String environmentPrefix
 
     @Override
     def getTargetClass() {

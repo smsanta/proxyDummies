@@ -16,6 +16,8 @@ class DummiesMessageCode {
     static def RULE_COULD_NOT_BE_FOUND = 1007
     static def FILE_NOT_FOUND = 1008
     static def RULE_NOT_MATCHING_ANY = 1009
+    static def RULE_INVALID_SERVICE_TYPE = 1010
+    static def PROXY_NOWHERE_TO_REDIRECT = 1011
 
     static def Messages = [
         //1000-2000 General errors
@@ -28,5 +30,7 @@ class DummiesMessageCode {
         (this.RULE_COULD_NOT_BE_FOUND) : "El id de la rule no esta en la base de datos.",
         (this.FILE_NOT_FOUND) : "El archivo indicado no existe.",
         (this.RULE_NOT_MATCHING_ANY) : "No se pudo evaluar ningúna regla válida.",
+        (this.RULE_INVALID_SERVICE_TYPE) : "El tipo de servicio no es válido.",
+        (this.PROXY_NOWHERE_TO_REDIRECT) : "No hay a donde redirigir, verifique las Rules o Active la redireccion global.",
     ]
 }

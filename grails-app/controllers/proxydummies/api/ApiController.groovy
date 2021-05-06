@@ -123,7 +123,7 @@ class ApiController extends ApiBaseController{
         handle{
             ConfigurationKeyCommand uConfigCommand = getCommandAndValidate( ConfigurationKeyCommand.newInstance(), HttpMethod.POST )
 
-            String configurationValue = systemConfigsService.getConfigValueByKey( uConfigCommand.key )
+            String configurationValue = systemConfigsService.getConfigurationValueByKey( uConfigCommand.key )
 
             respondOK( configurationValue )
         }

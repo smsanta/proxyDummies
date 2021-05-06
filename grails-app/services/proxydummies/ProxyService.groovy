@@ -2,8 +2,7 @@ package proxydummies
 
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
-import io.micronaut.http.HttpRequest
-import org.apache.commons.lang3.StringEscapeUtils
+import io.micronaut.http.HttpMethod
 import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
 import proxydummies.abstracts.BaseService
@@ -12,25 +11,36 @@ import proxydummies.filters.FilterResult
 import proxydummies.filters.RuleFilter
 import proxydummies.utilities.DummiesMessageCode
 
-import javax.servlet.http.HttpServletRequest
-import java.util.logging.Filter
-
 @Transactional
 class ProxyService extends BaseService{
 
     SystemConfigsService systemConfigsService
     FileServicesService fileServicesService
 
-    final static String PROXY_DUMMIES_URI_PREFIX = "/proxyDummies"
+    private def _serviceObject = null
+
+    final static String PROXY_DUMMIES_APPLICATION_CONFIG_PREFIX = "proxy-dummies.uri-prefix"
     final static String DUMMIES_NAME_PREFIX = "DUMMIES"
     final static String DUMMIES_RESPONSE_NAME_EXT = ".xml"
     final static String DUMMIES_IMPORT_NAME_EXT = ".json"
 
     FilterResult searchRule( RuleFilter filter ){
         filter.withCriteria {
-            filter.id != null ?  add(Restrictions.eq("id", filter.id)) : null
-            filter.uri ? add(Restrictions.ilike('uri', filter.uri, MatchMode.ANYWHERE)) : null
-            filter.active != null ?  add(Restrictions.eq("active", filter.active)) : null
+            filter.id ?  add(Restrictions.eq("id", filter.id ) ) : null
+            filter.uri ? add(Restrictions.ilike('uri', filter.uri, MatchMode.ANYWHERE ) ) : null
+            filter.method ? add(Restrictions.eq("method", filter.method ) ) : null
+            filter.active ? add(Restrictions.eq("active", filter.active ) ) : null
+
+            createAlias("environment", "env")
+
+            if( filter.environmentName ){
+                add(Restrictions.ilike('env.name', filter.environmentName, MatchMode.ANYWHERE ) )
+            }
+
+            if( filter.environmentPrefix ){
+                add(Restrictions.ilike('env.uriPrefix', filter.environmentPrefix, MatchMode.EXACT ) )
+            }
+
 
             order('uri')
             order('active')
@@ -38,22 +48,26 @@ class ProxyService extends BaseService{
         }
     }
 
-    List<Rule> getActiveRules( String uri ){
-        FilterResult result = searchRule( RuleFilter.newInstance( [ uri: uri, active: true ]) )
+    List<Rule> getActiveRules( String uri, String method, String environmentPrefix ){
+        RuleFilter ruleFilter = RuleFilter.newInstance( [ uri: uri, method: method, environmentPrefix: environmentPrefix, active: true ] )
+        FilterResult result = searchRule( ruleFilter )
         result.results
     }
 
-    Rule saveRule( String pUri,
-        Integer pPriority,
-        Rule.SourceType pSourceType,
-        String pData,
-        Boolean pActive,
-        String pDescription,
-        Boolean pRequestConditionActive,
-        String pRequestCondition,
-        Long id = null ){
+    Rule saveRule(String pUri,
+                  Integer pPriority,
+                  Rule.SourceType pSourceType,
+                  String pData,
+                  Boolean pActive,
+                  String pDescription,
+                  Boolean pRequestConditionActive,
+                  String pRequestCondition,
+                  HttpMethod pMethod,
+                  Environment pEnvironment,
+                  Long id = null
+    ){
         handle{
-            if ( Rule.countByUriAndPriorityAndIdNotEqual( pUri, pPriority, id ) > 0 ){
+            if ( Rule.countByUriAndMethodAndPriorityAndIdNotEqual( pUri, pMethod, pPriority, id ) > 0 ){
                 throw new DummiesException( DummiesMessageCode.SAVE_DUMMY_ALREADY_EXISTS )
             }
 
@@ -67,21 +81,25 @@ class ProxyService extends BaseService{
                 }
             }
 
+            //TODO CHECK DECODE DATA.
             String ruleData = pData
-            if( pSourceType == Rule.SourceType.DATABASE ){
-                ruleData = StringEscapeUtils.unescapeXml( ruleData )
+
+            if( pSourceType == Rule.SourceType.PROXY ){
+                pPriority = 0
             }
 
-            saveRule.with {
-                uri = pUri
-                priority = pPriority
-                sourceType = pSourceType
-                data = ruleData
-                active = pActive
-                description = pDescription
-                requestConditionActive = (pRequestConditionActive ?: false)
-                requestCondition = (pRequestConditionActive ? pRequestCondition : "")
-            }
+            saveRule.safeSetter([
+                uri: pUri,
+                priority: pPriority,
+                sourceType: pSourceType,
+                data: ruleData,
+                active: pActive,
+                description: pDescription,
+                requestConditionActive: (pRequestConditionActive ?: false),
+                requestCondition: (pRequestConditionActive ? pRequestCondition : ""),
+                method: pMethod,
+                environment: pEnvironment
+            ])
 
             saveRule.save( flush: true, failOnError: true )
         }
@@ -109,7 +127,7 @@ class ProxyService extends BaseService{
         deleteRule.delete()
     }
 
-    Rule evalRules(List<Rule> candidates, XmlNavigator soapXmlRequest){
+    Rule evalRules( List<Rule> candidates, String requestBody, queryParams, String requestUri ){
         Rule priorityCandidate = null
 
         List<Rule> sortedCandidates = candidates.sort { a, b ->
@@ -117,17 +135,18 @@ class ProxyService extends BaseService{
         }
 
         info( "Starting Evaluating candidates: ")
-        info( sortedCandidates.toList() )
+        info( sortedCandidates )
 
         for (Rule candidate in sortedCandidates){
             info( "Evaluating candidate: -> $candidate")
             if( candidate.active ){
-                if( candidate.requestConditionActive ){
 
+                if( candidate.requestConditionActive ){
+                    def payloadObject = getRequestBodyObject( requestBody, candidate.serviceType  )
                     Boolean evalExpression = false
                     try{
-                        soapXmlRequest.reset()
-                        evalExpression = Eval.me( "\$requestXml", soapXmlRequest, candidate.requestCondition )
+                        def expressionData = [ payload: payloadObject, params: queryParams ]
+                        evalExpression = Eval.me( "\$request", expressionData, candidate.requestCondition )
                     }catch(NoSuchElementException e){
                         info("NoSuchElementException: Returning false on current Rule.")
                     }
@@ -144,10 +163,31 @@ class ProxyService extends BaseService{
                 info("Selected Rule -> $candidate")
                 priorityCandidate = candidate
                 break
+
             }
         }
 
         priorityCandidate
+    }
+
+    def getRequestBodyObject(String requestBody, Rule.ServiceType serviceType) {
+        switch (serviceType){
+            case Rule.ServiceType.REST:
+                if ( !_serviceObject ){
+                    _serviceObject = requestBody as JSON
+                }
+                break
+            case Rule.ServiceType.SOAP:
+                if ( !_serviceObject ){
+                    _serviceObject = XmlNavigator.newInstance( requestBody )
+                }
+                _serviceObject.reset()
+                break
+            default:
+                throw new DummiesException( DummiesMessageCode.RULE_INVALID_SERVICE_TYPE )
+        }
+
+        _serviceObject
     }
 
     String loadDummy(Rule rule){
@@ -167,12 +207,13 @@ class ProxyService extends BaseService{
     }
 
     String purgeProxyDummiesPrefix( String str ){
-        str.replaceAll( PROXY_DUMMIES_URI_PREFIX, "")
+        String proxyDummiesPrefix = getApplicationConfigProperty( PROXY_DUMMIES_APPLICATION_CONFIG_PREFIX )
+        str.replaceAll( proxyDummiesPrefix, "")
     }
 
     void saveResponse(String uriName, String body){
         Boolean saveResponseConfig = systemConfigsService.getSaveResponse()
-        String saveResponseFolder = systemConfigsService.getConfigValueByKey( SystemConfigsService.CONFIG_KEY_SAVE_RESPONSE_FOLDER )
+        String saveResponseFolder = systemConfigsService.getConfigurationValueByKey( SystemConfigsService.CONFIG_KEY_SAVE_RESPONSE_FOLDER )
 
         if( saveResponseConfig ){
             def fileName = generateDummyNameFromUri( uriName, DUMMIES_RESPONSE_NAME_EXT)
