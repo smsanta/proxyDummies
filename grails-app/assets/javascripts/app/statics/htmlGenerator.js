@@ -83,6 +83,16 @@ var htmlGenerator = {
             return htmlGenerator.icons.any(("bi-eye-fill action-icon " + colorClass), tooltip, attrs, plainString )
         },
 
+        server: function (colorClass, tooltip, attrs, plainString) {
+            colorClass = validator.getValueOrDefault(colorClass, "");
+            return htmlGenerator.icons.any(("bi-server action-icon " + colorClass), tooltip, attrs, plainString )
+        },
+
+        fileCode: function (colorClass, tooltip, attrs, plainString) {
+            colorClass = validator.getValueOrDefault(colorClass, "");
+            return htmlGenerator.icons.any(("bi-file-earmark-code action-icon " + colorClass), tooltip, attrs, plainString )
+        },
+
         okayCheck: function (colorClass, tooltip, attrs, plainString) {
             colorClass = validator.getValueOrDefault(colorClass, "");
             return htmlGenerator.icons.any(("check-circle-fill action-icon " + colorClass), tooltip, attrs, plainString )

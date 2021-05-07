@@ -129,10 +129,18 @@ var _dashboard = {
             let dataString = item.data;
 
             if( item.sourceType == "DATABASE" ){
-                dataString = htmlGenerator.icons.eyeFill("text-blue","Ver Data", {
+                dataString = htmlGenerator.icons.server("text-blue","Ver Data", {
                     id: item.id,
                     "data-id": item.id,
                     action: "watch"
+                });
+            }
+
+            if( item.sourceType == "FILE" ){
+                dataString = htmlGenerator.icons.fileCode("", item.data, {
+                    id: item.id,
+                    "data-id": item.id,
+                    action: "copyFilePath"
                 });
             }
 
@@ -140,7 +148,7 @@ var _dashboard = {
             let activeIcon = htmlGenerator.icons.any(activeIconClass, "Rule " + (item.active ? "Activa" : "Inactiva"), {
                 id: item.id,
                 "data-id": item.id,
-                action: "watch"
+                action: "promptSwitchState"
             });
 
             let hideIcon = (item.description == "" ? "d-none" : "");
@@ -170,11 +178,9 @@ var _dashboard = {
                 "__ACTIVE__": item.active,
                 "__ACTIVE_STRING__": activeIcon,
                 "__PRIORITY__": item.priority,
-                "__TYPE__": item.sourceType,
+                "__TYPE__": dataString,
                 "__DATA__": item.data,
-                "__DATA_STRING__": dataString,
                 "__REQUEST_CONDITION__": requestCondition
-
             };
 
             let newRow = templater.getFilledTemplate( templateData, templater.TEMPLATE_RULE_TABLE_ROW );
@@ -197,6 +203,8 @@ var _dashboard = {
         let showActions = tableBody.find('td i[action=watch]');
         let showRequestCondition = tableBody.find('td i[action=watch-condition]');
         let exportActions = tableBody.find('td i[action=export]');
+        let copyFilePath = tableBody.find('td i[action=copyFilePath]');
+
 
         editActions.bind("click", _dashboard.tableActions.edit );
         deleteActions.bind("click", _dashboard.tableActions.delete );
@@ -205,7 +213,7 @@ var _dashboard = {
         showActions.bind("click", _dashboard.tableActions.show );
         showRequestCondition.bind("click", _dashboard.tableActions.showRequestCondition );
         exportActions.bind("click", _dashboard.tableActions.export );
-
+        copyFilePath.bind("click", _dashboard.tableActions.copyFilePath );
     },
 
     tableActions : {
@@ -240,9 +248,8 @@ var _dashboard = {
                         });
                 } );
             }
-
-
         },
+
         delete: function (e) {
             e.preventDefault();
 
@@ -272,6 +279,7 @@ var _dashboard = {
                 })
             });
         },
+
         activate: function (e) {
             e.preventDefault();
 
@@ -384,6 +392,17 @@ var _dashboard = {
                         })
                     });
             } );
+        },
+
+        copyFilePath: function (e) {
+            let tr = $(this).parents("tr");
+            let rowData = _dashboard.collectRuleDataFromTR(tr);
+
+            Util.copyToClipboard( rowData.data );
+            app.modals.showSuccess("Rule data file ", "El path al archivo se ha copiado al portapaples!", function () {
+                app.modals.closeDialog();
+            });
+
         }
     },
 
