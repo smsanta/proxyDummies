@@ -1,16 +1,15 @@
 package proxydummies
 
+import proxydummies.abstracts.RequestObjectNavigator
 import proxydummies.utilities.Logger
 
-class XmlNavigator {
+class XmlNavigator extends RequestObjectNavigator {
 
-    private Node xmlObject
-
-    private def currentElement
+    private Node currentElement
 
     XmlNavigator( String plainXml ){
-        xmlObject = XmlParser.newInstance().parseText( plainXml )
-        currentElement = xmlObject
+        requestObject = XmlParser.newInstance().parseText( plainXml )
+        currentElement = requestObject
     }
 
     def get( String node, asList = false){
@@ -44,18 +43,17 @@ class XmlNavigator {
     }
 
     def getHeaderComunRequest(){
-        currentElement = xmlObject.get("S:Header").first().get("ns4:HeaderComunRequest").first()
+        currentElement = requestObject.get("S:Header").first().get("ns4:HeaderComunRequest").first()
         this
     }
 
     def getBody(){
-        currentElement = xmlObject.get("S:Body").first()
+        currentElement = requestObject.get("S:Body").first()
         this
     }
 
-    def reset(){
-        currentElement = xmlObject
-        this
+    void reset(){
+        currentElement = requestObject
     }
 
     def value(asList = false){
