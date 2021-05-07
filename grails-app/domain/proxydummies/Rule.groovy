@@ -56,7 +56,7 @@ class Rule implements AbstractObject{
         description nullable: true
         requestCondition nullable: true
         responseOverride nullable: true
-        isJson: nullable: true
+        isJson nullable: true
     }
 
     static mapping = {
