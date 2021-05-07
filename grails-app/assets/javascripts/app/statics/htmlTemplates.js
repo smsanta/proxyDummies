@@ -15,7 +15,6 @@ var templater = {
             '<td class="t-align-center">__ACTIVE_STRING__</td>' +
             '<td class="t-align-center">__PRIORITY__</td>' +
             '<td class="t-align-center">__TYPE__</td>' +
-            '<td class="t-align-center">__DATA_STRING__</td>' +
             '<td class="t-align-center">__REQUEST_CONDITION__</td>' +
             '<td class="table-actions t-align-center">' +
                 '<i id="edit-__ID__" class="bi-pencil-square action-icon" action="edit" style="color: dodgerblue;" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Editar Rule"></i>' +

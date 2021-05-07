@@ -5,7 +5,6 @@
             <th class="t-align-center" scope="col">Activo</th>
             <th class="t-align-center" scope="col">Prioridad</th>
             <th class="t-align-center" scope="col">Tipo</th>
-            <th class="t-align-center" scope="col">Data</th>
             <th class="t-align-center" scope="col">Tiene Request Condition</th>
             <th class="t-align-center" scope="col">Acciones</th>
         </tr>
