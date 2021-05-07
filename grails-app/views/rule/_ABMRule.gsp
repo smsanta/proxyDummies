@@ -81,6 +81,20 @@
 
     <div class="row">
         <div class="col-2">
+            <label for="abm_input_is_json" class="col-form-label">es REST?</label>
+        </div>
+        <div class="col-5 form-switch">
+            <input type="checkbox" id="abm_input_is_json" class="form-check-input" aria-describedby="isJsonHelpInline">
+        </div>
+        <div class="col-auto">
+            <span id="isJsonHelpInline" class="form-text d-none">
+                Must be 8-20 characters long.
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
             <label for="abm_input_request_condition_active" class="col-form-label">Activar condición sobre la Request</label>
         </div>
         <div class="col-5 form-switch">
@@ -114,10 +128,9 @@
         <div class="col-5">
             <textarea type="text" id="abm_input_request_condition" class="form-control" aria-describedby="requestCondtionHelpInline" placeholder="
             Expression a ser evaluada sobre los parametros de la request.
-            Variable de la Request $requestXml
-            Ej: $requestXml
-                .getHeaderComunRequest()
-                .get(['origen', 'idSistema'])
+            Variable de la Request $request
+            Ej: $request
+                .get(['S:Header', 'ns4:HeaderComunRequest', 'idSistema'])
                 .value() == '753'"></textarea>
         </div>
         <div class="col-auto">

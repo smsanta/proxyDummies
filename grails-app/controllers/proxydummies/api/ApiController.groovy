@@ -46,7 +46,8 @@ class ApiController extends ApiBaseController{
                 ruleCommand.active,
                 ruleCommand.description,
                 ruleCommand.requestConditionActive,
-                ruleCommand.requestCondition
+                ruleCommand.requestCondition,
+                ruleCommand.isJson
             )
 
             respondOK( newRule.toMapObject() )
@@ -66,6 +67,7 @@ class ApiController extends ApiBaseController{
                 ruleCommand.description,
                 ruleCommand.requestConditionActive,
                 ruleCommand.requestCondition,
+                ruleCommand.isJson,
                 ruleCommand.id
             )
 
@@ -148,7 +150,8 @@ class ApiController extends ApiBaseController{
                 importRuleCommand.data,
                 importRuleCommand.description,
                 importRuleCommand.requestConditionActive,
-                importRuleCommand.requestCondition
+                importRuleCommand.requestCondition,
+                importRuleCommand.isJson
             )
 
             respondOK( importedRule.toMapObject() )

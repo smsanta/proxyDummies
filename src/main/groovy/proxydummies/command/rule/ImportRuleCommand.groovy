@@ -9,6 +9,7 @@ class ImportRuleCommand extends MainCommand{
     String description
     Boolean requestConditionActive
     String requestCondition
+    Boolean isJson
 
     static constraints = {
         uri nullable: false, blank: false
@@ -20,6 +21,7 @@ class ImportRuleCommand extends MainCommand{
                 obj.errors.putAt("requestCondition", "requestCondition no puede estar vacío si la condición esta activa.")
             }
         }
+        isJson nullable: true
     }
 
     @Override

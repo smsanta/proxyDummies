@@ -3,9 +3,9 @@ package proxydummies
 import grails.converters.JSON
 import proxydummies.abstracts.RequestObjectNavigator
 
-class RestNavigator extends RequestObjectNavigator{
+class JsonNavigator extends RequestObjectNavigator{
 
-    RestNavigator(String plainJson ){
+    JsonNavigator(String plainJson ){
         requestObject = JSON.parse( plainJson )
     }
 

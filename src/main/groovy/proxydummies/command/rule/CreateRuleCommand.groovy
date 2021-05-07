@@ -13,6 +13,7 @@ class CreateRuleCommand extends MainCommand {
     String description
     Boolean requestConditionActive
     String requestCondition
+    Boolean isJson
 
     static constraints = {
         uri nullable: false, blank: false
@@ -27,6 +28,7 @@ class CreateRuleCommand extends MainCommand {
                 errors.rejectValue("requestCondition", "requestConditionEmpty","Request Condition no puede estar vacío si la condición esta activa.")
             }
         }
+        isJson nullable: true
     }
 
     @Override
@@ -37,7 +39,8 @@ class CreateRuleCommand extends MainCommand {
             sourceType: sourceType,
             data: data,
             active: active,
-            description: description
+            description: description,
+            isJson: isJson
         ]
     }
 }

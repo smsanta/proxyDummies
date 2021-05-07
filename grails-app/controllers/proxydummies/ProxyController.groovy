@@ -6,6 +6,7 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import proxydummies.abstracts.AbstractController
+import proxydummies.abstracts.RequestObjectNavigator
 
 class ProxyController extends AbstractController{
 
@@ -18,24 +19,26 @@ class ProxyController extends AbstractController{
         def checkRules = proxyService.getActiveRules( requestUri )
 
         String requestBody = request.getInputStream().getText("UTF8")
-        String requestSoapBody = requestBody
 
         if( checkRules.isEmpty() ){
             info( "No Rules Matched for Ur: $requestUri. Forwaring to original destination.")
-            forwardRequest( requestUri, requestSoapBody )
+            forwardRequest( requestUri, requestBody )
         } else {
-            def xmlRequestNavigator = XmlNavigator.newInstance( requestSoapBody )
-
             info( "We have found rules for this uri(${checkRules.size()}) --> $checkRules"  )
-            Rule rule = proxyService.evalRules( checkRules, xmlRequestNavigator )
+            Rule rule = proxyService.evalRules( checkRules, requestBody )
 
             if ( !rule ){
-                info("Ninguna de las rules testeadas pudieron ser verificadas. se forwarea la request por default.")
-                forwardRequest( requestUri, requestSoapBody )
+                info("Any rule matched current request. request is being forwarded by default.")
+                forwardRequest( requestUri, requestBody )
             } else {
                 String dummy = proxyService.loadDummy( rule )
 
-                response.addHeader('Content-Type', 'text/xml')
+                if( rule.isJson ){
+                    response.addHeader('Content-Type', 'application/json')
+                }else{
+                    response.addHeader('Content-Type', 'text/xml')
+                }
+
 
                 render( dummy )
             }

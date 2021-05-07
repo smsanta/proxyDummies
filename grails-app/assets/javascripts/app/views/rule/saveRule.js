@@ -66,6 +66,7 @@ _saveRule = {
                         ruleData.description,
                         ruleData.requestConditionActive,
                         ruleData.requestCondition,
+                        ruleData.isJson,
                         successCallback,
                         errorCallback
                     )
@@ -79,6 +80,7 @@ _saveRule = {
                         ruleData.description,
                         ruleData.requestConditionActive,
                         ruleData.requestCondition,
+                        ruleData.isJson,
                         successCallback,
                         errorCallback
                     )
@@ -98,6 +100,7 @@ _saveRule = {
         let description = $("#abm_input_description").val();
         let requestConditionActive = $("#abm_input_request_condition_active").prop("checked");
         let requestCondition = $("#abm_input_request_condition").val();
+        let isJson = $("#abm_input_is_json").prop("checked");
 
         return {
             id: id,
@@ -108,7 +111,8 @@ _saveRule = {
             active: state,
             description: description,
             requestCondition: requestCondition,
-            requestConditionActive: requestConditionActive
+            requestConditionActive: requestConditionActive,
+            isJson: isJson
         }
     },
 
@@ -123,6 +127,7 @@ _saveRule = {
         $("#abm_input_request_condition_active").prop("checked", false);
         $("#abm_input_request_condition").val("");
         $("#abm_input_request_condition").attr("disabled", true);
+        $("#abm_input_is_json").prop("checked", false);
 
     },
 
@@ -137,6 +142,7 @@ _saveRule = {
         $("#abm_input_request_condition_active").prop("checked", data.requestConditionActive);
         $("#abm_input_request_condition").attr("disabled", !data.requestConditionActive);
         $("#abm_input_request_condition").val(data.requestCondition);
+        $("#abm_input_is_json").prop("checked", JSON.parse( data.isJson ));
 
     },
 

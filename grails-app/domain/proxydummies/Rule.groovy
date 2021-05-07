@@ -11,6 +11,7 @@ class Rule implements AbstractObject{
     String data
     Boolean requestConditionActive = false
     Boolean responseOverrideActive = false
+    Boolean isJson = false
 
     String requestCondition
     String responseOverride
@@ -29,7 +30,8 @@ class Rule implements AbstractObject{
             data: "",
             requestConditionActive: (requestConditionActive ?: false),
             requestCondition: (requestConditionActive ? requestCondition: ""),
-            responseOverrideActive: responseOverrideActive
+            responseOverrideActive: responseOverrideActive,
+            isJson: isJson
         ]
 
         if( sourceType in [ SourceType.FILE ] ){
@@ -54,6 +56,7 @@ class Rule implements AbstractObject{
         description nullable: true
         requestCondition nullable: true
         responseOverride nullable: true
+        isJson: nullable: true
     }
 
     static mapping = {

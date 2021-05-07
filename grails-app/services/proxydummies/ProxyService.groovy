@@ -1,19 +1,17 @@
 package proxydummies
 
+
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
-import io.micronaut.http.HttpRequest
 import org.apache.commons.lang3.StringEscapeUtils
 import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
 import proxydummies.abstracts.BaseService
+import proxydummies.abstracts.RequestObjectNavigator
 import proxydummies.exceptions.DummiesException
 import proxydummies.filters.FilterResult
 import proxydummies.filters.RuleFilter
 import proxydummies.utilities.DummiesMessageCode
-
-import javax.servlet.http.HttpServletRequest
-import java.util.logging.Filter
 
 @Transactional
 class ProxyService extends BaseService{
@@ -51,6 +49,7 @@ class ProxyService extends BaseService{
         String pDescription,
         Boolean pRequestConditionActive,
         String pRequestCondition,
+        Boolean pIsJson,
         Long id = null ){
         handle{
             if ( Rule.countByUriAndPriorityAndIdNotEqual( pUri, pPriority, id ) > 0 ){
@@ -81,6 +80,7 @@ class ProxyService extends BaseService{
                 description = pDescription
                 requestConditionActive = (pRequestConditionActive ?: false)
                 requestCondition = (pRequestConditionActive ? pRequestCondition : "")
+                isJson = (pIsJson ?: false)
             }
 
             saveRule.save( flush: true, failOnError: true )
@@ -109,7 +109,11 @@ class ProxyService extends BaseService{
         deleteRule.delete()
     }
 
-    Rule evalRules(List<Rule> candidates, XmlNavigator soapXmlRequest){
+    RequestObjectNavigator getRequestObjectNavigator(String plainRequestObject, Boolean isJson ){
+        isJson ? JsonNavigator.newInstance( plainRequestObject ) : XmlNavigator.newInstance( plainRequestObject )
+    }
+
+    Rule evalRules(List<Rule> candidates, String requestBody){
         Rule priorityCandidate = null
 
         List<Rule> sortedCandidates = candidates.sort { a, b ->
@@ -126,8 +130,8 @@ class ProxyService extends BaseService{
 
                     Boolean evalExpression = false
                     try{
-                        soapXmlRequest.reset()
-                        evalExpression = Eval.me( "\$requestXml", soapXmlRequest, candidate.requestCondition )
+                        def requestObject = getRequestObjectNavigator( requestBody, candidate.isJson )
+                        evalExpression = Eval.me( "\$request", requestObject, candidate.requestCondition )
                     }catch(NoSuchElementException e){
                         info("NoSuchElementException: Returning false on current Rule.")
                     }
@@ -223,11 +227,12 @@ class ProxyService extends BaseService{
                     String pData,
                     String pDescription,
                     Boolean pRequestConditionActive,
-                    String pRequestCondition ){
+                    String pRequestCondition,
+                    Boolean pIsJson){
 
         Integer newMaximumPriority = getNewMaximumPriorityRule( pUri )
 
-        saveRule(pUri, newMaximumPriority, Rule.SourceType.DATABASE, pData, false, pDescription, pRequestConditionActive, pRequestCondition)
+        saveRule(pUri, newMaximumPriority, Rule.SourceType.DATABASE, pData, false, pDescription, pRequestConditionActive, pRequestCondition, pIsJson)
     }
 
     String generateImportRuleFromResponse(pUri, pData){
