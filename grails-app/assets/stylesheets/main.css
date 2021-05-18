@@ -654,8 +654,32 @@ img.grails-logo {
 .rule-form {
     margin-top: 10px;
 }
+
+.rule-form h1{
+    margin-bottom: 15px;
+    text-align: center;
+    color: #0c63e4;
+}
+.rule-form button{
+    margin-top: 15px;
+    width: 200px;
+    height: 50px;
+}
+
 .rule-form .row{
     margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    justify-content: center;
+}
+
+.rule-form .rule-form-data div{
+    float: left;
+}
+
+.rule-form .rule-form-data-label{
+    text-align: right;
 }
 
 .rule-form .form-switch input{
@@ -1080,4 +1104,9 @@ img.grails-logo {
 
 .main-table{
     padding-right: 8px;
+}
+
+.popup-show-rule-data{
+    font-size: 14px;
+    margin-bottom: 0px;
 }

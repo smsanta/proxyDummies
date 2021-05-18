@@ -31,25 +31,14 @@ class ProxyService extends BaseService{
             filter.method ? add(Restrictions.eq("method", filter.method ) ) : null
             filter.active ? add(Restrictions.eq("active", filter.active ) ) : null
 
-            createAlias("environment", "env")
-
-            if( filter.environmentName ){
-                add(Restrictions.ilike('env.name', filter.environmentName, MatchMode.ANYWHERE ) )
-            }
-
-            if( filter.environmentPrefix ){
-                add(Restrictions.ilike('env.uriPrefix', filter.environmentPrefix, MatchMode.EXACT ) )
-            }
-
-
             order('uri')
             order('active')
             order('priority', 'DESC')
         }
     }
 
-    List<Rule> getActiveRules( String uri, String method, String environmentPrefix ){
-        RuleFilter ruleFilter = RuleFilter.newInstance( [ uri: uri, method: method, environmentPrefix: environmentPrefix, active: true ] )
+    List<Rule> getActiveRules( String uri, String method ){
+        RuleFilter ruleFilter = RuleFilter.newInstance( [ uri: uri, method: method, active: true ] )
         FilterResult result = searchRule( ruleFilter )
         result.results
     }
@@ -62,8 +51,10 @@ class ProxyService extends BaseService{
                   String pDescription,
                   Boolean pRequestConditionActive,
                   String pRequestCondition,
-                  HttpMethod pMethod,
-                  Environment pEnvironment,
+                  Rule.HttpMethod pMethod,
+                  Rule.ServiceType serviceType,
+                  Integer responseStatus,
+                  String responseHeaders,
                   Long id = null
     ){
         handle{
@@ -82,11 +73,7 @@ class ProxyService extends BaseService{
             }
 
             //TODO CHECK DECODE DATA.
-            String ruleData = pData
-
-            if( pSourceType == Rule.SourceType.PROXY ){
-                pPriority = 0
-            }
+            String ruleData = URLDecoder.decode( pData )
 
             saveRule.safeSetter([
                 uri: pUri,
@@ -98,7 +85,9 @@ class ProxyService extends BaseService{
                 requestConditionActive: (pRequestConditionActive ?: false),
                 requestCondition: (pRequestConditionActive ? pRequestCondition : ""),
                 method: pMethod,
-                environment: pEnvironment
+                serviceType: serviceType,
+                responseStatus: responseStatus,
+                responseHeaders: responseHeaders
             ])
 
             saveRule.save( flush: true, failOnError: true )
@@ -140,7 +129,6 @@ class ProxyService extends BaseService{
         for (Rule candidate in sortedCandidates){
             info( "Evaluating candidate: -> $candidate")
             if( candidate.active ){
-
                 if( candidate.requestConditionActive ){
                     def payloadObject = getRequestBodyObject( requestBody, candidate.serviceType  )
                     Boolean evalExpression = false

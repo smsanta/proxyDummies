@@ -4,7 +4,7 @@ class UrlMappings {
 
     static mappings = {
 
-        "/**"(controller: 'proxy', action:'index')
+        "/$environment/**"(controller: 'proxy', action:'index')
 
         "/"(controller: "setup", action:  [GET: "index"])
 

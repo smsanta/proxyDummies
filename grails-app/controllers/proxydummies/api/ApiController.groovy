@@ -46,7 +46,11 @@ class ApiController extends ApiBaseController{
                 ruleCommand.active,
                 ruleCommand.description,
                 ruleCommand.requestConditionActive,
-                ruleCommand.requestCondition
+                ruleCommand.requestCondition,
+                ruleCommand.method,
+                ruleCommand.serviceType,
+                ruleCommand.responseStatus,
+                ruleCommand.responseHeaders,
             )
 
             respondOK( newRule.toMapObject() )
@@ -66,6 +70,10 @@ class ApiController extends ApiBaseController{
                 ruleCommand.description,
                 ruleCommand.requestConditionActive,
                 ruleCommand.requestCondition,
+                ruleCommand.method,
+                ruleCommand.serviceType,
+                ruleCommand.responseStatus,
+                ruleCommand.responseHeaders,
                 ruleCommand.id
             )
 
@@ -105,7 +113,8 @@ class ApiController extends ApiBaseController{
 
             Rule rule = fResult.results.first()
 
-            respondOK( rule.data )
+            String responseData = proxyService.loadDummy( rule )
+            respondOK( responseData )
         }
     }
 

@@ -13,6 +13,8 @@ var templater = {
         '<tr data-id="__ID__">' +
             '<td> __DESCRIPTION__ __URI__ </td>' +
             '<td class="t-align-center">__ACTIVE_STRING__</td>' +
+            '<td class="t-align-center">__SERVICE__</td>' +
+            '<td class="t-align-center">__HEADERS__</td>' +
             '<td class="t-align-center">__PRIORITY__</td>' +
             '<td class="t-align-center">__TYPE__</td>' +
             '<td class="t-align-center">__REQUEST_CONDITION__</td>' +

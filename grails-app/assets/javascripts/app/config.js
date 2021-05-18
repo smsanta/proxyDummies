@@ -17,6 +17,24 @@ var config = {
             },
 
             enabledPaymentMethods : ['ticket', 'atm'],
+        },
+
+        saveRule : {
+            formDefaults : {
+                id: "",
+                uri: "",
+                priority: "",
+                sourceType: "DATABASE",
+                data: "",
+                active: false,
+                description: "",
+                requestCondition: "",
+                requestConditionActive: false,
+                method: "POST",
+                serviceType: "SOAP",
+                responseStatus: "200",
+                responseHeaders: ""
+            }
         }
     }
 };

@@ -104,22 +104,12 @@ var apiClient = {
     //API Methods
 
     //    ########### Rule ###########
-    createRule: function (pUri,pPriority, pSourceType, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition, successCallback, errorCallback) {
+    createRule: function (rule, successCallback, errorCallback) {
         let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.create;
 
-        let json = {
-            uri: pUri,
-            priority: pPriority,
-            sourceType: pSourceType,
-            data: pData,
-            active: pActive,
-            description: pDescription,
-            requestCondition: pRequestCondition,
-            requestConditionActive: pRequestConditionActive
-
-        };
+        let json = rule.getJson();
 
         comunicator.doPost(urlFinal, json,
             function (data) {
@@ -138,22 +128,12 @@ var apiClient = {
         )
     },
 
-    updateRule: function (pId, pUri,pPriority, pSourceType, pData, pActive, pDescription, pRequestConditionActive, pRequestCondition, successCallback, errorCallback) {
+    updateRule: function (rule, successCallback, errorCallback) {
         let urlFinal = config.baseUrl +
             apiClient.module.rule +
             apiClient.action.rule.update;
 
-        let json = {
-            id: pId,
-            uri: pUri,
-            priority: pPriority,
-            sourceType: pSourceType,
-            data: pData,
-            active: pActive,
-            description: pDescription,
-            requestCondition: pRequestCondition,
-            requestConditionActive: pRequestConditionActive
-        };
+        let json = rule.getJson();
 
         comunicator.doPost(urlFinal, json,
             function (data) {

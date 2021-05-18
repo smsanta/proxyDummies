@@ -10,12 +10,13 @@ class Environment implements AbstractObject {
 
     @Override
     def toMapObject() {
-        [ name: name, url: url ]
+        [ name: name, url: url, uriPrefix: uriPrefix ]
     }
 
     static constraints = {
         name blank: false, unique: true
         url blank: false
+        uriPrefix blank: true
     }
 
     static mapping = {

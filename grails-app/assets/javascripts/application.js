@@ -11,8 +11,11 @@
 
 //Application Resources
 //Abstract Resources
-//= require app/abstract/DuumyObject
+//= require app/abstract/DummyObject
 //= require app/abstract/AbstractFilter
+
+//Domains
+//= require app/domain/Rule
 
 //Filter Resources
 //= require app/filters/rule/SearchRuleFilter

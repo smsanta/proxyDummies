@@ -14,12 +14,9 @@ class Rule implements AbstractObject{
 
     SourceType sourceType
     HttpMethod method
-    String responseExtraHeaders
-    Integer responseStatus
+    String responseExtraHeaders = ""
+    Integer responseStatus = 200
     ServiceType serviceType
-    String forwardUrl
-
-    static belongsTo = [ environment: Environment ]
 
     @Override
     def toMapObject() {
@@ -34,16 +31,14 @@ class Rule implements AbstractObject{
             requestConditionActive: requestConditionActive,
             requestCondition: requestCondition,
             method: method.name(),
-            environment: environment.toMapObject()
+            serviceType: serviceType.name(),
+            responseStatus: responseStatus,
+            responseExtraHeaders: responseExtraHeaders ?: ""
          ]
     }
 
     Map<String, String> getResponseExtraHeadersObject(){
-        Eval.me( responseExtraHeaders )
-    }
-
-    String getDestination(){
-        forwardUrl ?: environment.url
+        responseExtraHeaders ? Eval.me( responseExtraHeaders ) : [:]
     }
 
     @Override
@@ -56,27 +51,28 @@ class Rule implements AbstractObject{
     }
 
     enum SourceType {
-        FILE,
-        DATABASE
+        DATABASE,
+        FILE
     }
 
     enum HttpMethod {
-        GET,
         POST,
+        GET,
         PUT,
         DELETE,
         ANY
     }
 
     enum ServiceType {
-        REST,
         SOAP,
+        REST,
         PROXY
     }
 
     static constraints = {
         description nullable: true
         requestCondition nullable: true
+        responseExtraHeaders nullable: true, blank: true
     }
 
     static mapping = {

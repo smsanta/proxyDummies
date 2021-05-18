@@ -8,11 +8,15 @@ class CreateRuleCommand extends MainCommand {
     String uri
     Integer priority
     Rule.SourceType sourceType
+    Rule.HttpMethod method
+    Rule.ServiceType serviceType
+    Integer responseStatus
     String data
     Boolean active
     String description
     Boolean requestConditionActive
     String requestCondition
+    String responseHeaders
 
     static constraints = {
         uri nullable: false, blank: false
@@ -27,6 +31,7 @@ class CreateRuleCommand extends MainCommand {
                 errors.rejectValue("requestCondition", "requestConditionEmpty","Request Condition no puede estar vacío si la condición esta activa.")
             }
         }
+        responseHeaders nullable: true, blank: true
     }
 
     @Override

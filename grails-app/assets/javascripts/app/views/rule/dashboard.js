@@ -130,19 +130,33 @@ var _dashboard = {
 
             if( item.sourceType == "DATABASE" ){
                 dataString = htmlGenerator.icons.server("text-blue","Ver Data", {
-                    id: item.id,
+                    id: "show-body-" + item.id,
                     "data-id": item.id,
+                    "data-show-event": "showRuleBodyData",
                     action: "watch"
                 });
             }
 
             if( item.sourceType == "FILE" ){
                 dataString = htmlGenerator.icons.fileCode("", item.data, {
-                    id: item.id,
+                    id: "show-body-" + item.id,
                     "data-id": item.id,
-                    action: "copyFilePath"
+                    "data-show-event": "showRuleBodyData",
+                    action: "watch"
                 });
             }
+
+            let hasExtraHeaders = !(item.responseExtraHeaders === "");
+
+            console.log(item.responseExtraHeaders + " -- " + hasExtraHeaders + " --- " + item.id);
+            let headersIconClass = ( hasExtraHeaders ? "bi-node-plus-fill text-green action-icon" : "bi-node-plus action-icon");
+            let headersIconTooltip = ( hasExtraHeaders ? "Click Para Ver" : "No tiene." );
+            let headersIcon = htmlGenerator.icons.any(headersIconClass, headersIconTooltip, {
+                id: item.id,
+                "data-id": item.id,
+                "data-show-event": (hasExtraHeaders ? "showRuleExtraHeaders" : ""),
+                action: "watch"
+            });
 
             let activeIconClass = (item.active ? "bi-check-circle-fill text-green action-icon" : "bi-x-circle-fill text-red action-icon");
             let activeIcon = htmlGenerator.icons.any(activeIconClass, "Rule " + (item.active ? "Activa" : "Inactiva"), {
@@ -177,6 +191,8 @@ var _dashboard = {
                 "__DESCRIPTION__": descriptionIcon,
                 "__ACTIVE__": item.active,
                 "__ACTIVE_STRING__": activeIcon,
+                "__SERVICE__": [item.serviceType, item.method, item.responseStatus].join("::"),
+                "__HEADERS__": headersIcon,
                 "__PRIORITY__": item.priority,
                 "__TYPE__": dataString,
                 "__DATA__": item.data,
@@ -190,6 +206,64 @@ var _dashboard = {
 
         _dashboard.setTableActions();
         app.startTooltips();
+    },
+
+    showRuleExtraHeaders : function(id){
+        let rowData = _dashboard.getRule(id);
+        let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml( rowData.responseExtraHeaders ) + '</textarea>';
+        app.modals.showPopup("Headers from -> " + rowData.uri + " <br> Priority: " + rowData.priority,  dataPopup, function () {
+            app.modals.closeDialog();
+        });
+    },
+
+    showRuleBodyData : function(id){
+        let rowData = _dashboard.getRule(id);
+
+        let popupTitle = "Data from -> " + rowData.uri;
+
+        if( rowData.sourceType == "FILE" ){
+            let copyPathIcon = htmlGenerator.icons.any("bi-files text-blue c-pointer d-none", "Copiar al portapapeles", {
+                id: "popup-copy-path",
+                "data-path": rowData.data
+            });
+
+            popupTitle += "<p class='popup-show-rule-data'> Path: " + rowData.data + copyPathIcon + "</p>";
+        }
+
+        if ( _dashboard._rule_data_cache[id] !== undefined ){
+            let dataPopup = '<textarea class="w-100 h-100 border-0 disabled">' + Util.escapeXml( _dashboard._rule_data_cache[id] ) + '</textarea>';
+            app.modals.showPopup(popupTitle,  dataPopup, function () {
+                app.modals.closeDialog();
+            });
+
+            $("#popup-copy-path").unbind("click").bind("click", function () {
+                console.log("Copy -> " + $(this).attr("data-path") );
+                Util.copyToClipboard( $(this).attr("data-path") )
+            });
+        } else {
+            let btnId = "show-body-" + id;
+            app.startAjax(btnId, _dashboard._loaderId, function () {
+                app.apiClient.getRuleDatabaseBody(id, function (result) {
+                        _dashboard._rule_data_cache[id] = result;
+                        app.endAjax( btnId, _dashboard._loaderId, function () {
+                            let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml(result) + '</textarea>';
+                            app.modals.showPopup(popupTitle,  dataPopup, function () {
+                                app.modals.closeDialog();
+                            });
+                            $("#popup-copy-path").unbind("click").bind("click", function () {
+                                console.log("Copy -> " + $(this).attr("data-path") );
+
+                                Util.copyToClipboard( $(this).attr("data-path") )
+                            });
+                        })
+                    },
+                    function (errorData) {
+                        app.endAjax(btnId, _dashboard._loaderId, function () {
+                            app.modals.showError("Error al desactivar la Rule.", errorData.message );
+                        })
+                    });
+            } );
+        }
     },
 
     setTableActions : function () {
@@ -327,35 +401,15 @@ var _dashboard = {
         show: function (e) {
             e.preventDefault();
             let tr = $(this).parents("tr");
-            let rowData = _dashboard.collectRuleDataFromTR(tr);
-
             let btnId = $(this).attr("id");
+            let id = tr.attr("data-id");
+            let dataShowEvent = $(this).attr("data-show-event");
 
-            let id = rowData.id;
-
-            if ( _dashboard._rule_data_cache[id] !== undefined ){
-                let dataPopup = '<textarea class="w-100 h-100 border-0 disabled">' + Util.escapeXml( _dashboard._rule_data_cache[id] ) + '</textarea>';
-                app.modals.showPopup("Data from -> " + rowData.uri,  dataPopup, function () {
-                    app.modals.closeDialog();
-                });
-            } else {
-                app.startAjax(btnId, _dashboard._loaderId, function () {
-                    app.apiClient.getRuleDatabaseBody(id, function (result) {
-                            _dashboard._rule_data_cache[id] = result;
-                            app.endAjax( btnId, _dashboard._loaderId, function () {
-                                let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml(result) + '</textarea>';
-                                app.modals.showPopup("Data from -> " + rowData.uri,  dataPopup, function () {
-                                    app.modals.closeDialog();
-                                });
-                            })
-                        },
-                        function (errorData) {
-                            app.endAjax(btnId, _dashboard._loaderId, function () {
-                                app.modals.showError("Error al desactivar la Rule.", errorData.message );
-                            })
-                        });
-                } );
+            console.log(dataShowEvent);
+            if( dataShowEvent != "" ){
+                _dashboard[dataShowEvent](id);
             }
+
         },
 
         showRequestCondition:  function (e) {
