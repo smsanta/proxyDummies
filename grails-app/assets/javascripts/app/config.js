@@ -33,7 +33,7 @@ var config = {
                 method: "POST",
                 serviceType: "SOAP",
                 responseStatus: "200",
-                responseHeaders: ""
+                responseExtraHeaders: ""
             }
         }
     }

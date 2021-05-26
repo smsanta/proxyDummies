@@ -2,6 +2,7 @@ package proxydummies.api
 
 import io.micronaut.http.HttpMethod
 import proxydummies.Configuration
+import proxydummies.Environment
 import proxydummies.ProxyService
 import proxydummies.Rule
 import proxydummies.SystemConfigsService
@@ -10,11 +11,14 @@ import proxydummies.command.DeleteCommand
 import proxydummies.command.IdCommand
 import proxydummies.command.configuration.ConfigurationKeyCommand
 import proxydummies.command.configuration.UpdateConfigurationCommand
+import proxydummies.command.environment.CreateEnvironmentCommand
+import proxydummies.command.environment.UpdateEnvironmentCommand
 import proxydummies.command.rule.CreateRuleCommand
 import proxydummies.command.rule.ImportRuleCommand
 import proxydummies.command.rule.UpdateRuleCommand
 import proxydummies.filters.FilterResult
 import proxydummies.filters.RuleFilter
+import proxydummies.filters.EnvironmentFilter
 
 class ApiController extends ApiBaseController{
 
@@ -50,7 +54,7 @@ class ApiController extends ApiBaseController{
                 ruleCommand.method,
                 ruleCommand.serviceType,
                 ruleCommand.responseStatus,
-                ruleCommand.responseHeaders,
+                ruleCommand.responseExtraHeaders,
             )
 
             respondOK( newRule.toMapObject() )
@@ -73,7 +77,7 @@ class ApiController extends ApiBaseController{
                 ruleCommand.method,
                 ruleCommand.serviceType,
                 ruleCommand.responseStatus,
-                ruleCommand.responseHeaders,
+                ruleCommand.responseExtraHeaders,
                 ruleCommand.id
             )
 
@@ -122,7 +126,7 @@ class ApiController extends ApiBaseController{
         handle{
             UpdateConfigurationCommand uConfigCommand = getCommandAndValidate( UpdateConfigurationCommand.newInstance(), HttpMethod.POST )
 
-            Configuration updatedConfiguration = systemConfigsService.updateConfig( uConfigCommand.key, uConfigCommand.value )
+            Configuration updatedConfiguration = systemConfigsService.updateConfig( uConfigCommand.key, uConfigCommand.value, uConfigCommand.description, uConfigCommand.title )
 
             respondOK( updatedConfiguration.toMapObject() )
         }
@@ -157,13 +161,61 @@ class ApiController extends ApiBaseController{
                 importRuleCommand.data,
                 importRuleCommand.description,
                 importRuleCommand.requestConditionActive,
-                importRuleCommand.requestCondition
+                importRuleCommand.requestCondition,
+                importRuleCommand.method,
+                importRuleCommand.serviceType,
+                importRuleCommand.responseStatus,
+                importRuleCommand.responseExtraHeaders
             )
 
             respondOK( importedRule.toMapObject() )
         }
     }
 
+    def searchEnvironment(){
+        handle{
+            def filter = EnvironmentFilter.newInstance( populate: getRequestParams() )
+            info(filter)
+
+            FilterResult fResult = proxyService.searchEnvironment( filter )
+
+            def items = fResult.toMapObject()
+
+            respondOK( items )
+        }
+    }
+
+    def createEnvironment(){
+        handle{
+            CreateEnvironmentCommand environmentCommand = getCommandAndValidate( CreateEnvironmentCommand.newInstance(), HttpMethod.POST )
+
+            Environment newEnvironment = proxyService.saveEnvironment(
+                environmentCommand.name,
+                environmentCommand.url,
+                environmentCommand.uriPrefix,
+                environmentCommand.id
+            )
+
+            respondOK( newEnvironment.toMapObject() )
+        }
+    }
+
+    def updateEnvironment(){
+        handle{
+            UpdateEnvironmentCommand environmentCommand = getCommandAndValidate( UpdateEnvironmentCommand.newInstance(), HttpMethod.POST )
+
+            Environment updateEnvironment = proxyService.saveEnvironment(
+                environmentCommand.name,
+                environmentCommand.url,
+                environmentCommand.uriPrefix,
+                environmentCommand.id
+            )
+
+            respondOK( updateEnvironment.toMapObject() )
+        }
+    }
+
+    //Non endpoint Methods ---------------------------------------------------------------------------------------------
     private Rule changeRuleState(Boolean newState){
         IdCommand switchCommand = getCommandAndValidate( IdCommand.newInstance(), HttpMethod.POST )
 

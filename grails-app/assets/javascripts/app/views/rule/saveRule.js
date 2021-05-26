@@ -76,7 +76,7 @@ _saveRule = {
         let method = $("#abm_input_method").select().val();
         let serviceType = $("#abm_input_service_type").select().val();
         let responseStatus = $("#abm_input_response_status").val();
-        let responseHeaders = $("#abm_input_respone_headers").val();
+        let responseExtraHeaders = $("#abm_input_respone_headers").val();
 
         return new Rule({
             id: id,
@@ -91,7 +91,7 @@ _saveRule = {
             method: method,
             serviceType: serviceType,
             responseStatus: responseStatus,
-            responseHeaders: responseHeaders,
+            responseExtraHeaders: responseExtraHeaders,
         })
     },
 
@@ -117,7 +117,7 @@ _saveRule = {
         $("#abm_input_method").select().val( data.method );
         $("#abm_input_service_type").select().val( data.serviceType );
         $("#abm_input_response_status").val( data.responseStatus );
-        $("#abm_input_respone_headers").val( data.responseHeaders );
+        $("#abm_input_respone_headers").val( data.responseExtraHeaders );
     },
 
     popupEditData: function () {

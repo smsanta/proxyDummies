@@ -144,7 +144,10 @@
                 <label for="abm_input_data" class="col-form-label">Data</label>
             </div>
             <div class="w-75 rule-form-data-input">
-                <textarea style="height: 180px;" type="text" id="abm_input_data" class="form-control" aria-describedby="dataHelpInline" placeholder="Ruta completa al archivo: C:\folder\file.xml"></textarea>
+                <textarea style="height: 180px;" type="text" id="abm_input_data" class="form-control" aria-describedby="dataHelpInline" placeholder="
+                Tipo FILE: Ruta completa al archivo: C:\folder\file.xml|json
+                Tipo DATABASE: Ingresar todo el contenido plano.
+                "></textarea>
             </div>
             <div class="col-auto">
                 <span id="dataHelpInline" class="form-text d-none">
@@ -155,7 +158,10 @@
 
         <div class="col-5 rule-form-data">
             <div class="w-25 rule-form-data-label">
-                <label for="abm_input_respone_headers" class="col-form-label">Response Headers</label>
+                <label for="abm_input_respone_headers" class="col-form-label">
+                    Response Headers
+                    <i class="bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Expresión Groovy/Java, debe retornar un Map." style="color: orange"></i>
+                </label>
             </div>
             <div class="w-75 rule-form-data-input">
                 <textarea style="height: 180px;" type="text" id="abm_input_respone_headers" class="form-control" aria-describedby="responsetHeadersHelpInline" placeholder="Expresión que debe retornar un map con los headers a ser incluidos

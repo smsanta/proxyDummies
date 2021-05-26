@@ -6,8 +6,6 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import proxydummies.abstracts.AbstractController
-import proxydummies.exceptions.DummiesException
-import proxydummies.utilities.DummiesMessageCode
 
 class ProxyController extends AbstractController {
 
@@ -18,6 +16,7 @@ class ProxyController extends AbstractController {
 
         String environmentName = params.environment
         Environment environment = Environment.findByUriPrefix( environmentName )
+        info( "Environment Key: ${ environmentName } - Obtained -> $environment" )
 
         String requestUri = getRequestUri( environment )
 
@@ -27,13 +26,19 @@ class ProxyController extends AbstractController {
 
         String redirectUrl = environment?.url
 
-        if( systemConfigsService.getEnableGlobalRedirectUrl() ){
+        Boolean isGlobalRedirectEnabled = systemConfigsService.getEnableGlobalRedirectUrl()
+        if( isGlobalRedirectEnabled ){
             redirectUrl = systemConfigsService.getGlobalRedirectUrl()
             info("Goblal redirect URL is enabled! forwaring request to: $redirectUrl" )
         }
 
         if( checkRules.isEmpty() ){
             info( "No Rules Matched for Uri: $requestUri. Forwaring to original destination.")
+            if( isGlobalRedirectEnabled == false && environment == false ){
+                info( "There is nowhere to redirect current request. FAILING!!!" )
+                render(status: 500, text: "Environment (${params.environment}) does not exist. The request has nowhere to go.")
+                return
+            }
             forwardRequest( redirectUrl, requestUri, requestBody )
         } else {
             info( "We have found rules for this uri(${checkRules.size()}) --> $checkRules"  )
@@ -41,6 +46,11 @@ class ProxyController extends AbstractController {
 
             if( !rule ){
                 info("Any rule applied to current request... Forwaring to $redirectUrl.")
+                if( isGlobalRedirectEnabled == false && environment == false ){
+                    info( "There is nowhere to redirect current request. FAILING!!!" )
+                    render(status: 500, text: "Environment (${params.environment}) does not exist. The request has nowhere to go.")
+                    return
+                }
                 forwardRequest( redirectUrl, requestUri, requestBody )
                 return
             }
@@ -70,7 +80,7 @@ class ProxyController extends AbstractController {
     }
 
     private void forwardRequest(String redirectUrl, String forwardUri, String requestBody ){
-        info( "Forwaring request -> ${request.getRequestURL()} " )
+        info( "Forwaring request -> ${request.getRequestURL()} to $redirectUrl/$forwardUri" )
 
         HttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
 
@@ -83,7 +93,7 @@ class ProxyController extends AbstractController {
             newResponse = e.getResponse()
         }
 
-        proxyService.saveResponse( forwardUri, newResponse.body() )
+        proxyService.saveResponse( forwardUri, newResponse.body(), forwardRequest.method.name() )
         mirrorResponseHeaders( newResponse, response )
 
         response.status = newResponse.getStatus().getCode()
@@ -108,5 +118,4 @@ class ProxyController extends AbstractController {
 
         newRequest
     }
-
 }

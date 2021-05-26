@@ -26,7 +26,7 @@ class Rule implements AbstractObject{
             data: data,
             active: active,
             priority: priority,
-            description: description,
+            description: description ?: "",
             sourceType: sourceType.name(),
             requestConditionActive: requestConditionActive,
             requestCondition: requestCondition,

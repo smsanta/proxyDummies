@@ -12,6 +12,6 @@
         </tr>
     </thead>
     <tbody>
-        <td colspan="6" class="no-results-row">No hay resultados!</td>
+        <td colspan="8" class="no-results-row">No hay resultados!</td>
     </tbody>
 </table>

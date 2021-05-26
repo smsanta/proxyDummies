@@ -1,13 +1,13 @@
 package proxydummies
 
 import grails.util.Environment
-import io.micronaut.http.HttpMethod
 import proxydummies.utilities.Logger
 
 class  BootStrap {
 
     SystemConfigsService systemConfigsService
     FileServicesService fileServicesService
+    ProxyService proxyService
 
     def dataSource
 
@@ -27,6 +27,18 @@ class  BootStrap {
         def proxyDummiesHome = fileServicesService.buildDefaultProxyDummiesHomeFolder()
         def saveResponsesFolder = fileServicesService.buildDefaultProxyDummiesSaveResponseFolder()
 
+        def configDefaultAmbientId = systemConfigsService.getConfigByKey( systemConfigsService.CONFIG_KEY_DEFAULT_AMBIENT)
+
+        if( !configDefaultAmbientId ){
+            proxydummies.Environment defaultAmbient = proxyService.saveEnvironment(
+                "Membrane Loopback on 8888",
+                "http://localhost:8888",
+                "bancon_soap_service_loopback"
+            )
+            configDefaultAmbientId = defaultAmbient.id
+        }
+
+
         def initialConfigs = [
             [
                 key: "globalRedirectUrl",
@@ -35,8 +47,14 @@ class  BootStrap {
                 description: "Se utiliza para redirigir todas request hacia esta url manteniendo la misma URI."
             ],
             [
+                key: "defaultEnvironment",
+                value: configDefaultAmbientId?.toString(),
+                title: "Ambiente por defecto",
+                description: "Id del ambiente seleccionado por defecto."
+            ],
+            [
                 key: "enableGlobalRedirectUrl",
-                value: "true",
+                value: "false",
                 title: "Habilita la Url de redirección global",
                 description: "Habilita el redireccionamiento global de URLs(Cuando no se encuentra ninguna Rule que matchee.)."
             ],
@@ -76,6 +94,12 @@ class  BootStrap {
                 title: "Auto-Generar archivo de import?",
                 description: "Variable que determina si al guardar un response debe generar un file con el snippet para imporatar esa request como dummy. Valores posibles: \"true\" o \"false\""
             ],
+            [
+                key: "autoGenerateImportDummyDefaultServiceType",
+                value: "SOAP",
+                title: "Auto-Gen Archivo de import default Service Type",
+                description: "Variable que determina si al generar un file con el snippet para imporatar esa request como dummy debe guardarse como REST/SOAP. Valores posibles: \"REST\" o \"SOAP\""
+            ],
         ]
 
         initialConfigs.each { conf ->
@@ -110,11 +134,12 @@ class  BootStrap {
             testRule.uri = "/esb/EAI/ChequeElectronico_Buscar/v1.0"
             testRule.data = "C:\\Users\\u900574\\proxyDummies\\DUMMIES__2021-05-07_09.35.22.867__.esb.EAI.ChequeElectronico_Buscar.v1.0.xml"
             testRule.sourceType = Rule.SourceType.FILE
-            testRule.active = true
+            testRule.active = false
             testRule.priority = 1
             testRule.method = Rule.HttpMethod.POST
             testRule.serviceType = Rule.ServiceType.SOAP
             testRule.responseExtraHeaders = "['Content-Type' : 'text/xml']"
+            testRule.description = "Test Rule"
             testRule.save( flush: true, failOnError: true )
         }
     }

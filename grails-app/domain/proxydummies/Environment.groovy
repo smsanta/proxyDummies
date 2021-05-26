@@ -10,7 +10,7 @@ class Environment implements AbstractObject {
 
     @Override
     def toMapObject() {
-        [ name: name, url: url, uriPrefix: uriPrefix ]
+        [ id: id, name: name, url: url, uriPrefix: uriPrefix ]
     }
 
     static constraints = {
@@ -23,4 +23,8 @@ class Environment implements AbstractObject {
         version false
     }
 
+    @Override
+    String toString() {
+        toMapObject()
+    }
 }

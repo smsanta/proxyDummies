@@ -27,7 +27,7 @@ var templater = {
             '</td>' +
         '</tr>',
 
-    TEMPLATE_RULE_TABLE_ROW_EMPTY: '<td colspan="6" class="no-results-row">No hay resultados!</td>',
+    TEMPLATE_RULE_TABLE_ROW_EMPTY: '<td colspan="8" class="no-results-row">No hay resultados!</td>',
     TEMPLATE_RULE_TABLE_DATA_TD_ICON_SHOW: '<i id="watch-__ID__" data-id="__ID__" class="bi-eye-fill action-icon" style="color: #1000ff;" action="watch" data-bs-toggle="tooltip" data-bs-placement="top" title="__TOOLTIP_TITLE__"></i>'
 };
 

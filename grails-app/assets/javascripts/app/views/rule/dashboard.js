@@ -148,8 +148,7 @@ var _dashboard = {
 
             let hasExtraHeaders = !(item.responseExtraHeaders === "");
 
-            console.log(item.responseExtraHeaders + " -- " + hasExtraHeaders + " --- " + item.id);
-            let headersIconClass = ( hasExtraHeaders ? "bi-node-plus-fill text-green action-icon" : "bi-node-plus action-icon");
+            let headersIconClass = ( hasExtraHeaders ? "bi-node-plus-fill text-green action-icon" : "bi-node-minus action-icon");
             let headersIconTooltip = ( hasExtraHeaders ? "Click Para Ver" : "No tiene." );
             let headersIcon = htmlGenerator.icons.any(headersIconClass, headersIconTooltip, {
                 id: item.id,
@@ -237,7 +236,6 @@ var _dashboard = {
             });
 
             $("#popup-copy-path").unbind("click").bind("click", function () {
-                console.log("Copy -> " + $(this).attr("data-path") );
                 Util.copyToClipboard( $(this).attr("data-path") )
             });
         } else {
@@ -251,7 +249,6 @@ var _dashboard = {
                                 app.modals.closeDialog();
                             });
                             $("#popup-copy-path").unbind("click").bind("click", function () {
-                                console.log("Copy -> " + $(this).attr("data-path") );
 
                                 Util.copyToClipboard( $(this).attr("data-path") )
                             });
@@ -302,7 +299,10 @@ var _dashboard = {
             let btnId = $(this).attr("id");
 
             if ( _dashboard._rule_data_cache[id] !== undefined ){
-                ruleData.data = _dashboard._rule_data_cache[id];
+                if( ruleData.sourceType == 'DATABASE' ){
+                    ruleData.data = _dashboard._rule_data_cache[id];
+                }
+
                 _saveRule.loadForm( ruleData );
                 app.navToSaveRule();
             } else {
@@ -310,7 +310,10 @@ var _dashboard = {
                     app.apiClient.getRuleDatabaseBody(id, function (result) {
                             _dashboard._rule_data_cache[id] = result;
                             app.endAjax( btnId, _dashboard._loaderId, function () {
-                                ruleData.data = _dashboard._rule_data_cache[id];
+                                if( ruleData.sourceType == 'DATABASE' ){
+                                    ruleData.data = _dashboard._rule_data_cache[id];
+                                }
+
                                 _saveRule.loadForm( ruleData );
                                 app.navToSaveRule();
                             })
@@ -401,23 +404,18 @@ var _dashboard = {
         show: function (e) {
             e.preventDefault();
             let tr = $(this).parents("tr");
-            let btnId = $(this).attr("id");
             let id = tr.attr("data-id");
             let dataShowEvent = $(this).attr("data-show-event");
 
-            console.log(dataShowEvent);
             if( dataShowEvent != "" ){
                 _dashboard[dataShowEvent](id);
             }
-
         },
 
         showRequestCondition:  function (e) {
             e.preventDefault();
             let tr = $(this).parents("tr");
             let rowData = _dashboard.collectRuleDataFromTR(tr);
-
-            let id = rowData.id;
 
             let dataPopup = '<textarea disabled class="w-100 h-100 border-0">' + rowData.requestCondition + '</textarea>';
             app.modals.showPopup("Request Condition from -> " + rowData.uri, dataPopup, function () {

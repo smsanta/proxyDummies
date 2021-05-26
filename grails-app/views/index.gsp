@@ -41,6 +41,10 @@
                         Save Rule
                         <span id="loader-save-rule" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                     </button>
+                    <button class="nav-link" id="v-pills-save-environment-tab" data-bs-toggle="pill" data-bs-target="#v-pills-save-environment" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                        Save Environment
+                        <span id="loader-save-environment" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
                     <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">
                         Configuración
                         <span id="loader-configuration" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
@@ -57,6 +61,10 @@
 
                     <div class="tab-pane fade w-100 h-100" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                         <g:render template="/rule/ABMRule" model=""/>
+                    </div>
+
+                    <div class="tab-pane fade w-100 h-100" id="v-pills-save-environment" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                        <g:render template="/environment/ABMEnvironment" model=""/>
                     </div>
 
                     <div class="tab-pane fade w-100 h-100" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
