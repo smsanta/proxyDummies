@@ -290,7 +290,7 @@ var modals = {
         }
         modalId = validator.getValueOrDefault(modalId, modals.live.currentModal);
 
-        var selectorModalId = "#" + modalId;
+        let selectorModalId = "#" + modalId;
 
 
         $( selectorModalId ).modal('hide');

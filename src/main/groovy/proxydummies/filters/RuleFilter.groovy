@@ -9,7 +9,9 @@ class RuleFilter extends AbstractFilter{
 
     Long id
     String uri
+    Rule.HttpMethod method
     Boolean active
+    Long ambientId
 
     @Override
     def getTargetClass() {

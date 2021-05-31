@@ -1,6 +1,7 @@
+<%@ page import="proxydummies.SystemConfigsService; proxydummies.Configuration" %>
 <div class="configuration-cards row">
 
-    <g:each in="${proxydummies.Configuration.findAll()}" var="eachConfig">
+    <g:each in="${proxydummies.Configuration.findAllByKeyInList( proxydummies.SystemConfigsService.getAllConfigurationKeys(), [sort: 'id', order: 'asc'] )}" var="eachConfig">
         <div class="card border border-primary text-dark bg-light mb-3 align-items-center" style="max-width: 30%;">
             <div class="card-header">
                 <i class="bi-info-circle-fill text-blue" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-original-title="${eachConfig.description}" style="float: right;"></i>

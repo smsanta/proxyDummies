@@ -522,22 +522,6 @@ h8 {
     color: #db4800
 }
 
-.row {
-    position: relative;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 5%
-}
-
-.row:before, .row:after {
-    content: " ";
-    display: table
-}
-
-.row:after {
-    clear: both
-}
-
 .band {
     background: #4298b8;
     height: 400px;
@@ -829,7 +813,7 @@ ul.nav-sidebar li.active a {
 }
 
 .table tbody tr td {
-    vertical-align: top;
+    vertical-align: middle;
     font-size: 12px;
     padding: 10px;
     border-top: 1px solid #EEE

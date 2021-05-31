@@ -50,42 +50,15 @@ _saveRule = {
                 })
             };
 
-            if(ruleData.sourceType == "DATABASE"){
-                ruleData.data = Util.escapeXml( ruleData.data );
-            }
+
+            ruleData.data = encodeURIComponent( ruleData.data );
 
             app.startAjax( _saveRule._btnSave, _saveRule._loaderId, function () {
                 if( ruleData.id > 0 ){
-                    app.apiClient.updateRule(
-                        ruleData.id,
-                        ruleData.uri,
-                        ruleData.priority,
-                        ruleData.sourceType,
-                        ruleData.data,
-                        ruleData.active,
-                        ruleData.description,
-                        ruleData.requestConditionActive,
-                        ruleData.requestCondition,
-                        ruleData.isJson,
-                        successCallback,
-                        errorCallback
-                    )
+                    app.apiClient.updateRule(ruleData, successCallback, errorCallback );
                 } else {
-                    app.apiClient.createRule(
-                        ruleData.uri,
-                        ruleData.priority,
-                        ruleData.sourceType,
-                        ruleData.data,
-                        ruleData.active,
-                        ruleData.description,
-                        ruleData.requestConditionActive,
-                        ruleData.requestCondition,
-                        ruleData.isJson,
-                        successCallback,
-                        errorCallback
-                    )
+                    app.apiClient.createRule(ruleData, successCallback, errorCallback );
                 }
-
             });
         })
     },
@@ -100,9 +73,12 @@ _saveRule = {
         let description = $("#abm_input_description").val();
         let requestConditionActive = $("#abm_input_request_condition_active").prop("checked");
         let requestCondition = $("#abm_input_request_condition").val();
-        let isJson = $("#abm_input_is_json").prop("checked");
+        let method = $("#abm_input_method").select().val();
+        let serviceType = $("#abm_input_service_type").select().val();
+        let responseStatus = $("#abm_input_response_status").val();
+        let responseExtraHeaders = $("#abm_input_respone_headers").val();
 
-        return {
+        return new Rule({
             id: id,
             uri: uri,
             priority: priority,
@@ -112,26 +88,22 @@ _saveRule = {
             description: description,
             requestCondition: requestCondition,
             requestConditionActive: requestConditionActive,
-            isJson: isJson
-        }
+            method: method,
+            serviceType: serviceType,
+            responseStatus: responseStatus,
+            responseExtraHeaders: responseExtraHeaders,
+        })
     },
 
     clearForm: function () {
-        $("#abm_input_id").val( "" );
-        $("#abm_input_uri").val("");
-        $("#abm_input_priority").val("");
-        $("#abm_input_state").prop("checked", false);
-        $("#abm_input_type").select().val("FILE");
-        $("#abm_input_data").val("");
-        $("#abm_input_description").val("");
-        $("#abm_input_request_condition_active").prop("checked", false);
-        $("#abm_input_request_condition").val("");
-        $("#abm_input_request_condition").attr("disabled", true);
-        $("#abm_input_is_json").prop("checked", false);
-
+        _saveRule._fillFillForm( config.view.saveRule.formDefaults );
     },
 
     loadForm: function ( data ) {
+        _saveRule._fillFillForm( data );
+    },
+
+    _fillFillForm: function( data ){
         $("#abm_input_id").val( data.id );
         $("#abm_input_uri").val( data.uri );
         $("#abm_input_priority").val( data.priority );
@@ -139,11 +111,13 @@ _saveRule = {
         $("#abm_input_type").select().val( data.sourceType );
         $("#abm_input_data").val( data.data );
         $("#abm_input_description").val( data.description );
-        $("#abm_input_request_condition_active").prop("checked", data.requestConditionActive);
-        $("#abm_input_request_condition").attr("disabled", !data.requestConditionActive);
-        $("#abm_input_request_condition").val(data.requestCondition);
-        $("#abm_input_is_json").prop("checked", JSON.parse( data.isJson ));
-
+        $("#abm_input_request_condition_active").prop( "checked", data.requestConditionActive );
+        $("#abm_input_request_condition").attr( "disabled", !data.requestConditionActive );
+        $("#abm_input_request_condition").val( data.requestCondition );
+        $("#abm_input_method").select().val( data.method );
+        $("#abm_input_service_type").select().val( data.serviceType );
+        $("#abm_input_response_status").val( data.responseStatus );
+        $("#abm_input_respone_headers").val( data.responseExtraHeaders );
     },
 
     popupEditData: function () {

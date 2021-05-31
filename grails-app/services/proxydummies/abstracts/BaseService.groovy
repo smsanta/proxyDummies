@@ -6,9 +6,6 @@ import org.grails.web.json.JSONObject
 
 abstract class BaseService extends AbstractGenericImpl{
 
-    //Service main attributes
-    def restClient
-
     /**
      * Validates if a JSON is valid.
      *

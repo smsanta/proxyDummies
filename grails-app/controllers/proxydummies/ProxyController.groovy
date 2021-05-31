@@ -6,53 +6,85 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import proxydummies.abstracts.AbstractController
-import proxydummies.abstracts.RequestObjectNavigator
 
-class ProxyController extends AbstractController{
+class ProxyController extends AbstractController {
 
     ProxyService proxyService
     SystemConfigsService systemConfigsService
 
     def index() {
 
-        def requestUri = proxyService.purgeProxyDummiesPrefix( request.getRequestURI() )
-        def checkRules = proxyService.getActiveRules( requestUri )
+        String environmentName = params.environment
+        Environment environment = Environment.findByUriPrefix( environmentName )
+        info( "Environment Key: ${ environmentName } - Obtained -> $environment" )
 
-        String requestBody = request.getInputStream().getText("UTF8")
+        String requestUri = getRequestUri( environment )
+
+        def checkRules = proxyService.getActiveRules( requestUri, request.method )
+
+        String requestBody = request.getInputStream().getText( INPUT_STREAM_CHARSET_UTF8 )
+
+        String redirectUrl = environment?.url
+
+        Boolean isGlobalRedirectEnabled = systemConfigsService.getEnableGlobalRedirectUrl()
+        if( isGlobalRedirectEnabled ){
+            redirectUrl = systemConfigsService.getGlobalRedirectUrl()
+            info("Goblal redirect URL is enabled! forwaring request to: $redirectUrl" )
+        }
 
         if( checkRules.isEmpty() ){
-            info( "No Rules Matched for Ur: $requestUri. Forwaring to original destination.")
-            forwardRequest( requestUri, requestBody )
+            info( "No Rules Matched for Uri: $requestUri. Forwaring to original destination.")
+            if( isGlobalRedirectEnabled == false && environment == false ){
+                info( "There is nowhere to redirect current request. FAILING!!!" )
+                render(status: 500, text: "Environment (${params.environment}) does not exist. The request has nowhere to go.")
+                return
+            }
+            forwardRequest( redirectUrl, requestUri, requestBody )
         } else {
             info( "We have found rules for this uri(${checkRules.size()}) --> $checkRules"  )
-            Rule rule = proxyService.evalRules( checkRules, requestBody )
+            Rule rule = proxyService.evalRules( checkRules, requestBody, params, requestUri )
 
-            if ( !rule ){
-                info("Any rule matched current request. request is being forwarded by default.")
-                forwardRequest( requestUri, requestBody )
-            } else {
-                String dummy = proxyService.loadDummy( rule )
-
-                if( rule.isJson ){
-                    response.addHeader('Content-Type', 'application/json')
-                }else{
-                    response.addHeader('Content-Type', 'text/xml')
+            if( !rule ){
+                info("Any rule applied to current request... Forwaring to $redirectUrl.")
+                if( isGlobalRedirectEnabled == false && environment == false ){
+                    info( "There is nowhere to redirect current request. FAILING!!!" )
+                    render(status: 500, text: "Environment (${params.environment}) does not exist. The request has nowhere to go.")
+                    return
                 }
-
-
-                render( dummy )
+                forwardRequest( redirectUrl, requestUri, requestBody )
+                return
             }
+
+            String dummy = proxyService.loadDummy( rule )
+
+            rule.getResponseExtraHeadersObject()?.each { headerKey, headerValue ->
+                response.addHeader( headerKey, headerValue )
+            }
+
+            if( rule.responseStatus ){
+                response.status = rule.responseStatus
+            }
+
+            render( dummy )
         }
     }
 
-    private void forwardRequest(forwardUri, String soapBody ){
-        info( "Forwaring request -> ${request.getRequestURL()} " )
+    private String getRequestUri( Environment environment ) {
+        String requestUri = proxyService.purgeProxyDummiesPrefix( request.getRequestURI() )
 
-        String redirectUrl = systemConfigsService.getDummiesRedirectUrl()
+        if( environment ){
+            requestUri = requestUri.replaceAll( "/${environment.uriPrefix}", "" )
+        }
+
+        requestUri
+    }
+
+    private void forwardRequest(String redirectUrl, String forwardUri, String requestBody ){
+        info( "Forwaring request -> ${request.getRequestURL()} to $redirectUrl/$forwardUri" )
+
         HttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
 
-
-        HttpRequest forwardRequest = getRequestByMethod( request.method, forwardUri, soapBody )
+        HttpRequest forwardRequest = getMirroredRequest( forwardUri, requestBody )
         HttpResponse newResponse
 
         try{
@@ -61,7 +93,7 @@ class ProxyController extends AbstractController{
             newResponse = e.getResponse()
         }
 
-        proxyService.saveResponse( forwardUri, newResponse.body() )
+        proxyService.saveResponse( forwardUri, newResponse.body(), forwardRequest.method.name() )
         mirrorResponseHeaders( newResponse, response )
 
         response.status = newResponse.getStatus().getCode()
@@ -69,6 +101,12 @@ class ProxyController extends AbstractController{
         render( newResponse.body() )
     }
 
+    private HttpRequest getMirroredRequest(String uri, String requestBody) {
+        String method = request.method
+        HttpRequest mirroredRequest = getRequestByMethod( method, uri, requestBody )
+        mirrorCurrentRequestHeaders( mirroredRequest )
+        mirroredRequest
+    }
 
     private HttpRequest getRequestByMethod(String method, String uri, String data ){
         HttpRequest newRequest
@@ -78,9 +116,6 @@ class ProxyController extends AbstractController{
             newRequest = HttpRequest.GET( uri )
         }
 
-        mirrorCurrentRequestHeaders( newRequest )
-
         newRequest
     }
-
 }

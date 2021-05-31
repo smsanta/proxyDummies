@@ -11,8 +11,12 @@
 
 //Application Resources
 //Abstract Resources
-//= require app/abstract/DuumyObject
+//= require app/abstract/DummyObject
 //= require app/abstract/AbstractFilter
+
+//Domains
+//= require app/domain/Rule
+//= require app/domain/Environment
 
 //Filter Resources
 //= require app/filters/rule/SearchRuleFilter
@@ -33,6 +37,7 @@
 // Views
 //= require app/views/rule/dashboard.js
 //= require app/views/rule/saveRule.js
+//= require app/views/environment/saveEnvironment.js
 //= require app/views/configuration/configuration.js
 
 //Main App Resources

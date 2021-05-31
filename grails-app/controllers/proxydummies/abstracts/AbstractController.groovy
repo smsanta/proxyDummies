@@ -1,12 +1,16 @@
 package proxydummies.abstracts
 
 import io.micronaut.http.HttpRequest
+import io.micronaut.http.HttpResponse
 import proxydummies.exceptions.ApiException
 import proxydummies.utilities.DummiesMessageCode
 import org.springframework.http.HttpStatus
 
+import javax.servlet.http.HttpServletResponse
+
 abstract class AbstractController extends AbstractGenericImpl{
 
+    final static INPUT_STREAM_CHARSET_UTF8 = "UTF8"
     /**
      * Returns the request parameters
      *
@@ -64,7 +68,7 @@ abstract class AbstractController extends AbstractGenericImpl{
         }
     }
 
-    protected mirrorResponseHeaders(copyHeader, pasteHeaders) {
+    protected mirrorResponseHeaders(HttpResponse copyHeader, HttpServletResponse pasteHeaders) {
         def headers = copyHeader.getHeaders()
         headers.each { header ->
             info( "Mirroring Response Headers: ${header.key} -> ${header.value}" )
@@ -85,14 +89,4 @@ abstract class AbstractController extends AbstractGenericImpl{
     def methodNotAllowed() {
         response.sendError(HttpStatus.METHOD_NOT_ALLOWED.value())
     }
-
-    protected def isAjaxRequest(){
-        params.request_type == "ajax"
-    }
-
-    protected URL getDummyUrl(){
-
-    }
-
-
 }

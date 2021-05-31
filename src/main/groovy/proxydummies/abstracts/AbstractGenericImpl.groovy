@@ -25,7 +25,7 @@ abstract class AbstractGenericImpl {
      *
      * @return
      */
-    protected getConfig(){
+    protected getApplicationConfig(){
         grailsApplication.config
     }
 
@@ -35,12 +35,12 @@ abstract class AbstractGenericImpl {
      * @param prop
      * @return
      */
-    protected getConfigProperty(String prop){
-        getConfig().getProperty( prop)
+    protected getApplicationConfigProperty(String prop){
+        getApplicationConfig().getProperty( prop)
     }
 
-    protected getConfigProperty(String prop, parseTo){
-        getConfig().getProperty( prop, parseTo)
+    protected getApplicationConfigProperty(String prop, parseTo){
+        getApplicationConfig().getProperty( prop, parseTo)
     }
 
     /**
@@ -50,8 +50,8 @@ abstract class AbstractGenericImpl {
      * @return
      */
     static def retry(Closure c, retryTimes = null){
-        retryTimes = retryTimes ?: getConfigProperty( DEFAULT_RETRY_TIMES_PROP )
-        def retrySleepTime = getConfigProperty( DEFAULT_RETRY_SLEEP_TIME_PROP )
+        retryTimes = retryTimes ?: getSystemConfigProperty( DEFAULT_RETRY_TIMES_PROP )
+        def retrySleepTime = getSystemConfigProperty( DEFAULT_RETRY_SLEEP_TIME_PROP )
 
         Throwable catchedThrowable = null
         for(int i = 0; i < retryTimes; i++){
@@ -122,6 +122,6 @@ abstract class AbstractGenericImpl {
     }
 
     protected String getConfiguration(String configProperty) {
-        systemConfigsService.getConfigValueByKey( configProperty )
+        systemConfigsService.getConfigurationValueByKey( configProperty )
     }
 }

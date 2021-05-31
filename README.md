@@ -17,6 +17,19 @@ Request ---> ProxyDummies ---> Tiene Rule Aplicable?
     ----------------------------------------------------------------------------------------------------
     |-> No: forwareo la request haciendo mirror del body y header tanto de la request como del response.
 
+
+**Anatomia de una request**
+
+http://localhost:8088/proxyDummies/bancon_soap_service/esb.EAI/TarjetasSvc
+
+                     
+< baseurl >/            
+----------------------------< proxyDummiesUriPrefix >/
+
+-------------------------------------------------< proxyDummiesEnvironment >/
+
+------------------------------------------------------------------------------< Real Request Uri >/...
+
 **Intalación** 
 
 Se requiere descargar el war de acá: 
@@ -43,25 +56,17 @@ Aantes de desplegar el war es necesario crear un usuario en su base de datos Ora
         
 **SETUP**
 
-Si vamos a **/setup** encontraremos un dashboard que permite manejar las Rules de acuerdo a nuestras necesidades.
+Si vamos a **/setup** encontraremos un dashboard que permite manejar las Rules y Environments de acuerdo a nuestras necesidades.
 
 Ahí mismo se pueden dar de alta nuevas, modificar las que ya tengamos e incluso activar y desactivar rules umdividualmente.
 Tambien puede activarse/desactivarse el saveResponses (En el header) para guardar las responses de todos las requests que
 se forwarean.
 
+Tambien se pueden dar de alta "**Environments**" los cuales se utilizan como un pseudo query string para dar redirección 
+a las request que no cumplan con ninguna Rule. es la parte "**proxy**" del proxyDummies.
 
 Por ultimo pero no menos importante esta la seccion se configuracion donde se puede setear la url de redireccion, 
 las carpetas donde guardar los responses y otras opciones utiles.
 
-**NOTAS:** 
-
-El scope final es que se puedan configurar cualquier tipo de request tanto SOAP como REST pero a priori la 
-implementacion se limita a trabajar solamente con SOAP. 
-
-Y tambien que las rules tengan la autonomia de definirse autosuficientes, es decir que ellas mismas sepan si tienen que 
-hacer un POST/GET o si es un SOAP/REST y hacia donde va a redirigir las llamadas.
-
 **TODOs**
-- Agregar soporte para REST
-- Agregar "ambientes" que son las urls finales donde las request van a ser redirigidas(Implica eliminar la config unica de redireccion) y ser asignadas a cara rule por separado.
 - Mejorar la interfaz en general.

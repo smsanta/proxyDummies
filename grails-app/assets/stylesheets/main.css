@@ -651,18 +651,6 @@ img.grails-logo {
     margin-right: 7px;
 }
 
-.rule-form {
-    margin-top: 10px;
-}
-.rule-form .row{
-    margin-bottom: 5px;
-}
-
-.rule-form .form-switch input{
-    margin-left: -13px;
-    margin-top: 10px;
-}
-
 .c-pointer{
     cursor: pointer;
 }
@@ -671,8 +659,9 @@ img.grails-logo {
     padding-top: 10px;
 }
 
-.configuration-cards .card{
+.configuration-cards .card {
     margin-right: 1rem;
+    margin-left: 15px;
 }
 
 .body-exchange{
@@ -1080,4 +1069,101 @@ img.grails-logo {
 
 .main-table{
     padding-right: 8px;
+}
+
+.popup-show-rule-data{
+    font-size: 14px;
+    margin-bottom: 0px;
+}
+
+.rule-form {
+    margin-top: 10px;
+}
+
+.rule-form h1{
+    margin-bottom: 15px;
+    text-align: center;
+    color: #0c63e4;
+}
+.rule-form button{
+    margin-top: 15px;
+    width: 200px;
+    height: 50px;
+}
+
+.rule-form .row{
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    justify-content: center;
+}
+
+.rule-form .rule-form-data div{
+    float: left;
+}
+
+.rule-form .rule-form-data-label{
+    text-align: right;
+}
+
+.rule-form .form-switch input{
+    margin-left: -13px;
+    margin-top: 10px;
+}
+
+.environment-form .update-environment-btn{
+    height: 100%;
+    width: 35%;
+}
+
+.environment-form {
+    margin-top: 10px;
+}
+
+.environment-form h1{
+    margin-bottom: 15px;
+    text-align: center;
+    color: #0c63e4;
+}
+
+.environment-form .row{
+    margin-bottom: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    justify-content: center;
+}
+
+.environment-form .row.odd{
+    background-color: #B5FFAB;
+}
+
+.environment-form .environment-form-data{
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.environment-form .environment-form-data div{
+    float: left;
+}
+
+.environment-form .environment-form-data-label{
+    text-align: right;
+}
+
+.environment-form .form-switch input{
+    margin-left: -13px;
+    margin-top: 10px;
+}
+
+
+.add-environment{
+    text-align: center;
+}
+
+.add-environment-btn{
+    margin-top: 50px;
+    height: 70px;
+    width: 200px;
 }
