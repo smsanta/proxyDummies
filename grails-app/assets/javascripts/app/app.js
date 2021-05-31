@@ -27,7 +27,7 @@ var app = {
         app.modals = modals;
         app.apiClient = apiClient;
 
-        app.views = [ _dashboard, _saveRule, _configuration ];
+        app.views = [ _dashboard, _saveRule, _configuration, _saveEnvironment ];
 
         app.load();
 	},

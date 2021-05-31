@@ -6,7 +6,7 @@ class Environment extends DummyObject{
         this.id ="";
         this.name="";
         this.url="";
-        this.urlPrefix="";
+        this.uriPrefix="";
 
         this.loadJson( loadJson );
     }

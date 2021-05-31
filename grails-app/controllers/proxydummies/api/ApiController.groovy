@@ -11,8 +11,7 @@ import proxydummies.command.DeleteCommand
 import proxydummies.command.IdCommand
 import proxydummies.command.configuration.ConfigurationKeyCommand
 import proxydummies.command.configuration.UpdateConfigurationCommand
-import proxydummies.command.environment.CreateEnvironmentCommand
-import proxydummies.command.environment.UpdateEnvironmentCommand
+import proxydummies.command.environment.SaveEnvironmentCommand
 import proxydummies.command.rule.CreateRuleCommand
 import proxydummies.command.rule.ImportRuleCommand
 import proxydummies.command.rule.UpdateRuleCommand
@@ -185,24 +184,9 @@ class ApiController extends ApiBaseController{
         }
     }
 
-    def createEnvironment(){
+    def saveEnvironment(){
         handle{
-            CreateEnvironmentCommand environmentCommand = getCommandAndValidate( CreateEnvironmentCommand.newInstance(), HttpMethod.POST )
-
-            Environment newEnvironment = proxyService.saveEnvironment(
-                environmentCommand.name,
-                environmentCommand.url,
-                environmentCommand.uriPrefix,
-                environmentCommand.id
-            )
-
-            respondOK( newEnvironment.toMapObject() )
-        }
-    }
-
-    def updateEnvironment(){
-        handle{
-            UpdateEnvironmentCommand environmentCommand = getCommandAndValidate( UpdateEnvironmentCommand.newInstance(), HttpMethod.POST )
+            SaveEnvironmentCommand environmentCommand = getCommandAndValidate( SaveEnvironmentCommand.newInstance(), HttpMethod.POST )
 
             Environment updateEnvironment = proxyService.saveEnvironment(
                 environmentCommand.name,
@@ -212,6 +196,16 @@ class ApiController extends ApiBaseController{
             )
 
             respondOK( updateEnvironment.toMapObject() )
+        }
+    }
+
+    def deleteEnvironment(){
+        handle{
+            DeleteCommand delCommand = getCommandAndValidate( DeleteCommand.newInstance(), HttpMethod.POST )
+
+            proxyService.deleteEnvironment( delCommand.id )
+
+            respondOK( "Environmet Deleted" )
         }
     }
 

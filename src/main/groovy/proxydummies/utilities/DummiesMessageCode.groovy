@@ -36,8 +36,8 @@ class DummiesMessageCode {
         (this.RULE_NOT_MATCHING_ANY) : "No se pudo evaluar ningúna regla válida.",
         (this.ENVIRONMENT_COULD_NOT_BE_FOUND) : "El id del ENVIRONMENT no esta en la base de datos.",
         (this.ENVIRONMENT_CANT_DELETE_WITH_ASOCIATED_RULE) : "No se puede eliminar un ENVIRONMENTe que este asociado a una Rule",
-        (this.ENVIRONMENT_CANT_DELETE_DEFAULT) : "No se puede eliminar un ENVIRONMENTe que este seleccionado como default.",
-        (this.RULE_ENVIRONMENT_REQUIRED) : "El ENVIRONMENTe no puede ser nulo.",
+        (this.ENVIRONMENT_CANT_DELETE_DEFAULT) : "No se puede eliminar un Environment que esté seleccionado como default.",
+        (this.RULE_ENVIRONMENT_REQUIRED) : "El Environment no puede ser nulo.",
         (this.RULE_INVALID_SERVICE_TYPE) : "El tipo de servicio no es válido.",
         (this.PROXY_NOWHERE_TO_REDIRECT) : "No hay a donde redirigir, verifique las Rules o Active la redireccion global.",
     ]

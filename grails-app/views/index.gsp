@@ -38,11 +38,11 @@
                         <span id="loader-dashboard" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                     </button>
                     <button class="nav-link" id="v-pills-save-rule-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">
-                        Save Rule
+                        Rules
                         <span id="loader-save-rule" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                     </button>
                     <button class="nav-link" id="v-pills-save-environment-tab" data-bs-toggle="pill" data-bs-target="#v-pills-save-environment" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">
-                        Save Environment
+                        Environments
                         <span id="loader-save-environment" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                     </button>
                     <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">

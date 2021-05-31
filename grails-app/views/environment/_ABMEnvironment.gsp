@@ -1,7 +1,8 @@
 <form class="environment-form">
     <h1> Save Environment </h1>
-    <g:each in="${proxydummies.Environment.findAll()}" var="eachEnvironment">
-        <div class="row ${((eachEnvironment.id % 2) == 0) ? "even" : "odd"}" data-id="${eachEnvironment.id}">
+
+    <g:each status="index" in="${proxydummies.Environment.findAll()}" var="eachEnvironment">
+        <div class="row ${((index % 2) == 0) ? "odd" : "even"}" data-id="${eachEnvironment.id}">
             <div class="col-3 environment-form-data">
                 <div class="w-25 environment-form-data-label">
                     <label for="abm_input_environment_name_${eachEnvironment.id}" class="col-form-label">Name</label>
@@ -45,8 +46,8 @@
             </div>
 
             <div class="col-3">
-                <button id="btn-save-environment-${eachEnvironment.id}" type="submit" class="btn btn-primary update-environment-btn" action="save">Guardar</button>
-                <i id="delete-${eachEnvironment.id}" class="bi-trash-fill action-icon" style="color: red; margin-left: 30px;" action="delete" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Eliminar Environment"></i>
+                <button id="btn-save-environment-${eachEnvironment.id}" data-id="${eachEnvironment.id}" data-is-new="false" type="submit" class="btn btn-primary update-environment-btn" action="save">Guardar</button>
+                <i id="delete-${eachEnvironment.id}" data-id="${eachEnvironment.id}" data-is-new="false" class="bi-trash-fill action-icon" style="color: red; margin-left: 30px;" action="delete" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Eliminar Environment"></i>
             </div>
         </div>
     </g:each>

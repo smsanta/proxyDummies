@@ -57,14 +57,24 @@ var apiClient = {
             getConfiguration : {
                 error : "Error al obtener la configuración."
             }
+        },
+        environment: {
+            save: {
+                error : "Error al guatdar el Environment."
+            },
+            delete: {
+                error: "Error al eliminar el Environment."
+            }
         }
     },
+
     /**
      * Defines the apis
      */
     module: {
         rule: "/setup/api/rule",
-        configuration: "/setup/api/configuration"
+        configuration: "/setup/api/configuration",
+        environment: "/setup/api/environment",
     },
 
     /**
@@ -86,6 +96,10 @@ var apiClient = {
         configuration: {
             getConfiguration: '/find',
             update: '/update'
+        },
+        environment: {
+            save: '/save',
+            delete: '/delete'
         }
     },
 
@@ -331,6 +345,57 @@ var apiClient = {
     },
     //---------------------- Rule ----------------------
 
+    //    ########### Environment ###########
+    saveEnvironment: function(environment, successCallback, errorCallback){
+        let urlFinal = config.baseUrl +
+            apiClient.module.environment +
+            apiClient.action.environment.save;
+
+        let json = environment.getJson();
+
+        comunicator.doPost(urlFinal, json,
+            function (data) {
+                if (data.status == 200) {
+                    successCallback(data.result);
+                } else {
+                    if( validator.isObject( errorCallback ) ){
+                        errorCallback( data );
+                    } else {
+                        app.modals.showError(apiClient.messages.environment.updateConfiguration.error, data.message );
+                    }
+                }
+            },
+            apiClient._defaultErrorCallback,
+            comunicator._responseTypes.JSON
+        )
+    },
+
+    deleteEnvironment: function (id, successCallback, errorCallback) {
+    let urlFinal = config.baseUrl +
+        apiClient.module.environment +
+        apiClient.action.environment.delete;
+
+    let json = {
+        id: id
+    };
+
+    comunicator.doPost(urlFinal, json,
+        function (data) {
+            if (data.status == 200) {
+                successCallback(data.result);
+            } else {
+                if( validator.isObject( errorCallback ) ){
+                    errorCallback( data );
+                } else {
+                    app.modals.showError(apiClient.messages.environment.delete.error, data.message );
+                }
+            }
+        },
+        apiClient._defaultErrorCallback,
+        comunicator._responseTypes.JSON
+    )
+},
+    //---------------------- Rule ----------------------
     //    ########### Configuration ###########
     updateConfiguration: function (pKey, pValue, successCallback, errorCallback) {
         let urlFinal = config.baseUrl +

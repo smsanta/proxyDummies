@@ -24,6 +24,9 @@ class UrlMappings {
         "/setup/api/configuration/find"(controller: "api", action:  [POST: "getConfiguration"])
         "/setup/api/configuration/update"(controller: "api", action:  [POST: "updateConfiguration"])
 
+        "/setup/api/environment/save"(controller: "api", action:  [POST: "saveEnvironment"])
+        "/setup/api/environment/delete"(controller: "api", action:  [POST: "deleteEnvironment"])
+
         "500"(view:'/error')
         "404"(view: 'notFound')
     }

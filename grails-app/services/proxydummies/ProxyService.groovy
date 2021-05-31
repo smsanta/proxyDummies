@@ -323,6 +323,7 @@ class ProxyService extends BaseService{
             Environment saveEnvironment = Environment.newInstance()
 
             if( id ){
+
                 saveEnvironment = Environment.findById( id )
 
                 if(!saveEnvironment){
@@ -344,15 +345,11 @@ class ProxyService extends BaseService{
         Environment deleteEnvironment = Environment.findById( id )
 
         if( !deleteEnvironment ){
-            throw new DummiesException( DummiesMessageCode.Environment_COULD_NOT_BE_FOUND )
+            throw new DummiesException( DummiesMessageCode.ENVIRONMENT_COULD_NOT_BE_FOUND )
         }
 
         if( systemConfigsService.getDefaultEnvironmentId() == deleteEnvironment.id ){
             throw new DummiesException( DummiesMessageCode.ENVIRONMENT_CANT_DELETE_DEFAULT )
-        }
-
-        if( Rule.countByEnvironment( deleteEnvironment ) > 0 ){
-            throw new DummiesException( DummiesMessageCode.ENVIRONMENT_CANT_DELETE_WITH_ASOCIATED_RULE )
         }
 
         deleteEnvironment.delete()
