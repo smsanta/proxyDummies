@@ -15,7 +15,7 @@ class SystemConfigsService extends BaseService{
     final static String CONFIG_KEY_SAVE_RESPONSE_FOLDER = "saveResponsesFolder"
     final static String CONFIG_KEY_OVERRIDE_SAVE_RESPONSE = "overrideSaveResponses"
     final static String CONFIG_KEY_OVERRIDE_SAVE_RESPONSE_EXPRESSION = "overrideSaveResponsesExpression"
-    final static String CONFIG_KEY_DEFAULT_AMBIENT = "defaultAmbientId"
+    final static String CONFIG_KEY_DEFAULT_AMBIENT = "defaultEnvironmentId"
     final static String CONFIG_KEY_AUTO_GENERATE_IMPORT_DUMMY_FROM_RESPONSES = "autoGenerateImportDummyFromResponses"
     final static String CONFIG_KEY_AUTO_GENERATE_IMPORT_DUMMY_DEFAULT_SERVICE_TYPE = "autoGenerateImportDummyDefaultServiceType"
     final static String CONFIG_KEY_DEFAULT_ENVIRONMENT = "defaultEnvironment"

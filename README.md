@@ -15,7 +15,12 @@ Request ---> ProxyDummies ---> Tiene Rule Aplicable?
     
     |-> Si: Evaluo (n) rules y ejecuta la de mayor prioridad y devuelvo el dummy configurado
     ----------------------------------------------------------------------------------------------------
-    |-> No: forwareo la request haciendo mirror del body y header tanto de la request como del response.
+    |-> No: forwareo la request haciendo mirror del body y headers tanto de la request como del response.
+
+**Como sabe el proxyDummies a donde redirigir la request si no hay rules aplicable?**
+
+Dada la url a cual se le pega (al PD) el primer slash despues del prefix indica el Environment (proxyDummies/**environment_id**). 
+Los Environment son la parte encarcargada de guardar hacia donde deben redirigirse las requests.
 
 
 **Anatomia de una request**

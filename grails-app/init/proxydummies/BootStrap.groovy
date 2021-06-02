@@ -47,7 +47,7 @@ class  BootStrap {
                 description: "Se utiliza para redirigir todas request hacia esta url manteniendo la misma URI."
             ],
             [
-                key: "defaultEnvironment",
+                key: "defaultEnvironmentId",
                 value: configDefaultAmbientId?.toString(),
                 title: "Ambiente por defecto",
                 description: "Id del ambiente seleccionado por defecto."
