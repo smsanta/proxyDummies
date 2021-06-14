@@ -25,7 +25,7 @@ Los Environment son la parte encarcargada de guardar hacia donde deben redirigir
 
 **Anatomia de una request**
 
-http://localhost:8088/proxyDummies/bancon_soap_service/esb.EAI/TarjetasSvc
+http://localhost:8088/proxyDummies/random_soap_service/path/to/endpoint
 
                      
 < baseurl >/            
@@ -75,3 +75,4 @@ las carpetas donde guardar los responses y otras opciones utiles.
 
 **TODOs**
 - Mejorar la interfaz en general.
+- Generar una app a parte para el core y la api del setup y el front.
