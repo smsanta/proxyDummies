@@ -45,9 +45,7 @@ class ProxyService extends BaseService{
     }
 
     List<Rule> getActiveRules( String uri, String method ){
-        RuleFilter ruleFilter = RuleFilter.newInstance( [ uri: uri, method: method, active: true ] )
-        FilterResult result = searchRule( ruleFilter )
-        result.results
+        Rule.findAllByUriAndMethodAndActive( uri, method, true, [sort: "priority"] )
     }
 
     Rule saveRule(String pUri,
@@ -203,6 +201,7 @@ class ProxyService extends BaseService{
 
     String purgeProxyDummiesPrefix( String str ){
         String proxyDummiesPrefix = getApplicationConfigProperty( PROXY_DUMMIES_APPLICATION_CONFIG_PREFIX )
+        info( "Purging prefix -$proxyDummiesPrefix- from -$str-." )
         str.replaceAll( proxyDummiesPrefix, "")
     }
 

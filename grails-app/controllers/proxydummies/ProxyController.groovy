@@ -5,6 +5,8 @@ import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.exceptions.HttpClientResponseException
+import io.micronaut.http.uri.UriBuilder
+import org.grails.web.util.WebUtils
 import proxydummies.abstracts.AbstractController
 
 class ProxyController extends AbstractController {
@@ -80,7 +82,7 @@ class ProxyController extends AbstractController {
     }
 
     private void forwardRequest(String redirectUrl, String forwardUri, String requestBody ){
-        info( "Forwaring request -> ${request.getRequestURL()} to $redirectUrl/$forwardUri" )
+        info( "Forwaring request -> ${request.getRequestURL()} to ${redirectUrl}${forwardUri}." )
 
         HttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
 
@@ -110,10 +112,21 @@ class ProxyController extends AbstractController {
 
     private HttpRequest getRequestByMethod(String method, String uri, String data ){
         HttpRequest newRequest
+
+        UriBuilder uriBuilder = UriBuilder.of( uri )
+
+        params.each { key, value ->
+            if( !(key in ["action", "controller", "environment"]) ){
+                uriBuilder.queryParam( key, value )
+            }
+        }
+
+        URI requestUri = uriBuilder.build()
+        info( "Building request with uri: $requestUri" )
         if( HttpMethod."$method" == HttpMethod.POST ){
-            newRequest = HttpRequest.POST( uri, data )
+            newRequest = HttpRequest.POST( requestUri, data )
         } else {
-            newRequest = HttpRequest.GET( uri )
+            newRequest = HttpRequest.GET( requestUri )
         }
 
         newRequest

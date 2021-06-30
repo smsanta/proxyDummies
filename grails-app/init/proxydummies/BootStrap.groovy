@@ -27,18 +27,6 @@ class  BootStrap {
         def proxyDummiesHome = fileServicesService.buildDefaultProxyDummiesHomeFolder()
         def saveResponsesFolder = fileServicesService.buildDefaultProxyDummiesSaveResponseFolder()
 
-        def configDefaultAmbientId = systemConfigsService.getConfigByKey( systemConfigsService.CONFIG_KEY_DEFAULT_AMBIENT)
-
-        if( !configDefaultAmbientId ){
-            proxydummies.Environment defaultAmbient = proxyService.saveEnvironment(
-                "Membrane Loopback on 8888",
-                "http://localhost:8888",
-                "bancon_soap_service_loopback"
-            )
-            configDefaultAmbientId = defaultAmbient.id
-        }
-
-
         def initialConfigs = [
             [
                 key: "globalRedirectUrl",
@@ -47,17 +35,12 @@ class  BootStrap {
                 description: "Se utiliza para redirigir todas request hacia esta url manteniendo la misma URI."
             ],
             [
-                key: "defaultEnvironmentId",
-                value: configDefaultAmbientId?.toString(),
-                title: "Ambiente por defecto",
-                description: "Id del ambiente seleccionado por defecto."
-            ],
-            [
                 key: "enableGlobalRedirectUrl",
                 value: "false",
                 title: "Habilita la Url de redirección global",
                 description: "Habilita el redireccionamiento global de URLs(Cuando no se encuentra ninguna Rule que matchee.)."
             ],
+
             [
                 key: "proxyDummiesHome",
                 value: proxyDummiesHome,
