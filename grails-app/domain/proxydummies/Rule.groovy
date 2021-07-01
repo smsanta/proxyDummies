@@ -78,5 +78,6 @@ class Rule implements AbstractObject{
     static mapping = {
         version false
         data type: "text"
+        requestCondition size: 0..3999
     }
 }
