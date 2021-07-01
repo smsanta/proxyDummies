@@ -166,7 +166,7 @@ class ProxyService extends BaseService{
     def getRequestBodyObject(String requestBody, Rule.ServiceType serviceType) {
         switch (serviceType){
             case Rule.ServiceType.REST:
-                if ( !_serviceObject ){
+                if ( !_serviceObject && requestBody ){
                     _serviceObject = requestBody as JSON
                 }
                 break
