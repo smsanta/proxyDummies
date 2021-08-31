@@ -17,6 +17,7 @@ class CreateRuleCommand extends MainCommand {
     Boolean requestConditionActive
     String requestCondition
     String responseExtraHeaders
+    Boolean includeDefaultContentType
 
     static constraints = {
         uri nullable: false, blank: false
@@ -32,6 +33,7 @@ class CreateRuleCommand extends MainCommand {
             }
         }
         responseExtraHeaders nullable: true, blank: true
+        includeDefaultContentType nullable: true, blank: true
     }
 
     @Override

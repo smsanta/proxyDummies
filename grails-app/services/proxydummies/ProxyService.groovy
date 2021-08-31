@@ -30,6 +30,10 @@ class ProxyService extends BaseService{
     final static String DUMMIES_NAME_PREFIX = "DUMMIES"
     final static String DUMMIES_RESPONSE_NAME_EXT = ".xml"
     final static String DUMMIES_IMPORT_NAME_EXT = ".json"
+    final static String CONTENT_TYPE_HEADER_KEY = 'Content-Type'
+
+    final static def DEFAULT_EXTENDED_HEADERS_SOAP = 'text/xml'
+    final static def DEFAULT_EXTENDED_HEADERS_JSON = 'application/json'
 
     FilterResult searchRule( RuleFilter filter ){
         filter.withCriteria {
@@ -60,6 +64,7 @@ class ProxyService extends BaseService{
                   Rule.ServiceType serviceType,
                   Integer responseStatus,
                   String responseExtraHeaders,
+                  Boolean includeDefaultContentType,
                   Long id = null
     ){
         handle{
@@ -79,6 +84,13 @@ class ProxyService extends BaseService{
 
             //TODO CHECK DECODE DATA.
             String ruleData = URLDecoder.decode( pData )
+
+            if( includeDefaultContentType ){
+                def extendedExtraHeaders = responseExtraHeaders ? Eval.me( responseExtraHeaders ) : [:]
+                extendedExtraHeaders[CONTENT_TYPE_HEADER_KEY] = Rule.ServiceType.SOAP == serviceType ? DEFAULT_EXTENDED_HEADERS_SOAP : DEFAULT_EXTENDED_HEADERS_JSON
+
+                responseExtraHeaders = extendedExtraHeaders.inspect()
+            }
 
             saveRule.safeSetter([
                 uri: pUri,

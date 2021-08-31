@@ -54,6 +54,7 @@ class ApiController extends ApiBaseController{
                 ruleCommand.serviceType,
                 ruleCommand.responseStatus,
                 ruleCommand.responseExtraHeaders,
+                ruleCommand.includeDefaultContentType
             )
 
             respondOK( newRule.toMapObject() )
@@ -77,6 +78,7 @@ class ApiController extends ApiBaseController{
                 ruleCommand.serviceType,
                 ruleCommand.responseStatus,
                 ruleCommand.responseExtraHeaders,
+                ruleCommand.includeDefaultContentType,
                 ruleCommand.id
             )
 

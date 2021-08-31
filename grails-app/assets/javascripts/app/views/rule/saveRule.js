@@ -77,6 +77,7 @@ _saveRule = {
         let serviceType = $("#abm_input_service_type").select().val();
         let responseStatus = $("#abm_input_response_status").val();
         let responseExtraHeaders = $("#abm_input_respone_headers").val();
+        let includeDefaultContentType = $("#abm_input_default_header").prop("checked");
 
         return new Rule({
             id: id,
@@ -92,6 +93,7 @@ _saveRule = {
             serviceType: serviceType,
             responseStatus: responseStatus,
             responseExtraHeaders: responseExtraHeaders,
+            includeDefaultContentType: includeDefaultContentType
         })
     },
 

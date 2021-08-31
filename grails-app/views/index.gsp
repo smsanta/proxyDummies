@@ -5,7 +5,7 @@
     <title>ProxyDummies</title>
 </head>
 <body>
-    <div id="content" role="main">
+    <div id="content" role="main" style="overflow: hidden">
         <nav class="navbar navbar-expand-lg navbar-dark navbar-static-top" role="navigation">
             <a class="navbar-brand" href=""><asset:image src="pmlogo.png" alt="Proxy Manager Logo" id="logo"/></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,8 +16,14 @@
                 <ul class="nav navbar-nav ml-auto">
                     <li class="nav-switcher">
                         <form class="form-switch">
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Save Responses</label>
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" ${saveResponses ? "checked" : ""}>
+                            <label class="form-check-label" for="head-switch-save-responses">Save Responses</label>
+                            <input id="head-switch-save-responses" class="form-check-input" type="checkbox" ${saveResponses ? "checked" : ""}>
+                        </form>
+                    </li>
+                    <li class="nav-switcher">
+                        <form class="form-switch">
+                            <label class="form-check-label" for="head-switch-request-logs">Request Log</label>
+                            <input id="head-switch-request-logs" class="form-check-input" type="checkbox" style="margin-left: .7rem;">
                         </form>
                     </li>
                     <li class="nav-importer">
@@ -72,6 +78,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div id="request-logs" class="logs-panel">
+            <g:render template="/requests/logs" />
         </div>
     </div>
 </body>

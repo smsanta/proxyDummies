@@ -60,16 +60,26 @@
                 <label for="abm_input_service_type" class="col-form-label">Tipo de Servicio</label>
             </div>
             <div class="w-75 rule-form-data-input">
-                <select id="abm_input_service_type" class="form-select" aria-label="Default select example">
-                    <g:each in="${proxydummies.Rule.ServiceType.values()}" var="eachServiceType">
-                        <option value="${eachServiceType.name()}"
-                            <g:if test="${eachServiceType.ordinal() == 0}">
-                                selected
-                            </g:if>
+                <div class="w-25 float-left">
+                    <select id="abm_input_service_type" class="form-select" aria-label="Default select example">
+                        <g:each in="${proxydummies.Rule.ServiceType.values()}" var="eachServiceType">
+                            <option value="${eachServiceType.name()}"
+                                <g:if test="${eachServiceType.ordinal() == 0}">
+                                    selected
+                                </g:if>
 
-                        >${eachServiceType.name()}</option>
-                    </g:each>
-                </select>
+                            >${eachServiceType.name()}</option>
+                        </g:each>
+                    </select>
+                </div>
+                <div class="form-switch w-75 float-left">
+                    <i class="bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Si permanece activado se agregará a los Response Headers un header extra por default pre-defeinido según el Tipo de Servicio.
+                        Rest: ['Content-Type': 'application/json']
+                        SOAP: ['Content-Type': 'text/xml']"
+                    style="color: orange"></i>
+                    <label for="abm_input_default_header" class="col-form-label">Incluir default Content-Type al header?</label>
+                    <input type="checkbox" checked="checked" id="abm_input_default_header" class="form-check-input" style="margin-left: 10px;">
+                </div>
             </div>
         </div>
     </div>

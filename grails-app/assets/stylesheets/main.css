@@ -1167,3 +1167,18 @@ img.grails-logo {
     height: 70px;
     width: 200px;
 }
+
+.logs-panel{
+    position: absolute;
+    top: 70%;
+    width: 100%;
+    height: 30%;
+    max-height: 30%;
+    right: 100%;
+    transition: right 1s ease 0s;
+    background-color: white;
+}
+
+.logs-panel table{
+    margin-top: 0px;
+}

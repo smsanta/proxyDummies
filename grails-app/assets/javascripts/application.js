@@ -39,6 +39,7 @@
 //= require app/views/rule/saveRule.js
 //= require app/views/environment/saveEnvironment.js
 //= require app/views/configuration/configuration.js
+//= require app/views/request/logs.js
 
 //Main App Resources
 //= require app/apiClient

@@ -3,7 +3,7 @@ _configuration = {
     _btnSave: ".btn-update-config",
     _loaderId: "#loader-configuration",
     _saveResponseKey: "saveResponses",
-    _headerSaveResponsesSelector: ".nav-switcher input",
+    _headerSaveResponsesSelector: "#head-switch-save-responses",
 
     initialize: function () {
         _configuration.setSaveEvent();

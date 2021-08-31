@@ -16,6 +16,7 @@ class Rule extends DummyObject{
         this.serviceType="";
         this.responseStatus="";
         this.responseExtraHeaders="";
+        this.includeDefaultContentType="";
 
         this.loadJson( loadJson );
     }

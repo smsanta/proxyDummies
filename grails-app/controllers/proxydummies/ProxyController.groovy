@@ -50,7 +50,7 @@ class ProxyController extends AbstractController {
                 info("Any rule applied to current request... Forwaring to $redirectUrl.")
                 if( isGlobalRedirectEnabled == false && environment == false ){
                     info( "There is nowhere to redirect current request. FAILING!!!" )
-                    render(status: 500, text: "Environment (${params.environment}) does not exist. The request has nowhere to go.")
+                    render(status: 500, text: "Environment (${params?.environment}) does not exist. The request has nowhere to go.")
                     return
                 }
                 forwardRequest( redirectUrl, requestUri, requestBody )
@@ -98,9 +98,16 @@ class ProxyController extends AbstractController {
         proxyService.saveResponse( forwardUri, newResponse.body(), forwardRequest.method.name() )
         mirrorResponseHeaders( newResponse, response )
 
+        String responseBody = newResponse.body() ?: ""
+
+        //TODO: Check why length m8 not be matching original response length.
+        if( responseBody ){
+            response.addHeader("content-length", newResponse.body().length().toString() )
+        }
+
         response.status = newResponse.getStatus().getCode()
 
-        render( newResponse.body() )
+        render( responseBody )
     }
 
     private HttpRequest getMirroredRequest(String uri, String requestBody) {
