@@ -20,6 +20,7 @@
 
 //Filter Resources
 //= require app/filters/rule/SearchRuleFilter
+//= require app/filters/logs/SearchRequestLogFilter
 
 // Static Resources
 //= require app/statics/httpStatus

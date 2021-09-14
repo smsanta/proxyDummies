@@ -69,7 +69,10 @@ var _dashboard = {
 
     _onFilterStart : function(){
         let searchFilter = _dashboard.getSearchFilter();
+        _dashboard._doSearch( searchFilter);
+    },
 
+    _doSearch: function(searchFilter){
         app.startAjax( _dashboard._btnFilter, _dashboard._loaderId, function () {
             app.apiClient.searchRules(searchFilter,
                 function (result) {

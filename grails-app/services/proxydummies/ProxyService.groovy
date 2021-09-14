@@ -2,8 +2,6 @@ package proxydummies
 
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
-import io.micronaut.http.HttpRequest
-import org.apache.commons.lang3.StringEscapeUtils
 import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
 import proxydummies.Rule.HttpMethod
@@ -12,17 +10,16 @@ import proxydummies.abstracts.BaseService
 import proxydummies.exceptions.DummiesException
 import proxydummies.filters.EnvironmentFilter
 import proxydummies.filters.FilterResult
+import proxydummies.filters.RequestLogFilter
 import proxydummies.filters.RuleFilter
 import proxydummies.utilities.DummiesMessageCode
-
-import javax.servlet.http.HttpServletRequest
-import java.util.logging.Filter
 
 @Transactional
 class ProxyService extends BaseService{
 
     SystemConfigsService systemConfigsService
     FileServicesService fileServicesService
+    def executorService
 
     private def _serviceObject = null
 
@@ -364,6 +361,45 @@ class ProxyService extends BaseService{
         }
 
         deleteEnvironment.delete()
+    }
+
+    void registerRequestLog(
+        Date date,
+        String uri,
+        Boolean forwarded,
+        String urlDestination,
+        String requestHeaders,
+        String requestBody,
+        String requestType,
+        Integer responseStatus,
+        String responseHeaders,
+        String responseBody,
+        String rule
+    ){
+        executorService.execute{
+            RequestLog newEntry = RequestLog.newInstance().safeSetter([
+                uri: uri,
+                eventDate: date,
+                forwarded: forwarded,
+                urlDestination: urlDestination,
+                requestHeaders: requestHeaders,
+                requestBody: requestBody,
+                requestType: requestType,
+                responseStatus: responseStatus,
+                responseHeaders: responseHeaders,
+                responseBody: responseBody,
+                rule: rule
+            ])
+
+            newEntry.save( flush: true, failOnError: true )
+        }
+    }
+
+    FilterResult searchRequestLogs(RequestLogFilter filter){
+        filter.withCriteria {
+            order("id", "DESC")
+            maxResults( filter.maxResults )
+        }
     }
 
 }

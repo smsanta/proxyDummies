@@ -16,6 +16,7 @@ import proxydummies.command.rule.CreateRuleCommand
 import proxydummies.command.rule.ImportRuleCommand
 import proxydummies.command.rule.UpdateRuleCommand
 import proxydummies.filters.FilterResult
+import proxydummies.filters.RequestLogFilter
 import proxydummies.filters.RuleFilter
 import proxydummies.filters.EnvironmentFilter
 
@@ -208,6 +209,19 @@ class ApiController extends ApiBaseController{
             proxyService.deleteEnvironment( delCommand.id )
 
             respondOK( "Environmet Deleted" )
+        }
+    }
+
+    def searchRequestLogs(){
+        handle{
+            def filter = RequestLogFilter.newInstance( populate: getRequestParams() )
+            info(filter)
+
+            FilterResult fResult = proxyService.searchRequestLogs( filter )
+
+            def items = fResult.toMapObject()
+
+            respondOK( items )
         }
     }
 

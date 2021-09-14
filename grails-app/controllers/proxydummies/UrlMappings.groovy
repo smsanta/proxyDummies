@@ -20,6 +20,7 @@ class UrlMappings {
         "/setup/api/rule/search"(controller: "api", action:  [GET: "searchRules"])
         "/setup/api/rule/export"(controller: "api", action:  [GET: "exportRule"])
         "/setup/api/rule/import"(controller: "api", action:  [POST: "importRule"])
+        "/setup/api/logs/search"(controller: "api", action:  [GET: "searchRequestLogs"])
 
         "/setup/api/configuration/find"(controller: "api", action:  [POST: "getConfiguration"])
         "/setup/api/configuration/update"(controller: "api", action:  [POST: "updateConfiguration"])

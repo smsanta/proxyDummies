@@ -76,14 +76,57 @@ abstract class AbstractController extends AbstractGenericImpl{
         }
     }
 
+    protected Map getResponseHeadersMap(def httpResponse) {
+        def headerMap = [:]
+
+        if ( httpResponse instanceof HttpServletResponse ){
+            httpResponse.getHeaderNames().each { String headerKey ->
+                headerMap[headerKey] = httpResponse.getHeader( headerKey )
+            }
+        }else {
+            def headers = httpResponse.getHeaders()
+            headers.each { Map.Entry header ->
+                headerMap[header.key] = header.value.first()
+            }
+        }
+
+        if ( httpResponse.contentType ){
+            headerMap['Content-Type'] = httpResponse.contentType
+        }
+
+        headerMap
+    }
+
     private void mirrorCurrentRequestHeaders(HttpRequest newRequest ){
+        readRequestHeaders { headerKey, headerValue ->
+            info( "Mirroring Request Headers: $headerKey -> $headerValue")
+            newRequest.headers.add( headerKey, headerValue )
+        }
+    }
+
+
+    /**
+     * Iterates over all request headers
+     *
+     * @param readingRequestHeaderAction
+     */
+    protected void readRequestHeaders(Closure readingRequestHeaderAction){
         Enumeration<String> headerNames = request.getHeaderNames()
         while ( headerNames.hasMoreElements()) {
             String nextElement = headerNames.nextElement()
             def header = request.getHeader(  nextElement )
-            info( "Mirroring Request Headers: $nextElement -> $header")
-            newRequest.headers.add( nextElement, header )
+            readingRequestHeaderAction( nextElement, header )
         }
+    }
+
+    protected Map getRequestHeadersMap(){
+        def headersMap = [:]
+
+        readRequestHeaders { String headerKey, String headerValue ->
+            headersMap[headerKey] = headerValue
+        }
+
+        headersMap
     }
 
     def methodNotAllowed() {

@@ -59,6 +59,22 @@ var templater = {
             '<button id="btn-save-environment-__ID__" data-id="__ID__" data-is-new="true" type="submit" class="btn btn-primary update-environment-btn" action="save">Guardar</button>' +
             '<i id="delete-__ID__" data-id="__ID__" data-is-new="true" class="bi-trash-fill action-icon" style="color: red; margin-left: 35px;" action="delete" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Eliminar Environment"></i>' +
         '</div>' +
-    '</div>'
+    '</div>',
+
+    TEMPLATE_LOGS_TABLE_ROW: '<tr data-id="__ID__" >' +
+            '<td class="results-row" style="width: 10%; min-width: 180px;"> __DATE__ </td>' +
+            '<td class="results-row">__STATUS__ </td>' +
+            '<td class="results-row">__METHOD__ </td>' +
+            '<td class="results-row">__URI__ </td>' +
+            '<td class="results-row">' +
+                '<i class="bi-telephone-outbound-fill action-icon " data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Request"></i> ' +
+            '</td>' +
+            '<td class="results-row">' +
+                '<i class="bi-telephone-inbound-fill action-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Response"></i> ' +
+            '</td>' +
+            '<td class="results-row"><i class="bi-search action-icon __DISPLAY_RULE_" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Buscar esta Rule"></i> </td>' +
+        '</tr>',
+
+    TEMPLATE_LOGS_TABLE_ROW_EMPTY: '<tr><td colspan="7" class="no-results-row"> [__DATE__] No hay logs registrados aun. </td></tr>'
 };
 

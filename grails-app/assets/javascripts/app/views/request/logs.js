@@ -3,6 +3,7 @@ _requestLogs = {
     _loaderId: "#loader-configuration",
     _contentId: "#request-logs",
     _headerRequestLogsSelector: "#head-switch-request-logs",
+    _logTableSelector: "#table-request-logs",
     _realTimeUpdateState: false,
     _realTimeUpdateInterval: undefined,
     _realTimeUpdateIntervalTimeout: 5000,
@@ -46,12 +47,45 @@ _requestLogs = {
     },
 
     loadLatestRequestLog: function(){
-      console.log("LOADING REQUEST LOG.")
+        let searchFilter = new SearchRequestLogFilter();
+        searchFilter.maxResults = $("#request-log-autoupdate-results").val();
+        apiClient.searchRequestLogs( searchFilter, function (logs) {
+            _requestLogs.fillRequestTable( logs.items );
+        });
+    },
+
+    fillRequestTable: function( items ){
+        let logsTable = $( _requestLogs._logTableSelector );
+        let tableBody = logsTable.find( "tbody" );
+
+        tableBody.empty();
+        if ( items.length ){
+            $.each(items, function (index, item) {
+               tableBody.append(
+                   templater.getFilledTemplate(
+                       {
+                           "__ID__" : item.id,
+                           "__DATE__" : item.eventDate,
+                           "__STATUS__" : item.responseStatus,
+                           "__URI__" : item.uri,
+                           "__METHOD__" : item.requestType,
+                           "__DISPLAY_RULE_": item.rule
+                       },
+                       templater.TEMPLATE_LOGS_TABLE_ROW
+                   )
+               )
+            });
+
+            app.startTooltips();
+        } else {
+            let plainDate = Util.getDateHMS();
+            tableBody.append( templater.getFilledTemplate( {"__DATE__" : plainDate}, templater.TEMPLATE_LOGS_TABLE_ROW_EMPTY ) )
+        }
     },
 
     realTimeListenerSwitcher: function ( newState ) {
         let currentState = _requestLogs._realTimeUpdateState;
-        let stateUpdate = newState === undefined ? !currentState : newState
+        let stateUpdate = newState === undefined ? !currentState : newState;
 
         let icon = $("#request-log-autoupdate");
 

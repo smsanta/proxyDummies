@@ -599,7 +599,7 @@ img.grails-logo {
 }
 
 #main-content{
-    height: -webkit-fill-available;
+    height: 90%;
 }
 
 .nav-switcher {
@@ -1027,6 +1027,9 @@ img.grails-logo {
 .t-align-center{
     text-align: center;
 }
+.t-align-right{
+    text-align: right;
+}
 
 .nav-importer{
     display: block;
@@ -1177,8 +1180,36 @@ img.grails-logo {
     right: 100%;
     transition: right 1s ease 0s;
     background-color: white;
+    overflow-y: scroll;
+    z-index: 1000;
 }
 
 .logs-panel table{
     margin-top: 0px;
+}
+
+.logs-panel table thead{
+    position: sticky;
+    top: -1px;
+}
+
+.logs-panel table thead tr th{
+    padding: 4px;
+}
+
+.logs-panel-table-header-buttons{
+    max-width: 80px;
+    display: inline-flex;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.logs-panel table tbody i {
+    cursor: pointer;
+}
+
+.results-row {
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
 }

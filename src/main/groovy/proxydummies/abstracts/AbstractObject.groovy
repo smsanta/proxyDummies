@@ -1,6 +1,7 @@
 package proxydummies.abstracts
 
 import grails.converters.JSON
+import proxydummies.utilities.Logger
 
 trait AbstractObject {
 
@@ -33,7 +34,11 @@ trait AbstractObject {
         def _this = this
         toBe.each { key, value ->
             if(value != null){
-                _this."$key" = value
+                try{
+                    _this."$key" = value
+                }catch(e){
+                    Logger.error(this, "[safeSetter] Error setting Key $key with Value: $value On $_this")
+                }
             }
         }
 

@@ -1,12 +1,16 @@
 package proxydummies
 
+import grails.converters.JSON
+import io.micronaut.http.HttpStatus
+import io.micronaut.http.client.exceptions.ReadTimeoutException
+
+import java.time.Duration
 import io.micronaut.http.HttpMethod
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.client.DefaultHttpClient
 import io.micronaut.http.client.HttpClient
-import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.http.uri.UriBuilder
-import org.grails.web.util.WebUtils
 import proxydummies.abstracts.AbstractController
 
 class ProxyController extends AbstractController {
@@ -36,7 +40,7 @@ class ProxyController extends AbstractController {
 
         if( checkRules.isEmpty() ){
             info( "No Rules Matched for Uri: $requestUri. Forwaring to original destination.")
-            if( isGlobalRedirectEnabled == false && environment == false ){
+            if( !isGlobalRedirectEnabled && !environment){
                 info( "There is nowhere to redirect current request. FAILING!!!" )
                 render(status: 500, text: "Environment (${params.environment}) does not exist. The request has nowhere to go.")
                 return
@@ -59,7 +63,7 @@ class ProxyController extends AbstractController {
 
             String dummy = proxyService.loadDummy( rule )
 
-            rule.getResponseExtraHeadersObject()?.each { headerKey, headerValue ->
+            rule.getResponseExtraHeadersObject()?.each { String headerKey, String headerValue ->
                 response.addHeader( headerKey, headerValue )
             }
 
@@ -67,8 +71,40 @@ class ProxyController extends AbstractController {
                 response.status = rule.responseStatus
             }
 
+            registerRequestLog( requestUri, false, null, requestBody, request.method, response.status, getResponseHeadersMap(response), dummy, rule )
+
             render( dummy )
         }
+    }
+
+    private void registerRequestLog(
+        String uri,
+        Boolean forwarded,
+        String redirectUrl,
+        String requestBody,
+        String requestType,
+        Integer responseStatus,
+        LinkedHashMap responseHeadersMap,
+        String responseBody,
+        Rule rule
+    ){
+        String requestHeaders = (getRequestHeadersMap() as JSON).toString()
+        String responseHeaders = (responseHeadersMap as JSON).toString()
+        String plainRule = rule ? (rule.toMapObject() as JSON).toString() : ""
+
+        proxyService.registerRequestLog (
+            Date.newInstance(),
+            uri,
+            forwarded,
+            redirectUrl,
+            requestHeaders,
+            requestBody,
+            requestType,
+            responseStatus,
+            responseHeaders,
+            responseBody,
+            plainRule
+        )
     }
 
     private String getRequestUri( Environment environment ) {
@@ -84,15 +120,18 @@ class ProxyController extends AbstractController {
     private void forwardRequest(String redirectUrl, String forwardUri, String requestBody ){
         info( "Forwaring request -> ${request.getRequestURL()} to ${redirectUrl}${forwardUri}." )
 
-        HttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
-
+        DefaultHttpClient httpClient = HttpClient.create( redirectUrl.toURL() )
+        httpClient.configuration.exceptionOnErrorStatus = false
+        httpClient.configuration.readTimeout = Duration.ofSeconds( 30 )
         HttpRequest forwardRequest = getMirroredRequest( forwardUri, requestBody )
-        HttpResponse newResponse
 
-        try{
+        HttpResponse newResponse
+        try {
             newResponse = httpClient.toBlocking().exchange(forwardRequest, String)
-        } catch(HttpClientResponseException e){
-            newResponse = e.getResponse()
+        }catch(ReadTimeoutException e){
+            //TODO Buscar la forma de enviar el status code de timeout cuando ocurre la excepcion
+            response.status = HttpStatus.REQUEST_TIMEOUT.getCode()
+            newResponse = response
         }
 
         proxyService.saveResponse( forwardUri, newResponse.body(), forwardRequest.method.name() )
@@ -106,6 +145,8 @@ class ProxyController extends AbstractController {
         }
 
         response.status = newResponse.getStatus().getCode()
+
+        registerRequestLog( forwardUri, true, redirectUrl, requestBody, request.method, response.status, getResponseHeadersMap(response), responseBody, null)
 
         render( responseBody )
     }

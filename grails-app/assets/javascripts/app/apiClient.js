@@ -65,6 +65,11 @@ var apiClient = {
             delete: {
                 error: "Error al eliminar el Environment."
             }
+        },
+        logs: {
+            search: {
+                error: "Error al buscar Request Logs."
+            }
         }
     },
 
@@ -75,6 +80,7 @@ var apiClient = {
         rule: "/setup/api/rule",
         configuration: "/setup/api/configuration",
         environment: "/setup/api/environment",
+        logs: "/setup/api/logs",
     },
 
     /**
@@ -100,6 +106,9 @@ var apiClient = {
         environment: {
             save: '/save',
             delete: '/delete'
+        },
+        logs: {
+            search: '/search',
         }
     },
 
@@ -442,6 +451,30 @@ var apiClient = {
                         errorCallback( data );
                     } else {
                         app.modals.showError(apiClient.messages.configuration.getConfiguration.error, data.message );
+                    }
+                }
+            },
+            apiClient._defaultErrorCallback,
+            comunicator._responseTypes.JSON
+        )
+    },
+
+    searchRequestLogs: function (filter, successCallback, errorCallback) {
+        let urlFinal = app.config.baseUrl +
+            apiClient.module.logs +
+            apiClient.action.logs.search;
+
+        let json = filter.getJson();
+
+        comunicator.doGet(urlFinal, json,
+            function (data) {
+                if (data.status == 200) {
+                    successCallback(data.result);
+                } else {
+                    if( validator.isObject( errorCallback ) ){
+                        errorCallback( data );
+                    } else {
+                        app.modals.showError(apiClient.messages.logs.search.error, data.message );
                     }
                 }
             },

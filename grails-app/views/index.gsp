@@ -6,7 +6,7 @@
 </head>
 <body>
     <div id="content" role="main" style="overflow: hidden">
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-static-top" role="navigation">
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-static-top" role="navigation" style="height: 12%;">
             <a class="navbar-brand" href=""><asset:image src="pmlogo.png" alt="Proxy Manager Logo" id="logo"/></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -36,7 +36,7 @@
         </nav>
 
 
-        <div id="main-content" class="row-fluid col-12 h-100">
+        <div id="main-content" class="row-fluid col-12">
             <div class="d-flex align-items-start h-100">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">
