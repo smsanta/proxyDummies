@@ -28,6 +28,10 @@
 //= require app/statics/htmlGenerator
 //
 // Utility Resources
+//= require app/utils/recurrent/Recurrent
+//= require app/utils/recurrent/Timeout
+//= require app/utils/recurrent/Interval
+
 //= require app/utils
 //= require app/validators
 //= require app/config

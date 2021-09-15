@@ -16,11 +16,11 @@ abstract class AbstractFilter implements Populable {
         result?.results?.totalCount != null ? result?.results?.totalCount : 0
     }
 
-    FilterResult withCriteria(Closure criteriaClosure){
+    FilterResult withCriteria(Closure criteriaClosure, params = [:]){
         result = FilterResult.newInstance()
 
         result.hasStatistics = false
-        result.results = getCriteria().list([:], criteriaClosure)
+        result.results = getCriteria().list(params, criteriaClosure)
 
         result
     }

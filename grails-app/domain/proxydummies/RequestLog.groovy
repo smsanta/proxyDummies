@@ -15,31 +15,30 @@ class RequestLog implements AbstractObject {
 
     Integer responseStatus
     String responseHeaders
-    String responseBody
+    String zResponseBody
 
-    String rule
+    static belongsTo = [rule: Rule]
 
     static constraints = {
-        rule nullable: true, blank: true
+        rule nullable: true
         urlDestination nullable: true, blank: true
         requestBody nullable: true, blank: true
-        responseBody nullable: true, blank: true
+        zResponseBody nullable: true, blank: true
     }
 
     static mapping = {
         version false
-        responseBody sqlType: "LONG"
         requestBody length: 4000
         responseHeaders length: 4000
         requestHeaders length: 4000
-        rule length: 4000
+        zResponseBody sqlType: "LONG"
     }
 
     @Override
     def toMapObject() {
         [
             id: id,
-            eventDate: eventDate?.format("HH:MM:ss.SSS"),
+            eventDate: eventDate?.format("HH:mm:ss.SSS"),
             uri: uri,
             forwarded: forwarded,
             urlDestination: urlDestination,
@@ -49,7 +48,11 @@ class RequestLog implements AbstractObject {
             responseHeaders: responseHeaders,
             rule: rule,
             requestBody: requestBody,
-            responseBody: responseBody
+            responseBody: zResponseBody
         ]
+    }
+
+    String getResponseBody(){
+        zResponseBody
     }
 }

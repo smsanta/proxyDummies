@@ -80,6 +80,10 @@ var app = {
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         });
+
+        $("body").unbind("click").bind("click", function () {
+            $(".tooltip").remove();
+        });
     },
 
     getBaseUrl : function(){

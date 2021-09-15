@@ -6,5 +6,7 @@ class SearchRuleFilter extends AbstractFilter{
         this.id = "";
         this.uri = "";
         this.active = "";
+
+        this.loadJson(loadJson);
     }
 }

@@ -90,7 +90,6 @@ class ProxyController extends AbstractController {
     ){
         String requestHeaders = (getRequestHeadersMap() as JSON).toString()
         String responseHeaders = (responseHeadersMap as JSON).toString()
-        String plainRule = rule ? (rule.toMapObject() as JSON).toString() : ""
 
         proxyService.registerRequestLog (
             Date.newInstance(),
@@ -103,7 +102,7 @@ class ProxyController extends AbstractController {
             responseStatus,
             responseHeaders,
             responseBody,
-            plainRule
+            rule
         )
     }
 
@@ -126,29 +125,38 @@ class ProxyController extends AbstractController {
         HttpRequest forwardRequest = getMirroredRequest( forwardUri, requestBody )
 
         HttpResponse newResponse
+        String responseBody = ""
         try {
             newResponse = httpClient.toBlocking().exchange(forwardRequest, String)
         }catch(ReadTimeoutException e){
-            //TODO Buscar la forma de enviar el status code de timeout cuando ocurre la excepcion
+            responseBody = getPDErrorMessage( e.message )
             response.status = HttpStatus.REQUEST_TIMEOUT.getCode()
-            newResponse = response
+        }catch(Exception e){
+            responseBody = getPDErrorMessage( e.message )
+            response.status = HttpStatus.INTERNAL_SERVER_ERROR.getCode()
         }
 
-        proxyService.saveResponse( forwardUri, newResponse.body(), forwardRequest.method.name() )
-        mirrorResponseHeaders( newResponse, response )
+        if( newResponse ){
+            responseBody = newResponse.body()
+            mirrorResponseHeaders( newResponse, response )
 
-        String responseBody = newResponse.body() ?: ""
+            //TODO: Check why length m8 not be matching original response length.
+            if( responseBody ){
+                response.addHeader("content-length", responseBody.length().toString() )
+            }
 
-        //TODO: Check why length m8 not be matching original response length.
-        if( responseBody ){
-            response.addHeader("content-length", newResponse.body().length().toString() )
+            response.status = newResponse.getStatus().getCode()
         }
 
-        response.status = newResponse.getStatus().getCode()
+        proxyService.saveResponse( forwardUri, responseBody, forwardRequest.method.name() )
 
         registerRequestLog( forwardUri, true, redirectUrl, requestBody, request.method, response.status, getResponseHeadersMap(response), responseBody, null)
 
         render( responseBody )
+    }
+
+    private String getPDErrorMessage(String message) {
+        "<< PD >> (Original response was empty) - Error: ${message} << PD >>"
     }
 
     private HttpRequest getMirroredRequest(String uri, String requestBody) {

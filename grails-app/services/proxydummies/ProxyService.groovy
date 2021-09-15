@@ -374,7 +374,7 @@ class ProxyService extends BaseService{
         Integer responseStatus,
         String responseHeaders,
         String responseBody,
-        String rule
+        Rule rule
     ){
         executorService.execute{
             RequestLog newEntry = RequestLog.newInstance().safeSetter([
@@ -396,10 +396,17 @@ class ProxyService extends BaseService{
     }
 
     FilterResult searchRequestLogs(RequestLogFilter filter){
-        filter.withCriteria {
-            order("id", "DESC")
-            maxResults( filter.maxResults )
-        }
+        filter.withCriteria ({
+            order("eventDate", "desc")
+        }, [max: filter.maxResults])
+    }
+
+    void emptyRequestLogs(){
+        Date today = Date.newInstance().clearTime()
+
+        info( "Clearing request logs older than: ${today}" )
+        def resp = RequestLog.executeUpdate( "DELETE FROM RequestLog WHERE eventDate < :todayDate", [todayDate: today] )
+        info( "$resp items where cleared from db." )
     }
 
 }

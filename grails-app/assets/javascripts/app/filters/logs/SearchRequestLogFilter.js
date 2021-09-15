@@ -4,5 +4,7 @@ class SearchRequestLogFilter extends AbstractFilter{
         super(loadJson);
 
         this.maxResults = "";
+
+        this.loadJson( loadJson );
     }
 }

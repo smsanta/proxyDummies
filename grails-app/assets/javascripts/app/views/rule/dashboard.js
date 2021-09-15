@@ -218,7 +218,7 @@ var _dashboard = {
         });
     },
 
-    showRuleBodyData : function(id){
+    showRuleBodyData : function(id, opts){
         let rowData = _dashboard.getRule(id);
 
         let popupTitle = "Data from -> " + rowData.uri;
@@ -234,6 +234,8 @@ var _dashboard = {
 
         if ( _dashboard._rule_data_cache[id] !== undefined ){
             let dataPopup = '<textarea class="w-100 h-100 border-0 disabled">' + Util.escapeXml( _dashboard._rule_data_cache[id] ) + '</textarea>';
+
+            popupTitle = (opts && opts.title) ? opts.title : popupTitle;
             app.modals.showPopup(popupTitle,  dataPopup, function () {
                 app.modals.closeDialog();
             });
@@ -245,24 +247,24 @@ var _dashboard = {
             let btnId = "show-body-" + id;
             app.startAjax(btnId, _dashboard._loaderId, function () {
                 app.apiClient.getRuleDatabaseBody(id, function (result) {
-                        _dashboard._rule_data_cache[id] = result;
-                        app.endAjax( btnId, _dashboard._loaderId, function () {
-                            let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml(result) + '</textarea>';
-                            app.modals.showPopup(popupTitle,  dataPopup, function () {
-                                app.modals.closeDialog();
-                            });
-                            $("#popup-copy-path").unbind("click").bind("click", function () {
+                    _dashboard._rule_data_cache[id] = result;
+                    app.endAjax( btnId, _dashboard._loaderId, function () {
+                        let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml(result) + '</textarea>';
+                        app.modals.showPopup(popupTitle,  dataPopup, function () {
+                            app.modals.closeDialog();
+                        });
+                        $("#popup-copy-path").unbind("click").bind("click", function () {
 
-                                Util.copyToClipboard( $(this).attr("data-path") )
-                            });
-                        })
-                    },
-                    function (errorData) {
-                        app.endAjax(btnId, _dashboard._loaderId, function () {
-                            app.modals.showError("Error al desactivar la Rule.", errorData.message );
-                        })
-                    });
-            } );
+                            Util.copyToClipboard( $(this).attr("data-path") )
+                        });
+                    })
+                },
+                function (errorData) {
+                    app.endAjax(btnId, _dashboard._loaderId, function () {
+                        app.modals.showError("Error al desactivar la Rule.", errorData.message );
+                    })
+                });
+            });
         }
     },
 
@@ -475,6 +477,13 @@ var _dashboard = {
                 rule = eachRule;
             }
         });
+
+        if( !rule ){
+            apiClient.searchRules( new SearchRuleFilter({id: id} ), function (rule) {
+                console.log( rule );
+            });
+
+        }
 
         return rule;
     }

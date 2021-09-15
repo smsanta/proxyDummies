@@ -36,7 +36,7 @@
         </nav>
 
 
-        <div id="main-content" class="row-fluid col-12">
+        <div id="main-content" class="row-fluid col-12 h-100" style="height: 60%;">
             <div class="d-flex align-items-start h-100">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">

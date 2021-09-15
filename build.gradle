@@ -65,6 +65,7 @@ dependencies {
     runtime "org.apache.tomcat:tomcat-jdbc"
     runtime "javax.xml.bind:jaxb-api:2.3.1"
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:3.2.4"
+    runtime 'org.codehaus.groovy:groovy-dateutil'
     testCompile "io.micronaut:micronaut-inject-groovy"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.mockito:mockito-core"

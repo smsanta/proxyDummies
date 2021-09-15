@@ -28,6 +28,10 @@ class UrlMappings {
         "/setup/api/environment/save"(controller: "api", action:  [POST: "saveEnvironment"])
         "/setup/api/environment/delete"(controller: "api", action:  [POST: "deleteEnvironment"])
 
+        if ( grails.util.Environment.current == grails.util.Environment.DEVELOPMENT ){
+            "/setup/api/logs/delete"(controller: "api", action:  [GET: "emptyLogs"])
+        }
+
         "500"(view:'/error')
         "404"(view: 'notFound')
     }

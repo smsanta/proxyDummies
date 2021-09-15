@@ -225,6 +225,12 @@ class ApiController extends ApiBaseController{
         }
     }
 
+    def emptyLogs(){
+        proxyService.emptyRequestLogs()
+
+        render("Ok" )
+    }
+
     //Non endpoint Methods ---------------------------------------------------------------------------------------------
     private Rule changeRuleState(Boolean newState){
         IdCommand switchCommand = getCommandAndValidate( IdCommand.newInstance(), HttpMethod.POST )

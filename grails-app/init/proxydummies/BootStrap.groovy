@@ -16,8 +16,8 @@ class  BootStrap {
         extendFuntionalities()
         loadInitialConfig()
         loadTestData()
+        cleanRequestLogsData()
     }
-
     def destroy = {
     }
 
@@ -141,5 +141,9 @@ class  BootStrap {
     void extendFuntionalities(){
         StringExtension.extendStringMehtods()
         DateExtension.extendDateMehtods()
+    }
+
+    void cleanRequestLogsData() {
+        proxyService.emptyRequestLogs()
     }
 }
