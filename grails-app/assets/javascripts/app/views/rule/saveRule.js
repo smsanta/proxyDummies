@@ -3,6 +3,10 @@ _saveRule = {
     _btnSave : "#btn-save-rule",
     _loaderId: "#loader-save-rule",
 
+
+    _testConditionUrl : "https://groovyconsole.appspot.com/edit/5072938134929408",
+
+
     initialize: function () {
         _saveRule.setSaveEvent();
         _saveRule.setTextAreaEditEvents();
@@ -133,8 +137,16 @@ _saveRule = {
                 ruleSavedData = (_dashboard._rule_data_cache[ruleId] !== undefined) ? _dashboard._rule_data_cache[ruleId] : ruleData.data;
             }
 
-            let dataPopup = '<textarea id="ta-pop-'+  ruleId +'" class="w-100 h-100 border-0">' + Util.escapeXml( ruleSavedData ) + '</textarea>';
-            app.modals.showPopup("Data from -> " + ruleData.uri,  dataPopup, function () {
+
+            let title = "Data from -> " + ruleData.uri;
+            let content =  Util.escapeXml( ruleSavedData );
+            let dataPopup = htmlGenerator.tag.textarea({
+                id: "ta-pop-"+  ruleId,
+                class: "w-100 h-100 border-0",
+                text: content
+            });
+
+            app.modals.showPopup(title,  dataPopup, function () {
                 let newRuleData = $('#ta-pop-'+  ruleId).val();
                 $("#abm_input_data").val( newRuleData );
                 app.modals.closeDialog();
@@ -148,20 +160,34 @@ _saveRule = {
         if( ruleData.requestConditionActive == true){
             let ruleId = ruleData.id;
 
-            let testButton = '<a href="https://groovyconsole.appspot.com/edit/5072938134929408" ' +
-                'target="_blank" class="btn btn-warning" ' +
-                'style="float: right; margin-right: 8px;" ' +
-                'data-bs-toggle="tooltip" data-bs-placement="right" title="Si aparece en blanco, intenta recargar la pagina."' +
-                '>Probar Expression</a>';
+            let testButton = htmlGenerator.tag.a({
+                href: _saveRule._testConditionUrl,
+                target: "_blank",
+                class: "btn btn-warning",
+                "data-bs-toggle": "tooltip",
+                "data-bs-placement": "right",
+                "title": "Si aparece en blanco, intenta recargar la pagina.",
+                text: "Probar Expression"
+            }, {
+                float: "right",
+                "margin-right": "8px"
+            });
 
             let infoIcons =
                 '<a href="https://docs.groovy-lang.org/latest/html/api/groovy/util/XmlParser.html" target="_blank" style="float: right; margin-right: 10px;">' +
                     '<i class="bi-info-circle-fill text-blue" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-original-title="Click para ver sobre XmlParser"></i></a>' +
                 '<a href="https://github.com/smsanta/proxyDummies/tree/master/grails-app/utils/proxydummies/XmlNavigator.groovy" target="_blank" style="float: right; margin-right: 10px;">' +
                     '<i class="bi-info-circle-fill text-blue" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-original-title="Click para ver la clase wrapper."></i></a>';
-            let dataPopup = '<textarea id="ta-pop-rc-'+  ruleId +'" class="w-100 h-100 border-0">' + ruleData.requestCondition + '</textarea>';
 
-            app.modals.showPopup("Request Condition from -> " + ruleData.uri + testButton + infoIcons,  dataPopup, function () {
+            let title = "Request Condition from -> " + ruleData.uri + testButton + infoIcons;
+            let content = ruleData.requestCondition;
+            let dataPopup = htmlGenerator.tag.textarea({
+                id: "ta-pop-rc-" + ruleId,
+                class: "w-100 h-100 border-0",
+                text: content
+            });
+
+            app.modals.showPopup(title,  dataPopup, function () {
                 let newRuleRequestCondition = $('#ta-pop-rc-'+  ruleId).val();
                 $("#abm_input_request_condition").val( newRuleRequestCondition );
                 app.modals.closeDialog();

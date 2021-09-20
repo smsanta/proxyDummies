@@ -28,7 +28,11 @@ var _dashboard = {
             e.preventDefault();
 
             let popupTextAreaTmpId = "tmp-ta-" + Date.now();
-            let dataPopup = '<textarea id="'+ popupTextAreaTmpId +'" class="w-100 h-100 border-0"></textarea>';
+
+            let dataPopup = htmlGenerator.tag.textarea({
+                id: popupTextAreaTmpId,
+                class: "w-100 h-100 border-0"
+            });
 
             app.modals.promtModal("Import Rule -> Pegar JSON raw", dataPopup ,
                 function () {
@@ -212,8 +216,16 @@ var _dashboard = {
 
     showRuleExtraHeaders : function(id){
         let rowData = _dashboard.getRule(id);
-        let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml( rowData.responseExtraHeaders ) + '</textarea>';
-        app.modals.showPopup("Headers from -> " + rowData.uri + " <br> Priority: " + rowData.priority,  dataPopup, function () {
+
+        let title = "Headers from -> " + rowData.uri + " <br> Priority: " + rowData.priority;
+        let content = Util.escapeXml( rowData.responseExtraHeaders );
+        let dataPopup = htmlGenerator.tag.textarea({
+            disabled: "",
+            class: "w-100 h-100 border-0",
+            text: content
+        });
+
+        app.modals.showPopup(title,  dataPopup, function () {
             app.modals.closeDialog();
         });
     },
@@ -233,10 +245,15 @@ var _dashboard = {
         }
 
         if ( _dashboard._rule_data_cache[id] !== undefined ){
-            let dataPopup = '<textarea class="w-100 h-100 border-0 disabled">' + Util.escapeXml( _dashboard._rule_data_cache[id] ) + '</textarea>';
+            let title = (opts && opts.title) ? opts.title : popupTitle;
+            let content = Util.escapeXml( _dashboard._rule_data_cache[id] );
+            let dataPopup = htmlGenerator.tag.textarea({
+                disabled: "",
+                class: "w-100 h-100 border-0",
+                text: content
+            });
 
-            popupTitle = (opts && opts.title) ? opts.title : popupTitle;
-            app.modals.showPopup(popupTitle,  dataPopup, function () {
+            app.modals.showPopup(title,  dataPopup, function () {
                 app.modals.closeDialog();
             });
 
@@ -249,12 +266,19 @@ var _dashboard = {
                 app.apiClient.getRuleDatabaseBody(id, function (result) {
                     _dashboard._rule_data_cache[id] = result;
                     app.endAjax( btnId, _dashboard._loaderId, function () {
-                        let dataPopup = '<textarea class="w-100 h-100 border-0" disabled>' + Util.escapeXml(result) + '</textarea>';
-                        app.modals.showPopup(popupTitle,  dataPopup, function () {
+                        let title = popupTitle;
+                        let content = Util.escapeXml(result);
+                        let dataPopup = htmlGenerator.tag.textarea({
+                            disabled: "",
+                            class: "w-100 h-100 border-0",
+                            text: content
+                        });
+
+                        app.modals.showPopup(title,  dataPopup, function () {
                             app.modals.closeDialog();
                         });
-                        $("#popup-copy-path").unbind("click").bind("click", function () {
 
+                        $("#popup-copy-path").unbind("click").bind("click", function () {
                             Util.copyToClipboard( $(this).attr("data-path") )
                         });
                     })
@@ -422,8 +446,15 @@ var _dashboard = {
             let tr = $(this).parents("tr");
             let rowData = _dashboard.collectRuleDataFromTR(tr);
 
-            let dataPopup = '<textarea disabled class="w-100 h-100 border-0">' + rowData.requestCondition + '</textarea>';
-            app.modals.showPopup("Request Condition from -> " + rowData.uri, dataPopup, function () {
+            let title = "Request Condition from -> " + rowData.uri;
+            let content = rowData.requestCondition;
+            let dataPopup = htmlGenerator.tag.textarea({
+                disabled: "",
+                class: "w-100 h-100 border-0",
+                text: content
+            });
+
+            app.modals.showPopup(title, dataPopup, function () {
                 app.modals.closeDialog();
             });
         },

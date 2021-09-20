@@ -68,13 +68,16 @@ var templater = {
             '<td class="results-row">__URI__ </td>' +
             '<td class="results-row">' +
                 '<i class="bi-window-dock action-icon text-green" action="view-request-body" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Body"></i> ' +
-        '<i class="bi-window action-icon text-green" action="view-request-header" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Headers"></i> ' +
+                '<i class="bi-window action-icon text-green" action="view-request-header" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Headers"></i> ' +
             '</td>' +
             '<td class="results-row">' +
                 '<i class="bi-window-dock action-icon text-blue" action="view-response-body" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Body"></i> ' +
-        '<i class="bi-window action-icon text-blue" action="view-response-header" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Headers"></i> ' +
+                '<i class="bi-window action-icon text-blue" action="view-response-header" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Ver Headers"></i> ' +
             '</td>' +
-            '<td class="results-row"><i class="bi-search action-icon __DISPLAY_RULE__" action="view-rule" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Buscar esta Rule"></i> </td>' +
+            '<td class="results-row">' +
+                '<i class="bi-search action-icon __DISPLAY_RULE__" action="view-rule" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="Buscar esta Rule"></i> ' +
+                '<i class="bi-skip-forward-fill action-icon __DISPLAY_FORWARD__" data-bs-toggle="tooltip" data-bs-placement="top" data-original-title="__FORWARD_TOOLTIP__"></i> ' +
+            '</td>' +
         '</tr>',
 
     TEMPLATE_LOGS_TABLE_ROW_EMPTY: '<tr><td colspan="7" class="no-results-row"> [__DATE__] No hay logs para mostrar. </td></tr>'

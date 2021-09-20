@@ -1,4 +1,4 @@
-_requestLogs = {
+let _requestLogs = {
 
     _loaderId: "#loader-configuration",
     _contentId: "#request-logs",
@@ -8,7 +8,7 @@ _requestLogs = {
     _realTimeUpdateIntervalTimeRemaining: undefined,
     _realTimeUpdateIntervalTimeout: 5000,
     _searchLogs : [],
-    _emptyBodyMessage: "<< PD >> (Original response was empty) << PD >>",
+    _emptyBodyMessage: "<< PD >> (Original body was empty) << PD >>",
 
     initialize: function () {
         _requestLogs.startHeaderLogsEvent();
@@ -86,18 +86,20 @@ _requestLogs = {
             $.each(items, function (index, item) {
                 _requestLogs._searchLogs[item.id] = item;
 
+               let forwarded = !validator.isObject(item.rule);
                tableBody.append(
                    templater.getFilledTemplate(
                    {
-                           "__ID__" : item.id,
-                           "__DATE__" : item.eventDate,
-                           "__STATUS__" : item.responseStatus,
-                           "__URI__" : item.uri,
-                           "__METHOD__" : item.requestType,
-                           "__DISPLAY_RULE__": (validator.isObject(item.rule) ? "" : "d-none")
-                       },
-                       templater.TEMPLATE_LOGS_TABLE_ROW
-                   )
+                       "__ID__" : item.id,
+                       "__DATE__" : item.eventDate,
+                       "__STATUS__" : item.responseStatus,
+                       "__URI__" : item.uri,
+                       "__METHOD__" : item.requestType,
+                       "__DISPLAY_RULE__": ( forwarded ? "d-none" : "" ),
+                       "__DISPLAY_FORWARD__": (forwarded ? "" : "d-none"),
+                       "__FORWARD_TOOLTIP__": (forwarded ? ("Forwarded to: " + item.urlDestination) : "")
+                   },
+                   templater.TEMPLATE_LOGS_TABLE_ROW )
                )
             });
 
@@ -168,8 +170,15 @@ _requestLogs = {
 
             _requestLogs.realTimeListenerSwitcher( false );
 
-            let dataPopup = '<textarea disabled class="w-100 h-100 border-0">' + validator.getValueOrDefault(logItem.requestBody, _requestLogs._emptyBodyMessage) + '</textarea>';
-            app.modals.showPopup("Request Body: [" + logItem.eventDate + "] - " + logItem.uri, dataPopup, function () {
+            let title = "Request Body: [" + logItem.eventDate + "] - " + logItem.uri;
+            let content = validator.getValueOrDefault(logItem.requestBody, _requestLogs._emptyBodyMessage);
+            let dataPopup = htmlGenerator.tag.textarea({
+                disabled: "",
+                class: "w-100 h-100 border-0",
+                text: content
+            });
+
+            app.modals.showPopup(title, dataPopup, function () {
                 app.modals.closeDialog();
             });
         },
@@ -180,14 +189,21 @@ _requestLogs = {
 
             _requestLogs.realTimeListenerSwitcher( false );
 
+            let title = "Request Headers: [" + logItem.eventDate + "] - " + logItem.uri;
+
             let content = validator.getValueOrDefault( logItem.requestHeaders , "");
 
             if( content ){
                 content = JSON.stringify(JSON.parse(content),null,2);
             }
 
-            let dataPopup = '<textarea disabled class="w-100 h-100 border-0">' + content + '</textarea>';
-            app.modals.showPopup("Request Headers: [" + logItem.eventDate + "] - " + logItem.uri, dataPopup, function () {
+            let dataPopup = htmlGenerator.tag.textarea( {
+                disabled: "",
+                class: "w-100 h-100 border-0",
+                text: content
+            });
+
+            app.modals.showPopup(title, dataPopup, function () {
                 app.modals.closeDialog();
             });
         },
@@ -203,7 +219,13 @@ _requestLogs = {
             if ( validator.isObject(logItem.rule) ){
                     _dashboard.showRuleBodyData( logItem.rule.id, { title: title } )
             } else {
-                let dataPopup = '<textarea disabled class="w-100 h-100 border-0">' + validator.getValueOrDefault(logItem.responseBody, "") + '</textarea>';
+                let content = validator.getValueOrDefault(logItem.responseBody, _requestLogs._emptyBodyMessage);
+                let dataPopup = htmlGenerator.tag.textarea({
+                    disabled: "",
+                    class: "w-100 h-100 border-0",
+                    text: content
+                });
+
                 app.modals.showPopup(title, dataPopup, function () {
                     app.modals.closeDialog();
                 });
@@ -223,11 +245,15 @@ _requestLogs = {
                 content = JSON.stringify(JSON.parse(content),null,2);
             }
 
-            let dataPopup = '<textarea disabled class="w-100 h-100 border-0">' + content + '</textarea>';
+            let dataPopup = htmlGenerator.tag.textarea({
+                disabled: "",
+                class: "w-100 h-100 border-0",
+                text: content
+            });
+
             app.modals.showPopup(title, dataPopup, function () {
                 app.modals.closeDialog();
             });
-
         }
     },
 

@@ -13,7 +13,7 @@ class  BootStrap {
 
     def init = { servletContext ->
         checkDb()
-        extendFuntionalities()
+        extendFunctionalities()
         loadInitialConfig()
         loadTestData()
         cleanRequestLogsData()
@@ -40,7 +40,6 @@ class  BootStrap {
                 title: "Habilita la Url de redirección global",
                 description: "Habilita el redireccionamiento global de URLs(Cuando no se encuentra ninguna Rule que matchee.)."
             ],
-
             [
                 key: "proxyDummiesHome",
                 value: proxyDummiesHome,
@@ -138,7 +137,7 @@ class  BootStrap {
         }
     }
 
-    void extendFuntionalities(){
+    void extendFunctionalities(){
         StringExtension.extendStringMehtods()
         DateExtension.extendDateMehtods()
     }

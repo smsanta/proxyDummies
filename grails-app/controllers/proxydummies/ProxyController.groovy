@@ -19,32 +19,34 @@ class ProxyController extends AbstractController {
     SystemConfigsService systemConfigsService
 
     def index() {
-
-        String environmentName = params.environment
-        Environment environment = Environment.findByUriPrefix( environmentName )
-        info( "Environment Key: ${ environmentName } - Obtained -> $environment" )
-
-        String requestUri = getRequestUri( environment )
-
-        def checkRules = proxyService.getActiveRules( requestUri, request.method )
-
-        String requestBody = request.getInputStream().getText( INPUT_STREAM_CHARSET_UTF8 )
-
-        String redirectUrl = environment?.url
+        String redirectUrl
+        Environment environment
 
         Boolean isGlobalRedirectEnabled = systemConfigsService.getEnableGlobalRedirectUrl()
         if( isGlobalRedirectEnabled ){
             redirectUrl = systemConfigsService.getGlobalRedirectUrl()
-            info("Goblal redirect URL is enabled! forwaring request to: $redirectUrl" )
+            info("Goblal redirect URL is enabled! If forwarding request happens will go to: $redirectUrl" )
+        } else {
+            String environmentName = params.environment
+            environment = Environment.findByUriPrefix( environmentName )
+            info( "Environment Key: ${ environmentName } - Obtained -> $environment" )
+
+            redirectUrl = environment?.url
         }
+
+        if( !isGlobalRedirectEnabled && !redirectUrl){
+            info( "There is nowhere to redirect current request. FAILING!!!" )
+            render(status: HttpStatus.INTERNAL_SERVER_ERROR.code, text: "<< PD >> Environment (${params.environment}) does not exist. The request has nowhere to go. << PD >>")
+            return
+        }
+
+        String requestUri = getRequestUri( environment )
+        String requestBody = request.getInputStream().getText( INPUT_STREAM_CHARSET_UTF8 )
+
+        def checkRules = proxyService.getActiveRules( requestUri, request.method )
 
         if( checkRules.isEmpty() ){
             info( "No Rules Matched for Uri: $requestUri. Forwaring to original destination.")
-            if( !isGlobalRedirectEnabled && !environment){
-                info( "There is nowhere to redirect current request. FAILING!!!" )
-                render(status: 500, text: "Environment (${params.environment}) does not exist. The request has nowhere to go.")
-                return
-            }
             forwardRequest( redirectUrl, requestUri, requestBody )
         } else {
             info( "We have found rules for this uri(${checkRules.size()}) --> $checkRules"  )
@@ -52,11 +54,6 @@ class ProxyController extends AbstractController {
 
             if( !rule ){
                 info("Any rule applied to current request... Forwaring to $redirectUrl.")
-                if( isGlobalRedirectEnabled == false && environment == false ){
-                    info( "There is nowhere to redirect current request. FAILING!!!" )
-                    render(status: 500, text: "Environment (${params?.environment}) does not exist. The request has nowhere to go.")
-                    return
-                }
                 forwardRequest( redirectUrl, requestUri, requestBody )
                 return
             }

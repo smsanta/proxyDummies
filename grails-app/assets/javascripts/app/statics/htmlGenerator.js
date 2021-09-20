@@ -1,12 +1,12 @@
-var htmlGenerator = {
+let htmlGenerator = {
 
-    temaplates: {
+    templates: {
         tag: '<___TAG___></___TAG___>'
     },
 
     tag: {
         icon: function (attributtes, css, plainString) {
-            var newIcon = htmlGenerator.tag._createElement("i", attributtes);
+            let newIcon = htmlGenerator.tag._createElement("i", attributtes, css);
 
             if (validator.isObject(plainString)) {
                 return newIcon;
@@ -16,7 +16,27 @@ var htmlGenerator = {
         },
 
         span: function (attributtes, css, plainString) {
-            var newSpan = htmlGenerator.tag._createElement("span", attributtes);
+            let newSpan = htmlGenerator.tag._createElement("span", attributtes, css);
+
+            if (validator.isObject(plainString)) {
+                return newSpan;
+            } else {
+                return newSpan.prop('outerHTML');
+            }
+        },
+
+        textarea: function (attributtes, css, plainString) {
+            let newSpan = htmlGenerator.tag._createElement("textarea", attributtes, css);
+
+            if (validator.isObject(plainString)) {
+                return newSpan;
+            } else {
+                return newSpan.prop('outerHTML');
+            }
+        },
+
+        a: function (attributtes, css, plainString) {
+            let newSpan = htmlGenerator.tag._createElement("a", attributtes, css);
 
             if (validator.isObject(plainString)) {
                 return newSpan;
@@ -26,10 +46,10 @@ var htmlGenerator = {
         },
 
         _createElement: function (tag, attributtes, css) {
-            var tagTemplate = htmlGenerator.temaplates.tag;
+            let tagTemplate = htmlGenerator.templates.tag;
             tagTemplate = tagTemplate.replaceAll('___TAG___', tag);
 
-            var newElement = $(tagTemplate);
+            let newElement = $(tagTemplate);
 
             if (validator.isObject(attributtes)) {
                 $.each(attributtes, function (key, value) {
@@ -55,7 +75,7 @@ var htmlGenerator = {
 
     icons: {
         any: function(iconClass, tooltip, attrs, plainString){
-            var base = {
+            let base = {
                 "data-bs-toggle": "tooltip",
                 "data-bs-placement": "top",
                 "title": tooltip
@@ -63,7 +83,7 @@ var htmlGenerator = {
 
             $.extend(base, attrs);
 
-            var element = htmlGenerator.tag._createElement("i", base);
+            let element = htmlGenerator.tag._createElement("i", base);
             element.addClass(iconClass);
 
             if (validator.isObject(plainString)) {
