@@ -3,8 +3,8 @@
         <tr>
             <th class="t-align-center" scope="col"> Fecha </th>
             <th class="t-align-center" scope="col">Status</th>
-            <th class="t-align-center" scope="col">Uri</th>
             <th class="t-align-center" scope="col">Method</th>
+            <th class="t-align-center col-3" scope="col" style="max-width: 600px;">Uri</th>
             <th class="t-align-center" scope="col">Request</th>
             <th class="t-align-center" scope="col">Response</th>
             <th class="t-align-right logs-panel-table-header-buttons" scope="col">

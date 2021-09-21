@@ -104,13 +104,7 @@ class ProxyController extends AbstractController {
     }
 
     private String getRequestUri( Environment environment ) {
-        String requestUri = proxyService.purgeProxyDummiesPrefix( request.getRequestURI() )
-
-        if( environment ){
-            requestUri = requestUri.replaceAll( "/${environment.uriPrefix}", "" )
-        }
-
-        requestUri
+        proxyService.purgeProxyDummiesPrefix( request.getRequestURI(), environment )
     }
 
     private void forwardRequest(String redirectUrl, String forwardUri, String requestBody ){

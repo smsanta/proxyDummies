@@ -208,10 +208,17 @@ class ProxyService extends BaseService{
         dummy
     }
 
-    String purgeProxyDummiesPrefix( String str ){
+    String purgeProxyDummiesPrefix( String str, Environment environment = null){
         String proxyDummiesPrefix = getApplicationConfigProperty( PROXY_DUMMIES_APPLICATION_CONFIG_PREFIX )
+        if( environment ){
+            proxyDummiesPrefix += "/${environment.uriPrefix}"
+        }
+
         info( "Purging prefix -$proxyDummiesPrefix- from -$str-." )
-        str.replaceAll( proxyDummiesPrefix, "")
+        String purgedUri = str.replaceAll( proxyDummiesPrefix, "")
+        info( "Final uri is: $purgedUri" )
+        purgedUri
+
     }
 
     void saveResponse(String uriName, String body, String method){
@@ -289,7 +296,8 @@ class ProxyService extends BaseService{
             pMethod,
             (pServiceType ?: ServiceType.SOAP),
             (pResponseStatus ?: 200),
-            pResponseExtraHeaders
+            pResponseExtraHeaders,
+            false
         )
     }
 
@@ -387,7 +395,7 @@ class ProxyService extends BaseService{
                 requestType: requestType,
                 responseStatus: responseStatus,
                 responseHeaders: responseHeaders,
-                responseBody: responseBody,
+                zResponseBody: responseBody,
                 rule: rule
             ])
 
